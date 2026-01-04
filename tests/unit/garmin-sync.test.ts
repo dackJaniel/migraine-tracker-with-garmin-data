@@ -74,7 +74,7 @@ describe('Garmin Sync Service', () => {
             const status = await getSyncStatus();
 
             expect(status.lastSyncDate).toBeNull();
-      expect(status.daysBehind).toBe(0); // Stub returns 0
+            expect(status.daysBehind).toBe(0); // Stub returns 0
             await db.garminData.add({
                 date: '2026-01-01',
                 syncedAt: new Date('2026-01-01'),

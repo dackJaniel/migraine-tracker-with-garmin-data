@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useEpisodes, useStats } from '@/hooks/use-episodes';
 import { deleteEpisode } from '@/features/episodes/episode-service';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,6 +28,7 @@ import { de } from 'date-fns/locale';
 import { toast } from 'sonner';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const episodes = useEpisodes();
   const stats = useStats();
   const [deleteId, setDeleteId] = useState<number | null>(null);
@@ -54,7 +56,7 @@ export default function Dashboard() {
             Übersicht deiner Migräne-Episoden
           </p>
         </div>
-        <Button size="lg" className="gap-2" disabled>
+        <Button size="lg" className="gap-2" onClick={() => navigate('/episodes/new')}>
           <Plus className="h-5 w-5" />
           Neue Episode
         </Button>
@@ -141,7 +143,7 @@ export default function Dashboard() {
               <p className="text-sm text-slate-500 mb-4">
                 Starte mit deiner ersten Migräne-Episode
               </p>
-              <Button disabled>
+              <Button onClick={() => navigate('/episodes/new')}>
                 <Plus className="h-4 w-4 mr-2" />
                 Erste Episode erfassen
               </Button>
@@ -186,7 +188,7 @@ export default function Dashboard() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      disabled
+                      onClick={() => navigate(`/episodes/${episode.id}/edit`)}
                       title="Bearbeiten"
                     >
                       <Pencil className="h-4 w-4" />

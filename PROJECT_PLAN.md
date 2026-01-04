@@ -511,18 +511,18 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
   - [x] `src/pages/PinUnlock.tsx` → App-Start Sperre
   - [x] Fehlversuch Counter (3x falsch → Reset-Option zeigen)
   - [x] Biometric später erweitern (TODO für v2)
-- [ ] `[🎨 PARALLEL]` **SUB-AGENT 2: Episode Form** (eigenständiges Feature):
-  - [ ] `src/features/episodes/EpisodeForm.tsx`
-  - [ ] Nutzung von `react-hook-form` und `zod`
-  - [ ] Felder:
-    - [ ] Startzeit (DateTime Picker)
-    - [ ] Endzeit (optional, "Noch aktiv" Checkbox)
-    - [ ] Intensität (Slider 1-10 mit Emoji-Feedback)
-    - [ ] Trigger Auswahl (Multi-Select, "Add Custom" Button)
-    - [ ] Medikamente (Multi-Select, Freitext möglich)
-    - [ ] Symptome (Checkboxen: Übelkeit, Lichtempfindlichkeit, Aura, Phonophobie)
-    - [ ] Notizen (Textarea, optional)
-  - [ ] Trigger/Meds persistent speichern für Autocomplete
+- [ ] `[🎨 PARALLEL]` **SUB-AGENT 2: Episode Form** (eigenständiges Feature - ✅ IMPLEMENTIERT):
+  - [x] `src/features/episodes/EpisodeForm.tsx`
+  - [x] Nutzung von `react-hook-form` und `zod`
+  - [x] Felder:
+    - [x] Startzeit (DateTime Picker)
+    - [x] Endzeit (optional, "Noch aktiv" Checkbox)
+    - [x] Intensität (Slider 1-10 mit Emoji-Feedback)
+    - [x] Trigger Auswahl (Multi-Select, "Add Custom" Button)
+    - [x] Medikamente (Multi-Select, Freitext möglich)
+    - [x] Symptome (Checkboxen: Übelkeit, Lichtempfindlichkeit, Aura, Phonophobie)
+    - [x] Notizen (Textarea, optional)
+  - [x] Trigger/Meds persistent speichern für Autocomplete
 - [x] `[🎨 PARALLEL]` **SUB-AGENT 3: Dashboard** (eigenständiges Feature):
   - [x] **Dashboard Page:**
     - [x] Anzeige "Tage seit letzter Migräne" (große Zahl)

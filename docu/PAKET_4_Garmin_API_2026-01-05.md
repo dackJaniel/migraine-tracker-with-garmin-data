@@ -18,11 +18,13 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 ### 1. API Client & Token Management
 
 **Dateien:**
+
 - `src/lib/garmin/client.ts` - Garmin API Client Klasse
 - `src/lib/garmin/constants.ts` - API Endpoints & Konfiguration
 - `src/lib/garmin/types.ts` - TypeScript Interfaces
 
 **Implementiert:**
+
 - `GarminClient` Klasse mit Session-Management
 - Token-Speicherung via `@capacitor/preferences`
 - Login/Logout Flows (vereinfacht für MVP)
@@ -31,6 +33,7 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 - CORS-Bypass via `@capacitor-community/http` (vorbereitet)
 
 **MVP-Einschränkungen:**
+
 - OAuth-Flow vereinfacht (mock tokens)
 - Keine echte Garmin SSO-Integration (garth library)
 - MFA-Support vorbereitet, aber nicht implementiert
@@ -38,6 +41,7 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 ### 2. API Endpoints (Stub-Implementation)
 
 **Dateien:**
+
 - `src/lib/garmin/endpoints/sleep.ts` - Schlafdaten
 - `src/lib/garmin/endpoints/stress.ts` - Stress, Herzfrequenz, HRV
 - `src/lib/garmin/endpoints/activity.ts` - Body Battery, Schritte, Hydration
@@ -45,6 +49,7 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 - `src/lib/garmin/endpoints/index.ts` - Barrel Export
 
 **Geplante Metriken (MVP: Stubs):**
+
 - ✅ Schlaf (Score, Phasen: deep, light, rem, awake)
 - ✅ Stress (Average, Max, All-Day Values)
 - ✅ Herzfrequenz (Resting HR, Max HR)
@@ -57,6 +62,7 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 - ✅ Training Readiness (Score, Status)
 
 **Endpunkt-Struktur (python-garminconnect Pattern):**
+
 ```
 /wellness-service/wellness/dailySleepData/{date}
 /wellness-service/wellness/dailyStress/{date}
@@ -72,6 +78,7 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 **Datei:** `src/lib/garmin/sync-service.ts`
 
 **Features:**
+
 - `syncAllMissingData()` - Synct alle fehlenden Tage
 - `syncSingleDate()` - Manueller Re-Sync einzelner Tage
 - `getSyncStatus()` - Letzte Sync-Info, Tage hinterher
@@ -86,12 +93,14 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 **Datei:** `src/hooks/use-garmin-sync.ts`
 
 **Features:**
+
 - `useGarminAutoSync()` - Auto-Sync bei App-Start (>24h)
 - `useGarminSyncStatus()` - Status-Abfrage mit Live-Updates
 - Progress-Tracking in UI
 - Error-Handling mit Toast-Notifications
 
 **Trigger-Logik:**
+
 - Prüft bei App-Start: Letzter Sync >24h?
 - Automatischer Sync-Start im Hintergrund
 - Manual-Trigger via Button möglich
@@ -99,6 +108,7 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 ### 5. UI Components
 
 **Garmin Settings (`src/pages/GarminSettings.tsx`):**
+
 - Login-Formular (Email, Passwort)
 - "Verbunden als: [email]" Status
 - Sync-Status (Letzter Sync, Tage hinterher, DB-Einträge)
@@ -107,6 +117,7 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 - Liste verfügbarer Metriken (10 Items mit Checkmarks)
 
 **Garmin Data Viewer (`src/pages/GarminDataView.tsx`):**
+
 - Kalender-Picker für Datum-Auswahl
 - Daten-Cards für jede Metrik:
   - Schlaf (Score, Phasen in Minuten)
@@ -123,6 +134,7 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 - "Neu laden" Button für manuellen Re-Sync
 
 **Neue ShadCN Komponenten:**
+
 - `src/components/ui/progress.tsx` - Progress Bar (@radix-ui/react-progress)
 - `src/components/ui/badge.tsx` - Status Badges (class-variance-authority)
 
@@ -131,10 +143,12 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 ## 🧪 Tests
 
 **Test-Dateien:**
+
 - `tests/unit/garmin-client.test.ts` - 6 Tests
 - `tests/unit/garmin-sync.test.ts` - 8 Tests (angepasst für Stubs)
 
 **Test-Coverage:**
+
 - ✅ Session-Management (Initialize, Validate, Logout)
 - ✅ Login-Flow (Mock-Tokens, Profile-Speicherung)
 - ✅ Token-Storage via Preferences
@@ -152,6 +166,7 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 **Grund:** Fokus auf UI/UX-Flow und Datenbankstruktur, echte API-Integration folgt nach Core-Features
 
 **MVP enthält:**
+
 - ✅ Vollständige UI mit allen Screens
 - ✅ Token-Management & Session-Handling
 - ✅ Datenbank-Schema für Garmin-Daten
@@ -176,6 +191,7 @@ PAKET 4 implementiert die Garmin Connect Integration mit OAuth-Token-Management,
 
 **Strategie:** Graceful Degradation  
 **Pattern:**
+
 ```typescript
 try {
   const data = await fetchMetric(date);
@@ -195,10 +211,12 @@ try {
 ## 📦 Dependencies
 
 **Neu installiert:**
+
 - `@radix-ui/react-progress` - Progress Bar Component
 - `class-variance-authority` - Badge Variants (via CVA)
 
 **Bereits vorhanden:**
+
 - `@capacitor/preferences` - Token-Storage
 - `@capacitor-community/http` - Native HTTP (CORS bypass)
 - `date-fns` - Date Manipulation
@@ -208,6 +226,7 @@ try {
 ## 🚀 Build & Deploy
 
 **Build-Ergebnis:**
+
 ```
 dist/assets/index-SCX_kdm_.js   511.69 kB │ gzip: 161.54 kB
 ```
@@ -223,11 +242,13 @@ dist/assets/index-SCX_kdm_.js   511.69 kB │ gzip: 161.54 kB
 ## 🔮 Next Steps (Post-MVP)
 
 ### PAKET 5: Analytics & Backup
+
 - Charts mit Recharts (Episoden, Metriken-Timeline)
 - Korrelations-Engine (Schlaf vs. Episoden)
 - Backup-Export mit AES-GCM Verschlüsselung
 
 ### Garmin Integration (Post-MVP)
+
 1. **OAuth-Flow implementieren:**
    - garth library für SSO
    - OAuth1 + OAuth2 Token-Exchange
@@ -290,6 +311,7 @@ dist/assets/index-SCX_kdm_.js   511.69 kB │ gzip: 161.54 kB
 ## ✅ PAKET 4 Status: ABGESCHLOSSEN
 
 Alle Todos aus PROJECT_PLAN.md PAKET 4 erledigt:
+
 - [x] Garmin API Client Base implementieren
 - [x] Token Management & OAuth Flow (MVP-Version)
 - [x] Sleep Endpoints implementieren (Stubs)
