@@ -417,23 +417,23 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
 
 **Todo-Liste:**
 
-- [ ] `[🏗️ SEQ]` Vite Projekt mit React & TypeScript initialisieren: `npm create vite@latest migraine-tracker -- --template react-ts`.
-- [ ] `[🏗️ SEQ]` ESLint + Prettier konfigurieren.
-- [ ] `[🏗️ SEQ]` TailwindCSS & PostCSS konfigurieren: `npm install tailwindcss @tailwindcss/vite postcss autoprefixer`.
-- [ ] `[🏗️ SEQ]` `tsconfig.json` Paths alias `@/*` auf `./src/*` setzen.
-- [ ] `[🏗️ SEQ]` ShadCN UI initialisieren: `npx shadcn@latest init`.
-- [ ] `[🏗️ SEQ]` ShadCN Komponenten installieren: `npx shadcn@latest add button card input label select textarea dialog calendar popover switch slider tabs toast alert-dialog`.
-- [ ] `[🏗️ SEQ]` Core Libraries installieren: `dexie`, `dexie-react-hooks`, `dexie-encrypted`, `zustand`, `date-fns`, `react-hook-form`, `zod`, `lucide-react`, `recharts`, `clsx`, `tailwind-merge`.
-- [ ] `[🏗️ SEQ]` Testing Setup:
-  - [ ] `vitest`, `@testing-library/react`, `@testing-library/jest-dom`, `jsdom`
-  - [ ] `playwright` für E2E Tests
-  - [ ] `vitest.config.ts` erstellen
-  - [ ] `playwright.config.ts` erstellen
-- [ ] `[🏗️ SEQ]` Capacitor Setup: `npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/preferences @capacitor/filesystem @capacitor/local-notifications @capacitor/app`.
-- [ ] `[🏗️ SEQ]` `@capacitor-community/http` installieren.
-- [ ] `[🏗️ SEQ]` Capacitor Init: `npx cap init MigraineTracker com.example.migrainetracker`.
-- [ ] `[🏗️ SEQ]` Android Platform hinzufügen: `npx cap add android`.
-- [ ] `[🏗️ PARALLEL]` Ordnerstruktur anlegen:
+- [x] `[🏗️ SEQ]` Vite Projekt mit React & TypeScript initialisieren: `npm create vite@latest migraine-tracker -- --template react-ts`.
+- [x] `[🏗️ SEQ]` ESLint + Prettier konfigurieren.
+- [x] `[🏗️ SEQ]` TailwindCSS & PostCSS konfigurieren: `npm install tailwindcss @tailwindcss/vite postcss autoprefixer`.
+- [x] `[🏗️ SEQ]` `tsconfig.json` Paths alias `@/*` auf `./src/*` setzen.
+- [x] `[🏗️ SEQ]` ShadCN UI initialisieren: `npx shadcn@latest init`.
+- [x] `[🏗️ SEQ]` ShadCN Komponenten installieren: `npx shadcn@latest add button card input label select textarea dialog calendar popover switch slider tabs toast alert-dialog`.
+- [x] `[🏗️ SEQ]` Core Libraries installieren: `dexie`, `dexie-react-hooks`, `dexie-encrypted`, `zustand`, `date-fns`, `react-hook-form`, `zod`, `lucide-react`, `recharts`, `clsx`, `tailwind-merge`.
+- [x] `[🏗️ SEQ]` Testing Setup:
+  - [x] `vitest`, `@testing-library/react`, `@testing-library/jest-dom`, `jsdom`
+  - [x] `playwright` für E2E Tests
+  - [x] `vitest.config.ts` erstellen
+  - [x] `playwright.config.ts` erstellen
+- [x] `[🏗️ SEQ]` Capacitor Setup: `npm install @capacitor/core @capacitor/cli @capacitor/android @capacitor/preferences @capacitor/filesystem @capacitor/local-notifications @capacitor/app`.
+- [x] `[🏗️ SEQ]` `@capacitor-community/http` installieren.
+- [x] `[🏗️ SEQ]` Capacitor Init: `npx cap init MigraineTracker com.example.migrainetracker`.
+- [x] `[🏗️ SEQ]` Android Platform hinzufügen: `npx cap add android`.
+- [x] `[🏗️ PARALLEL]` Ordnerstruktur anlegen:
   - `src/components/ui` (ShadCN)
   - `src/features` (episodes, garmin, analytics, auth)
   - `src/lib` (utils, db.ts, garmin-client.ts, encryption.ts)
@@ -441,8 +441,8 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
   - `src/pages`
   - `src/store` (zustand stores)
   - `tests/unit`, `tests/e2e`, `tests/fixtures`
-- [ ] `[🏗️ SEQ]` React Router (`react-router-dom`) einrichten mit Layout.
-- [ ] `[🏗️ SEQ]` Basic Error Boundary Component erstellen.
+- [x] `[🏗️ SEQ]` React Router (`react-router-dom`) einrichten mit Layout.
+- [x] `[🏗️ SEQ]` Basic Error Boundary Component erstellen.
 
 **🤖 Sub-Agent Strategy:** NONE (Foundation zu kritisch)
 
@@ -454,7 +454,8 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
 
 **🏷️ Execution Mode:** `[💾 SEQUENTIAL - BLOCKING]` (UI/Garmin benötigen DB)
 
-**🤖 Sub-Agent Strategy:** 
+**🤖 Sub-Agent Strategy:**
+
 - `subagent-tests` → Unit Tests parallel zur Main Implementation
 
 **Todo-Liste:**
@@ -505,6 +506,7 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
 **🏷️ Execution Mode:** `[🎨 PARALLEL]` (Kann parallel zu PAKET 4 laufen)
 
 **🤖 Sub-Agent Strategy:**
+
 - `subagent-pin-flow` → PIN Setup + Unlock Screen
 - `subagent-episode-form` → Episode Form + Validation
 - `subagent-dashboard` → Dashboard + List View
@@ -562,6 +564,7 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
 **🏷️ Execution Mode:** `[🔗 PARALLEL]` (Kann parallel zu PAKET 3 laufen)
 
 **🤖 Sub-Agent Strategy:**
+
 - `subagent-auth` → Login + Token Management (SEQUENTIAL)
 - `subagent-endpoints` → API Endpoints (PARALLEL nach Auth)
   - `worker-sleep` → Sleep Endpoints
@@ -650,6 +653,7 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
 **🏷️ Execution Mode:** `[📊 SEQUENTIAL - DEPENDS: PAKET 2,3,4]` (Benötigt DB + UI + Garmin)
 
 **🤖 Sub-Agent Strategy:**
+
 - `subagent-charts` → Recharts Implementation (PARALLEL)
 - `subagent-correlations` → Statistical Analysis (PARALLEL)
 - `subagent-backup` → Export/Import (PARALLEL)
@@ -711,6 +715,7 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
 **🏷️ Execution Mode:** `[🧪 PARALLEL - NON-BLOCKING]` (Kann parallel zu allen anderen laufen)
 
 **🤖 Sub-Agent Strategy:**
+
 - `subagent-tools` → MCP Tools Implementation (PARALLEL)
 - `subagent-mocks` → Mock Data Generators (PARALLEL)
 - **Sync Point:** Beide Sub-Agents unabhängig voneinander
@@ -987,16 +992,19 @@ Wenn du dieses Projekt umsetzt:
 ### 🎯 Orchestration Prinzipien
 
 **Koordination:**
+
 - **Main Agent (Orchestrator):** Koordiniert alle Sub-Agents, verwaltet Dependencies, merged Results
 - **Sub-Agents (Workers):** Spezialisiert auf spezifische Tasks, unabhängig von anderen Agents
 - **Sync Points:** Nach jedem Paket erfolgt ein Merge und Review durch Main Agent
 
 **Parallelisierung:**
+
 - Tasks mit `[PARALLEL]` können gleichzeitig von mehreren Agents bearbeitet werden
 - Tasks mit `[SEQUENTIAL]` müssen nacheinander abgearbeitet werden
 - Tasks mit `[DEPENDS: X]` benötigen Completion von Task X
 
 **Agent Types:**
+
 - 🏗️ **ARCHITECT:** Setup, Infrastruktur, Config
 - 💾 **DATABASE:** Datenmodell, Schema, Services
 - 🎨 **UI-CORE:** Components, Pages, User Flows
@@ -1027,31 +1035,39 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL - Requires 2,3,4]
 ### 🚀 Multi-Agent Execution Plan
 
 #### Phase 1: Foundation (Sequenziell)
+
 **Main Agent:** ARCHITECT
+
 - **Goal:** Lauffähiges Basis-Setup
 - **Sub-Agents:** KEINE (zu kritisch für Parallelisierung)
 - **Duration:** ~2-3h
 - **Blocking:** Ja (alles wartet auf Completion)
 
 #### Phase 2: Core Infrastructure (Sequenziell)
+
 **Main Agent:** DATABASE
+
 - **Goal:** DB Schema, Encryption, Core Services
-- **Sub-Agents:** 
+- **Sub-Agents:**
   - `subagent-tests` → Unit Tests parallel zur Implementierung
 - **Duration:** ~3-4h
 - **Blocking:** Ja (UI/Garmin benötigen DB)
 
 #### Phase 3: Features (Parallel)
+
 **Main Agents:** UI-CORE, GARMIN, MCP-SERVER (gleichzeitig)
+
 - **Sub-Agent Strategy:**
-  
+
   **UI-CORE Agent:**
+
   - `subagent-pin-flow` → PIN Setup + Unlock (parallel)
   - `subagent-episode-form` → Episode Form + Validation (parallel)
   - `subagent-dashboard` → Dashboard + List View (parallel)
   - Sync Point: Alle 3 Sub-Agents müssen fertig sein
-  
+
   **GARMIN Agent:**
+
   - `subagent-auth` → Login + Token Management
   - `subagent-endpoints` → API Endpoints (parallel nach Auth)
     - `worker-sleep` → Sleep Endpoints
@@ -1059,8 +1075,9 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL - Requires 2,3,4]
     - `worker-hr` → Heart Rate Endpoints
     - `worker-misc` → Hydration, Respiration, SpO2
   - `subagent-sync` → Sync Service (nach Endpoints)
-  
+
   **MCP-SERVER Agent:**
+
   - Läuft komplett parallel, kein Blocking
   - `subagent-tools` → MCP Tools Implementation
   - `subagent-mocks` → Mock Data Generators
@@ -1069,7 +1086,9 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL - Requires 2,3,4]
 - **Blocking:** Nur für Phase 4
 
 #### Phase 4: Analytics (Sequenziell)
+
 **Main Agent:** ANALYTICS
+
 - **Goal:** Charts, Korrelationen, Backup
 - **Sub-Agents:**
   - `subagent-charts` → Recharts Implementation (parallel)
@@ -1085,6 +1104,7 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL - Requires 2,3,4]
 **Format:** `[TYPE] [PARALLEL/SEQUENTIAL] [DEPENDS: X,Y]`
 
 **Beispiele:**
+
 - `[🏗️ SEQUENTIAL]` → Muss nacheinander, keine Parallelisierung
 - `[🎨 PARALLEL]` → Kann parallel bearbeitet werden
 - `[💾 PARALLEL - DEPENDS: db.ts]` → Parallel, aber nach db.ts
@@ -1095,32 +1115,38 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL - Requires 2,3,4]
 ### 🤖 Sub-Agent Invocation Pattern
 
 **Wann Sub-Agent verwenden:**
+
 1. **File Independence:** Task erstellt/editiert unterschiedliche Files
 2. **No Shared State:** Keine Race Conditions möglich
 3. **Clear Interface:** Eindeutige Input/Output Definition
 4. **Completion Criteria:** Klare Definition von "Done"
 
 **Wann NICHT:**
+
 1. Shared Files (z.B. beide editieren `db.ts`)
 2. Komplexe Dependencies (A benötigt Output von B)
 3. State Management (Zustand muss synchron sein)
 
 **Sub-Agent Prompt Template:**
+
 ```markdown
 ## Sub-Agent Task: [Name]
 
 **Goal:** [Einzeiliges Ziel]
 
 **Scope:**
+
 - Create Files: [Liste]
 - Edit Files: [Liste]
 - Dependencies: [Was muss existieren]
 
 **Acceptance Criteria:**
+
 1. [Kriterium 1]
 2. [Kriterium 2]
 
 **Output Format:**
+
 - Return: [Was zurückgeben]
 - Commit: [Commit Message Format]
 - Tests: [Test Coverage]
@@ -1130,6 +1156,7 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL - Requires 2,3,4]
 ```
 
 **Main Agent Merge Process:**
+
 1. Warte auf alle Sub-Agents
 2. Review Code via `read_file`
 3. Check for Conflicts (gleiche Files editiert?)
@@ -1141,15 +1168,15 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL - Requires 2,3,4]
 
 ### 📊 Parallelization Matrix
 
-| Paket | Phase | Parallele Tasks | Sub-Agents | Duration (Solo) | Duration (Parallel) |
-|-------|-------|----------------|------------|-----------------|---------------------|
-| 1 | Foundation | 0 | 0 | 2-3h | 2-3h |
-| 2 | Core | 1 (Tests) | 1 | 3-4h | 3-4h |
-| 3 | Features (UI) | 3 (PIN, Form, Dashboard) | 3 | 4-5h | 2-3h |
-| 4 | Features (Garmin) | 5 (Auth, 4 Endpoint Groups, Sync) | 5 | 6-8h | 3-4h |
-| 5 | Analytics | 3 (Charts, Corr, Backup) | 3 | 4-5h | 2-3h |
-| 6 | MCP | 2 (Tools, Mocks) | 2 | 2-3h | 1-2h |
-| **Total** | - | **14** | **14** | **21-28h** | **13-19h** |
+| Paket     | Phase             | Parallele Tasks                   | Sub-Agents | Duration (Solo) | Duration (Parallel) |
+| --------- | ----------------- | --------------------------------- | ---------- | --------------- | ------------------- |
+| 1         | Foundation        | 0                                 | 0          | 2-3h            | 2-3h                |
+| 2         | Core              | 1 (Tests)                         | 1          | 3-4h            | 3-4h                |
+| 3         | Features (UI)     | 3 (PIN, Form, Dashboard)          | 3          | 4-5h            | 2-3h                |
+| 4         | Features (Garmin) | 5 (Auth, 4 Endpoint Groups, Sync) | 5          | 6-8h            | 3-4h                |
+| 5         | Analytics         | 3 (Charts, Corr, Backup)          | 3          | 4-5h            | 2-3h                |
+| 6         | MCP               | 2 (Tools, Mocks)                  | 2          | 2-3h            | 1-2h                |
+| **Total** | -                 | **14**                            | **14**     | **21-28h**      | **13-19h**          |
 
 **Speedup:** ~35-40% durch Parallelisierung
 
@@ -1158,25 +1185,31 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL - Requires 2,3,4]
 ### 🔄 Automated Multi-Agent Workflow
 
 **Main Agent Script Pseudocode:**
+
 ```typescript
 async function executePackage3() {
   // Launch parallel sub-agents
   const agents = [
-    runSubagent("Implement PIN Setup Flow (PinSetup.tsx, PinUnlock.tsx)", "pin-flow"),
-    runSubagent("Implement Episode Form with react-hook-form", "episode-form"),
-    runSubagent("Implement Dashboard with Charts", "dashboard")
+    runSubagent(
+      'Implement PIN Setup Flow (PinSetup.tsx, PinUnlock.tsx)',
+      'pin-flow'
+    ),
+    runSubagent('Implement Episode Form with react-hook-form', 'episode-form'),
+    runSubagent('Implement Dashboard with Charts', 'dashboard'),
   ];
-  
+
   // Wait for all
   const results = await Promise.all(agents);
-  
+
   // Merge & Review
   await reviewCode(results);
   await runTests();
-  await commitMerge("feat(ui): implement PIN flow, episode form, and dashboard");
-  
+  await commitMerge(
+    'feat(ui): implement PIN flow, episode form, and dashboard'
+  );
+
   // Status Report
-  reportStatus("PAKET 3 Complete", results);
+  reportStatus('PAKET 3 Complete', results);
 }
 ```
 
@@ -1185,11 +1218,12 @@ async function executePackage3() {
 ### ⚠️ Conflict Resolution
 
 **Conflict Types:**
+
 1. **File Conflicts:** Zwei Agents editieren gleiche Datei
    - **Prevention:** Assign Files exklusiv
    - **Resolution:** Manual Merge via Main Agent
-   
 2. **Dependency Conflicts:** Agent B braucht Output von Agent A
+
    - **Prevention:** Dependency Graph einhalten
    - **Resolution:** Sequential Execution
 
@@ -1198,6 +1232,7 @@ async function executePackage3() {
    - **Resolution:** Migration Script
 
 **Best Practices:**
+
 - Jeder Sub-Agent commitet auf eigenen Branch: `agent/pin-flow`, `agent/episode-form`
 - Main Agent merged in `main`
 - Bei Konflikt: Main Agent entscheidet
@@ -1207,12 +1242,14 @@ async function executePackage3() {
 ### 🎯 Success Metrics
 
 **KPIs für Multi-Agent Execution:**
+
 - **Parallelization Rate:** Anzahl parallel laufender Agents / Gesamt-Agents
 - **Conflict Rate:** Anzahl Merge Conflicts / Gesamt Merges
 - **Speedup Factor:** Solo Duration / Parallel Duration
 - **Test Pass Rate:** % Tests die nach Merge grün sind
 
 **Target:**
+
 - Parallelization: >50%
 - Conflict Rate: <10%
 - Speedup: >30%

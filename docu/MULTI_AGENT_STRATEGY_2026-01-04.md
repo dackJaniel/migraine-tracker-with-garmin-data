@@ -2,7 +2,7 @@
 
 **Datum:** 2026-01-04  
 **Status:** ✅ Konzeptioniert  
-**Auswirkung:** Projekt-Durchführung  
+**Auswirkung:** Projekt-Durchführung
 
 ---
 
@@ -14,33 +14,36 @@ Die Multi-Agent Orchestration Strategy wurde in den PROJECT_PLAN.md integriert, 
 
 ## 📊 Key Metrics
 
-| Metrik | Wert |
-|--------|------|
-| **Gesamt-Tasks** | 14 parallelisierbare Tasks |
-| **Sub-Agents** | 14 Worker-Agents |
-| **Speedup** | 35-40% |
-| **Solo Duration** | 21-28 Stunden |
-| **Parallel Duration** | 13-19 Stunden |
-| **Target Conflict Rate** | <10% |
-| **Target Test Pass Rate** | >95% |
+| Metrik                    | Wert                       |
+| ------------------------- | -------------------------- |
+| **Gesamt-Tasks**          | 14 parallelisierbare Tasks |
+| **Sub-Agents**            | 14 Worker-Agents           |
+| **Speedup**               | 35-40%                     |
+| **Solo Duration**         | 21-28 Stunden              |
+| **Parallel Duration**     | 13-19 Stunden              |
+| **Target Conflict Rate**  | <10%                       |
+| **Target Test Pass Rate** | >95%                       |
 
 ---
 
 ## 🏗️ Execution Phases
 
 ### Phase 1: Foundation (Sequential)
+
 - **Agent:** ARCHITECT
 - **Duration:** 2-3h
 - **Blocking:** Ja
 - **Sub-Agents:** Keine (zu kritisch)
 
 ### Phase 2: Core Infrastructure (Sequential)
+
 - **Agent:** DATABASE
 - **Duration:** 3-4h
 - **Blocking:** Ja
 - **Sub-Agents:** 1 (Unit Tests parallel)
 
 ### Phase 3: Features (Parallel)
+
 - **Agents:** UI-CORE, GARMIN, MCP-SERVER (gleichzeitig)
 - **Duration:** 6-8h solo → 3-4h parallel
 - **Blocking:** Nur für Phase 4
@@ -50,6 +53,7 @@ Die Multi-Agent Orchestration Strategy wurde in den PROJECT_PLAN.md integriert, 
   - MCP-SERVER: 2 (Tools, Mocks)
 
 ### Phase 4: Analytics (Sequential)
+
 - **Agent:** ANALYTICS
 - **Duration:** 4-5h solo → 2-3h parallel
 - **Blocking:** Nein
@@ -82,12 +86,14 @@ Die Multi-Agent Orchestration Strategy wurde in den PROJECT_PLAN.md integriert, 
 ### Wann Sub-Agent nutzen?
 
 ✅ **Ja, wenn:**
+
 1. File Independence (unterschiedliche Files)
 2. Keine Shared State (keine Race Conditions)
 3. Klare Interface-Definition
 4. Klare Completion-Kriterien
 
 ❌ **Nein, wenn:**
+
 1. Shared Files werden editiert
 2. Komplexe Dependencies zwischen Tasks
 3. State muss synchron sein
@@ -100,15 +106,18 @@ Die Multi-Agent Orchestration Strategy wurde in den PROJECT_PLAN.md integriert, 
 **Goal:** [Einzeiliges Ziel]
 
 **Scope:**
+
 - Create Files: [Liste]
 - Edit Files: [Liste]
 - Dependencies: [Was muss existieren]
 
 **Acceptance Criteria:**
+
 1. [Kriterium 1]
 2. [Kriterium 2]
 
 **Output Format:**
+
 - Return: [Was zurückgeben]
 - Commit: [Commit Message Format]
 - Tests: [Test Coverage]
@@ -148,11 +157,11 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL]
 
 ### Conflict Resolution
 
-| Conflict Type | Prevention | Resolution |
-|---------------|------------|------------|
-| File Conflicts | Files exklusiv assignen | Manual Merge via Main Agent |
-| Dependency Conflicts | Dependency Graph einhalten | Sequential Execution |
-| Schema Conflicts | DB Schema zuerst fertig | Migration Script |
+| Conflict Type        | Prevention                 | Resolution                  |
+| -------------------- | -------------------------- | --------------------------- |
+| File Conflicts       | Files exklusiv assignen    | Manual Merge via Main Agent |
+| Dependency Conflicts | Dependency Graph einhalten | Sequential Execution        |
+| Schema Conflicts     | DB Schema zuerst fertig    | Migration Script            |
 
 ---
 
@@ -175,15 +184,15 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL]
 
 ## 📊 Parallelization Matrix
 
-| Paket | Parallele Tasks | Sub-Agents | Duration Solo | Duration Parallel | Speedup |
-|-------|----------------|------------|---------------|-------------------|---------|
-| 1 (Setup) | 0 | 0 | 2-3h | 2-3h | 0% |
-| 2 (DB) | 1 | 1 | 3-4h | 3-4h | 0% |
-| 3 (UI) | 3 | 3 | 4-5h | 2-3h | 40-50% |
-| 4 (Garmin) | 5 | 5 | 6-8h | 3-4h | 50% |
-| 5 (Analytics) | 3 | 3 | 4-5h | 2-3h | 40-50% |
-| 6 (MCP) | 2 | 2 | 2-3h | 1-2h | 33% |
-| **Total** | **14** | **14** | **21-28h** | **13-19h** | **35-40%** |
+| Paket         | Parallele Tasks | Sub-Agents | Duration Solo | Duration Parallel | Speedup    |
+| ------------- | --------------- | ---------- | ------------- | ----------------- | ---------- |
+| 1 (Setup)     | 0               | 0          | 2-3h          | 2-3h              | 0%         |
+| 2 (DB)        | 1               | 1          | 3-4h          | 3-4h              | 0%         |
+| 3 (UI)        | 3               | 3          | 4-5h          | 2-3h              | 40-50%     |
+| 4 (Garmin)    | 5               | 5          | 6-8h          | 3-4h              | 50%        |
+| 5 (Analytics) | 3               | 3          | 4-5h          | 2-3h              | 40-50%     |
+| 6 (MCP)       | 2               | 2          | 2-3h          | 1-2h              | 33%        |
+| **Total**     | **14**          | **14**     | **21-28h**    | **13-19h**        | **35-40%** |
 
 ---
 
@@ -192,38 +201,40 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL]
 ### Sub-Agent für PAKET 3 (UI-CORE)
 
 **Main Agent Pseudocode:**
+
 ```typescript
 async function executePackage3() {
   // Launch 3 parallel sub-agents
   const agents = [
-    runSubagent("PIN Setup Flow", "pin-flow"),
-    runSubagent("Episode Form", "episode-form"),
-    runSubagent("Dashboard", "dashboard")
+    runSubagent('PIN Setup Flow', 'pin-flow'),
+    runSubagent('Episode Form', 'episode-form'),
+    runSubagent('Dashboard', 'dashboard'),
   ];
-  
+
   // Wait for all
   const results = await Promise.all(agents);
-  
+
   // Merge & Review
   await reviewCode(results);
   await runTests();
-  await commitMerge("feat(ui): implement PIN, form, and dashboard");
-  
+  await commitMerge('feat(ui): implement PIN, form, and dashboard');
+
   // Status Report
-  reportStatus("PAKET 3 Complete", results);
+  reportStatus('PAKET 3 Complete', results);
 }
 ```
 
 ### Sub-Agent für PAKET 4 (Garmin Endpoints)
 
 **Worker-Struktur:**
+
 ```typescript
 // 4 parallel workers nach Auth
 const workers = [
-  runSubagent("Sleep Endpoints", "worker-sleep"),
-  runSubagent("Stress & HR Endpoints", "worker-stress"),
-  runSubagent("Activity & Body Battery", "worker-activity"),
-  runSubagent("Misc Health Metrics", "worker-misc")
+  runSubagent('Sleep Endpoints', 'worker-sleep'),
+  runSubagent('Stress & HR Endpoints', 'worker-stress'),
+  runSubagent('Activity & Body Battery', 'worker-activity'),
+  runSubagent('Misc Health Metrics', 'worker-misc'),
 ];
 ```
 
