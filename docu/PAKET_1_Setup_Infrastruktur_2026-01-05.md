@@ -15,28 +15,33 @@ PAKET 1 wurde erfolgreich abgeschlossen. Das Projekt verfügt nun über eine vol
 ## ✅ Erledigte Aufgaben
 
 ### 1. Vite Projekt mit React & TypeScript
+
 - ✅ Vite 7.3.0 initialisiert
 - ✅ React 19.2.0 + TypeScript konfiguriert
 - ✅ Hot Module Replacement (HMR) funktioniert
 
 ### 2. ESLint + Prettier
+
 - ✅ ESLint 9.39.1 mit TypeScript Support
 - ✅ Prettier Integration mit eslint-plugin-prettier
 - ✅ Konsistente Code-Formatierung
 - ✅ Scripts: `npm run lint`, `npm run lint:fix`, `npm run format`
 
 ### 3. TailwindCSS + PostCSS
+
 - ✅ TailwindCSS v4 mit Vite Plugin (@tailwindcss/vite)
 - ✅ PostCSS + Autoprefixer
 - ✅ `@import 'tailwindcss'` in index.css
 - ✅ Mobile-First Responsive Design Ready
 
 ### 4. TypeScript Path Aliases
+
 - ✅ `@/*` Alias auf `./src/*` in tsconfig.json und tsconfig.app.json
 - ✅ Vite resolve alias konfiguriert
 - ✅ ShadCN UI erkennt Path Alias
 
 ### 5. ShadCN UI
+
 - ✅ ShadCN UI v3.6.2 initialisiert
 - ✅ Color Scheme: Slate (Light Mode)
 - ✅ components.json erstellt
@@ -49,6 +54,7 @@ PAKET 1 wurde erfolgreich abgeschlossen. Das Projekt verfügt nun über eine vol
 - ✅ `src/lib/utils.ts` mit `cn()` Helper
 
 ### 6. Core Libraries
+
 - ✅ **Datenbank:** dexie@4.2.1, dexie-react-hooks@4.2.0, dexie-encrypted@2.0.0
 - ✅ **State:** zustand
 - ✅ **Date Handling:** date-fns
@@ -60,6 +66,7 @@ PAKET 1 wurde erfolgreich abgeschlossen. Das Projekt verfügt nun über eine vol
 **Hinweis:** dexie-encrypted mit `--legacy-peer-deps` installiert (Kompatibilitätsproblem zwischen dexie v3/v4)
 
 ### 7. Testing Setup
+
 - ✅ **Unit Tests:** Vitest + @testing-library/react
 - ✅ **E2E Tests:** Playwright mit Chromium
 - ✅ vitest.config.ts mit jsdom Environment
@@ -69,6 +76,7 @@ PAKET 1 wurde erfolgreich abgeschlossen. Das Projekt verfügt nun über eine vol
 - ✅ Scripts: `npm test`, `npm run test:ui`, `npm run test:coverage`, `npm run test:e2e`
 
 ### 8. Capacitor Setup
+
 - ✅ @capacitor/core, @capacitor/cli, @capacitor/android
 - ✅ @capacitor/preferences (Token Storage)
 - ✅ @capacitor/filesystem (Backup Export)
@@ -79,6 +87,7 @@ PAKET 1 wurde erfolgreich abgeschlossen. Das Projekt verfügt nun über eine vol
 - ✅ Bundle-ID: `com.example.migrainetracker`
 
 ### 9. Ordnerstruktur
+
 ```
 src/
 ├── components/
@@ -112,12 +121,14 @@ android/                 # Capacitor Android Project
 ```
 
 ### 10. React Router
+
 - ✅ BrowserRouter mit Routes
 - ✅ Layout Component mit Outlet
 - ✅ Dashboard Page (Placeholder)
 - ✅ Navigate zu `/dashboard` als Standard-Route
 
 ### 11. Error Boundary
+
 - ✅ Class Component mit getDerivedStateFromError
 - ✅ Error Display mit ShadCN Card & Button
 - ✅ Reset Funktion zur Startseite
@@ -131,6 +142,7 @@ android/                 # Capacitor Android Project
 **Dev Server:** `npm run dev` → http://localhost:5173  
 **Build:** `npm run build` → Erfolgreich (dist/ erstellt)  
 **Build Size:**
+
 - CSS: 41.53 kB (gzip: 7.82 kB)
 - JS: 262.46 kB (gzip: 84.29 kB)
 
@@ -139,12 +151,14 @@ android/                 # Capacitor Android Project
 ## 🐛 Bekannte Issues
 
 ### dexie-encrypted Kompatibilität
+
 - **Problem:** dexie-encrypted@2.0.0 benötigt dexie v3, aber dexie-react-hooks@4.2.0 benötigt dexie v4
 - **Lösung:** Installation mit `--legacy-peer-deps` Flag
 - **Impact:** Keine Laufzeit-Probleme erwartet, da dexie-encrypted mit v4 funktioniert
 - **Tracking:** Prüfen ob dexie-encrypted Update auf v3+ verfügbar wird
 
 ### TypeScript verbatimModuleSyntax
+
 - **Problem:** `ReactNode` muss als Type-Only Import deklariert werden
 - **Lösung:** `import type { ReactNode } from 'react'`
 - **Status:** ✅ Behoben
@@ -154,6 +168,7 @@ android/                 # Capacitor Android Project
 ## 📦 Nächste Schritte
 
 **PAKET 2: Datenbank & Encryption**
+
 - [ ] Dexie Schema definieren (Episode, GarminData, Settings, Logs)
 - [ ] dexie-encrypted Integration mit PBKDF2
 - [ ] Encryption Utils (`src/lib/encryption.ts`)
@@ -166,6 +181,7 @@ android/                 # Capacitor Android Project
 ## 🔧 Technische Details
 
 ### Path Aliases
+
 ```typescript
 // tsconfig.json & tsconfig.app.json
 "baseUrl": ".",
@@ -182,6 +198,7 @@ resolve: {
 ```
 
 ### TailwindCSS v4 Setup
+
 ```css
 /* src/index.css */
 @import 'tailwindcss';
@@ -197,6 +214,7 @@ export default defineConfig({
 ```
 
 ### Capacitor Config
+
 ```typescript
 // capacitor.config.ts
 {
@@ -207,6 +225,7 @@ export default defineConfig({
 ```
 
 ### NPM Scripts
+
 ```json
 {
   "dev": "vite",

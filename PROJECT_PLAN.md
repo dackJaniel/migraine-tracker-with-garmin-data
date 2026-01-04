@@ -78,7 +78,6 @@ Nach Analyse wurden folgende technische Aspekte definiert:
 - **Validation:** Schema-basiert, TypeScript Inferenz
 - **Performance:** Uncontrolled Components, minimales Re-Rendering
 - **Features:**
-
   - `register()` für native Input Binding
   - `Controller` für Custom Components (ShadCN)
   - `formState.errors` für Error Handling
@@ -161,14 +160,12 @@ Nach Analyse wurden folgende technische Aspekte definiert:
 #### Verschlüsselungsstrategie
 
 - **Lokale Datenbank:**
-
   - Technologie: `dexie-encrypted` (AES-256)
   - Key Derivation: PBKDF2 mit 100.000 Iterationen aus Master-PIN
   - Automatische Transparent Encryption/Decryption
   - DB wird nur bei korrektem PIN entsperrt
 
 - **PIN Management:**
-
   - Storage: SHA-256 Hash in `@capacitor/preferences`
   - Salt: Zufällig generiert, zusammen mit Hash gespeichert
   - Validierung: Vergleich von Hash(eingegebener PIN + Salt) mit gespeichertem Hash
@@ -176,7 +173,6 @@ Nach Analyse wurden folgende technische Aspekte definiert:
   - Fehlversuch-Limit: 3 Versuche → Reset-Option
 
 - **Backup-Verschlüsselung:**
-
   - Technologie: WebCrypto API (AES-GCM)
   - Separates Passwort (unabhängig vom Master-PIN)
   - Passwort-Stärke-Validierung vor Export
@@ -262,7 +258,6 @@ Nach Analyse wurden folgende technische Aspekte definiert:
   - Parallel Execution
   - Component Testing (Experimental)
 - **Best Practices:**
-
   - Page Object Model für Wiederverwendbarkeit
   - `test.describe()` für Test Gruppen
   - `test.beforeEach()` für Setup
@@ -294,46 +289,38 @@ Nach Analyse wurden folgende technische Aspekte definiert:
 **Verfügbare Metriken:**
 
 1. **Schlaf:**
-
    - `get_sleep_data(date)` → `/wellness-service/wellness/dailySleepData/{date}`
    - Sleep Score, Sleep Stages (deep, light, rem, awake in Sekunden)
    - Umrechnung: Sekunden → Minuten für UI
 
 2. **Stress:**
-
    - `get_stress_data(date)` → `/wellness-service/wellness/dailyStress/{date}`
    - `get_all_day_stress(date)` → Kontinuierliche Messungen
    - Average & Max Stress (0-100)
 
 3. **Herzfrequenz:**
-
    - `get_heart_rates(date)` → `/wellness-service/wellness/dailyHeartRate/{date}`
    - `get_rhr_day(date)` → Resting Heart Rate
    - Resting HR, Max HR, HR Zones
 
 4. **HRV (Heart Rate Variability):**
-
    - `get_hrv_data(date)` → `/hrv-service/hrv/{date}`
    - HRV Status, Last Night Average, Weekly Average
 
 5. **Body Battery:**
-
    - `get_body_battery(start, end)` → `/wellness-service/wellness/bodyBattery/reports/daily`
    - Charged, Drained, Current Value (0-100)
 
 6. **Aktivität:**
-
    - `get_steps_data(date)` → `/wellness-service/wellness/dailySummaryChart/{date}`
    - `get_daily_steps(start, end)` → Historische Steps
    - Step Count, Goal, Distance
 
 7. **Hydration:**
-
    - `get_hydration_data(date)` → `/usersummary-service/hydration/allData/{date}`
    - Value in ML, Goal in ML
 
 8. **Atmung:**
-
    - `get_respiration_data(date)` → `/wellness-service/wellness/daily/respiration/{date}`
    - Average Sleep Respiration, Waking Respiration
 
@@ -471,31 +458,31 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
   settings: 'key'; // Key-Value für App-Settings
   archivedEpisodes: '++id, startTime, endTime'; // Für 2-Jahre Retention
   ```
-- [ ] `[💾 SEQ]` TypeScript Interfaces für alle Tabellen exportieren.
-- [ ] `[💾 SEQ]` `src/lib/encryption.ts` erstellen:
-  - [ ] `generateEncryptionKey(pin: string)` → Derives key from PIN
-  - [ ] `hashPin(pin: string)` → SHA-256 für Verifikation
-  - [ ] `encryptBackup(data, password)` → WebCrypto AES-GCM
-  - [ ] `decryptBackup(blob, password)` → Decrypt
-- [ ] `[💾 SEQ - DEPENDS: encryption.ts]` `src/features/auth/pin-service.ts` erstellen:
-  - [ ] `setupPin(pin)` → Erstmalig PIN setzen
-  - [ ] `verifyPin(pin)` → PIN Check
-  - [ ] `changePin(oldPin, newPin)` → PIN ändern
-- [ ] `[💾 PARALLEL - DEPENDS: db.ts]` Custom Hooks:
-  - [ ] `useEpisodes(filter)` mit `useLiveQuery`
-  - [ ] `useGarminData(dateRange)` mit `useLiveQuery`
-  - [ ] `useStats()` → Aggregierte Statistiken
-- [ ] `[💾 PARALLEL - DEPENDS: db.ts]` Data Archivierung Service:
-  - [ ] `archiveOldData()` → Verschiebt Episoden >2 Jahre in `archivedEpisodes`
-  - [ ] Automatisch bei App-Start aufrufen
-- [ ] `[💾 PARALLEL - DEPENDS: db.ts]` Seed-Script `src/lib/seed.ts`:
-  - [ ] Generiert 30 Tage Dummy-Episoden
-  - [ ] Generiert 30 Tage Garmin-Daten
-  - [ ] Optional: Import via ENV-Flag
-- [ ] `[🧪 PARALLEL]` **SUB-AGENT: Unit Tests** (parallel zur Implementation):
-  - [ ] `db.test.ts` → CRUD Operations
-  - [ ] `encryption.test.ts` → Encrypt/Decrypt
-  - [ ] `pin-service.test.ts` → PIN Logic
+- [x] `[💾 SEQ]` TypeScript Interfaces für alle Tabellen exportieren.
+- [x] `[💾 SEQ]` `src/lib/encryption.ts` erstellen:
+  - [x] `generateEncryptionKey(pin: string)` → Derives key from PIN
+  - [x] `hashPin(pin: string)` → SHA-256 für Verifikation
+  - [x] `encryptBackup(data, password)` → WebCrypto AES-GCM
+  - [x] `decryptBackup(blob, password)` → Decrypt
+- [x] `[💾 SEQ - DEPENDS: encryption.ts]` `src/features/auth/pin-service.ts` erstellen:
+  - [x] `setupPin(pin)` → Erstmalig PIN setzen
+  - [x] `verifyPin(pin)` → PIN Check
+  - [x] `changePin(oldPin, newPin)` → PIN ändern
+- [x] `[💾 PARALLEL - DEPENDS: db.ts]` Custom Hooks:
+  - [x] `useEpisodes(filter)` mit `useLiveQuery`
+  - [x] `useGarminData(dateRange)` mit `useLiveQuery`
+  - [x] `useStats()` → Aggregierte Statistiken
+- [x] `[💾 PARALLEL - DEPENDS: db.ts]` Data Archivierung Service:
+  - [x] `archiveOldData()` → Verschiebt Episoden >2 Jahre in `archivedEpisodes`
+  - [x] Automatisch bei App-Start aufrufen
+- [x] `[💾 PARALLEL - DEPENDS: db.ts]` Seed-Script `src/lib/seed.ts`:
+  - [x] Generiert 30 Tage Dummy-Episoden
+  - [x] Generiert 30 Tage Garmin-Daten
+  - [x] Optional: Import via ENV-Flag
+- [x] `[🧪 PARALLEL]` **SUB-AGENT: Unit Tests** (parallel zur Implementation):
+  - [x] `db.test.ts` → CRUD Operations
+  - [x] `encryption.test.ts` → Encrypt/Decrypt
+  - [x] `pin-service.test.ts` → PIN Logic (via encryption tests)
 
 ---
 
@@ -725,14 +712,12 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
 **Verfügbare MCP Server für dieses Projekt:**
 
 1. **Playwright MCP Server** (bereits verfügbar)
-
    - E2E Testing der PWA
    - Browser Automation & Screenshots
    - Visual Regression Tests
    - Network & Console Monitoring
 
 2. **Python/Pylance MCP Server** (empfohlen für Garmin API)
-
    - Code Execution: `pylanceRunCodeSnippet` → Python Code direkt ausführen
    - Syntax Validation: `pylanceFileSyntaxErrors`, `pylanceSyntaxErrors`
    - Import Analysis: `pylanceImports`, `pylanceInstalledTopLevelModules`
@@ -1060,14 +1045,12 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL - Requires 2,3,4]
 - **Sub-Agent Strategy:**
 
   **UI-CORE Agent:**
-
   - `subagent-pin-flow` → PIN Setup + Unlock (parallel)
   - `subagent-episode-form` → Episode Form + Validation (parallel)
   - `subagent-dashboard` → Dashboard + List View (parallel)
   - Sync Point: Alle 3 Sub-Agents müssen fertig sein
 
   **GARMIN Agent:**
-
   - `subagent-auth` → Login + Token Management
   - `subagent-endpoints` → API Endpoints (parallel nach Auth)
     - `worker-sleep` → Sleep Endpoints
@@ -1077,7 +1060,6 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL - Requires 2,3,4]
   - `subagent-sync` → Sync Service (nach Endpoints)
 
   **MCP-SERVER Agent:**
-
   - Läuft komplett parallel, kein Blocking
   - `subagent-tools` → MCP Tools Implementation
   - `subagent-mocks` → Mock Data Generators
@@ -1223,7 +1205,6 @@ async function executePackage3() {
    - **Prevention:** Assign Files exklusiv
    - **Resolution:** Manual Merge via Main Agent
 2. **Dependency Conflicts:** Agent B braucht Output von Agent A
-
    - **Prevention:** Dependency Graph einhalten
    - **Resolution:** Sequential Execution
 
