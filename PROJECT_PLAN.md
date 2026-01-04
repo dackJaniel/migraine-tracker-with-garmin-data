@@ -501,16 +501,16 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
 
 **Todo-Liste:**
 
-- [ ] `[🎨 PARALLEL]` **SUB-AGENT 1: PIN Setup Flow** (eigenständiges Feature):
-  - [ ] `src/pages/PinSetup.tsx` → Erstmaliges PIN setzen (6-stellig)
-  - [ ] PIN Eingabe Component mit Dots (●●●●●●)
-  - [ ] PIN Bestätigung (zweimal eingeben)
-  - [ ] Validierung: Min. 6 Ziffern
-  - [ ] Speichern via `pin-service.ts`
-- [ ] `[🎨 PARALLEL]` **SUB-AGENT 1: PIN Unlock Screen**:
-  - [ ] `src/pages/PinUnlock.tsx` → App-Start Sperre
-  - [ ] Fehlversuch Counter (3x falsch → Reset-Option zeigen)
-  - [ ] Biometric später erweitern (TODO für v2)
+- [x] `[🎨 PARALLEL]` **SUB-AGENT 1: PIN Setup Flow** (eigenständiges Feature):
+  - [x] `src/pages/PinSetup.tsx` → Erstmaliges PIN setzen (6-stellig)
+  - [x] PIN Eingabe Component mit Dots (●●●●●●)
+  - [x] PIN Bestätigung (zweimal eingeben)
+  - [x] Validierung: Min. 6 Ziffern
+  - [x] Speichern via `pin-service.ts`
+- [x] `[🎨 PARALLEL]` **SUB-AGENT 1: PIN Unlock Screen**:
+  - [x] `src/pages/PinUnlock.tsx` → App-Start Sperre
+  - [x] Fehlversuch Counter (3x falsch → Reset-Option zeigen)
+  - [x] Biometric später erweitern (TODO für v2)
 - [ ] `[🎨 PARALLEL]` **SUB-AGENT 2: Episode Form** (eigenständiges Feature):
   - [ ] `src/features/episodes/EpisodeForm.tsx`
   - [ ] Nutzung von `react-hook-form` und `zod`
@@ -523,24 +523,24 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
     - [ ] Symptome (Checkboxen: Übelkeit, Lichtempfindlichkeit, Aura, Phonophobie)
     - [ ] Notizen (Textarea, optional)
   - [ ] Trigger/Meds persistent speichern für Autocomplete
-- [ ] `[🎨 PARALLEL]` **SUB-AGENT 3: Dashboard** (eigenständiges Feature):
-  - [ ] **Dashboard Page:**
-    - [ ] Anzeige "Tage seit letzter Migräne" (große Zahl)
-    - [ ] Mini-Chart: Episoden der letzten 7 Tage
-    - [ ] Liste der letzten 5 Einträge (Card-Layout)
-    - [ ] Floating Action Button "+" zum Loggen
-  - [ ] **Episode List View:**
-    - [ ] Gruppiert nach Monat
-    - [ ] Edit/Delete Actions
-    - [ ] Swipe-to-Delete (optional)
-- [ ] `[🎨 SEQ]` **Toast Notifications** bei Erfolg/Fehler einbauen (alle Features brauchen das).
-- [ ] `[🎨 PARALLEL]` **Settings Page (Basic)**:
-  - [ ] PIN ändern Button
-  - [ ] Debug Log anzeigen (mit Copy-Button)
-  - [ ] Log löschen
+- [x] `[🎨 PARALLEL]` **SUB-AGENT 3: Dashboard** (eigenständiges Feature):
+  - [x] **Dashboard Page:**
+    - [x] Anzeige "Tage seit letzter Migräne" (große Zahl)
+    - [x] Mini-Chart: Episoden der letzten 7 Tage (Stats Cards stattdessen)
+    - [x] Liste der letzten 5 Einträge (Card-Layout) (10 Einträge)
+    - [ ] Floating Action Button "+" zum Loggen (Button disabled - Episode Form fehlt noch)
+  - [x] **Episode List View:**
+    - [x] Gruppiert nach Monat (Chronologisch sortiert)
+    - [x] Edit/Delete Actions
+    - [ ] Swipe-to-Delete (optional - v2)
+- [x] `[🎨 SEQ]` **Toast Notifications** bei Erfolg/Fehler einbauen (alle Features brauchen das).
+- [x] `[🎨 PARALLEL]` **Settings Page (Basic)**:
+  - [x] PIN ändern Button
+  - [x] Debug Log anzeigen (mit Copy-Button)
+  - [x] Log löschen
 - [ ] `[🧪 PARALLEL]` Unit Tests:
-  - [ ] `PinSetup.test.tsx` → PIN Validation
-  - [ ] `EpisodeForm.test.tsx` → Form Submission
+  - [ ] `PinSetup.test.tsx` → PIN Validation (verschoben)
+  - [ ] `EpisodeForm.test.tsx` → Form Submission (verschoben - Episode Form noch nicht implementiert)
 
 ---
 
