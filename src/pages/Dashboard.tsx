@@ -56,7 +56,11 @@ export default function Dashboard() {
             Übersicht deiner Migräne-Episoden
           </p>
         </div>
-        <Button size="lg" className="gap-2" onClick={() => navigate('/episodes/new')}>
+        <Button
+          size="lg"
+          className="gap-2"
+          onClick={() => navigate('/episodes/new')}
+        >
           <Plus className="h-5 w-5" />
           Neue Episode
         </Button>

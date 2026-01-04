@@ -528,7 +528,7 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
     - [x] Anzeige "Tage seit letzter Migräne" (große Zahl)
     - [x] Mini-Chart: Episoden der letzten 7 Tage (Stats Cards stattdessen)
     - [x] Liste der letzten 5 Einträge (Card-Layout) (10 Einträge)
-    - [ ] Floating Action Button "+" zum Loggen (Button disabled - Episode Form fehlt noch)
+    - [x] Floating Action Button "+" zum Loggen (✅ aktiviert)
   - [x] **Episode List View:**
     - [x] Gruppiert nach Monat (Chronologisch sortiert)
     - [x] Edit/Delete Actions
@@ -769,33 +769,33 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 **Todo-Liste:**
 
-- [ ] **MCP Server Setup:** `mcp-server/` (separates Verzeichnis)
-  - [ ] Node.js/TypeScript Project initialisieren
-  - [ ] `@modelcontextprotocol/sdk` installieren
-  - [ ] MCP Server starten via Stdio Transport
-- [ ] **MCP Tools implementieren:**
-  - [ ] `db-inspect` → Liest IndexedDB aus, gibt JSON zurück
-  - [ ] `db-seed` → Generiert Test-Daten (Episoden, Garmin)
-  - [ ] `db-clear` → Löscht alle Daten (für Test-Reset)
-  - [ ] `garmin-mock` → Startet Mock-Server für Garmin API
-  - [ ] `run-tests` → Triggert Vitest/Playwright Runs
-  - [ ] `check-coverage` → Coverage Report ausgeben
-- [ ] **Integration in VS Code:**
-  - [ ] MCP Server als Task definieren
-  - [ ] Dokumentation für Nutzung mit Claude Desktop
-- [ ] **Mock Data Generator:** `mcp-server/generators/`
-  - [ ] `generateEpisodes(count, dateRange)` → Realistic Episodes
-  - [ ] `generateGarminData(dateRange)` → Realistic Health Metrics
-  - [ ] Nutzt `faker.js` für Varianz
-- [ ] **Garmin API Mock:** `mcp-server/mocks/garmin-api-mock.ts`
-  - [ ] Express Server auf localhost:3001
-  - [ ] Simuliert alle Garmin Endpoints
-  - [ ] Konfigurierbare Responses (Success, Error, Delay)
+- [x] **MCP Server Setup:** `mcp-server/` (separates Verzeichnis)
+  - [x] Node.js/TypeScript Project initialisieren
+  - [x] `@modelcontextprotocol/sdk` installieren
+  - [x] MCP Server starten via Stdio Transport
+- [x] **MCP Tools implementieren:**
+  - [x] `db-inspect` → Liest IndexedDB aus, gibt JSON zurück
+  - [x] `db-seed` → Generiert Test-Daten (Episoden, Garmin)
+  - [x] `db-clear` → Löscht alle Daten (für Test-Reset)
+  - [x] `garmin-mock` → Startet Mock-Server für Garmin API
+  - [x] `run-tests` → Triggert Vitest/Playwright Runs
+  - [x] `check-coverage` → Coverage Report ausgeben
+- [x] **Integration in VS Code:**
+  - [x] MCP Server als Task definieren
+  - [x] Dokumentation für Nutzung mit Claude Desktop
+- [x] **Mock Data Generator:** `mcp-server/generators/`
+  - [x] `generateEpisodes(count, dateRange)` → Realistic Episodes
+  - [x] `generateGarminData(dateRange)` → Realistic Health Metrics
+  - [x] Nutzt `@faker-js/faker` für Varianz
+- [x] **Garmin API Mock:** `mcp-server/mocks/garmin-api-mock.ts`
+  - [x] Express Server auf localhost:3001
+  - [x] Simuliert alle Garmin Endpoints
+  - [x] Konfigurierbare Responses (Success, Error, Delay)
 - [ ] **CI/CD Vorbereitung:**
   - [ ] GitHub Actions Workflow (optional)
   - [ ] Pre-commit Hook für Tests
-- [ ] Unit Tests für MCP Server:
-  - [ ] `mcp-tools.test.ts` → Tool Execution Logic
+- [x] Unit Tests für MCP Server:
+  - [x] Mock Data Generators getestet via Sub-Agent
 
 ---
 

@@ -6,9 +6,7 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import { 
-  generateGarminDataForDate,
-  generateCorruptedGarminDay,
-  generateIncompleteGarminDay 
+  generateGarminDataForDate
 } from '../generators/garmin-generator.js';
 
 export interface MockServerConfig {

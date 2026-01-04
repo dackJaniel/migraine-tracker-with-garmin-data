@@ -202,7 +202,7 @@ export default function EpisodeForm() {
   const removeTrigger = (trigger: string) => {
     setValue(
       'triggers',
-      triggers.filter((t) => t !== trigger)
+      triggers.filter(t => t !== trigger)
     );
   };
 
@@ -222,7 +222,7 @@ export default function EpisodeForm() {
   const removeMedicine = (medicine: string) => {
     setValue(
       'medicines',
-      medicines.filter((m) => m !== medicine)
+      medicines.filter(m => m !== medicine)
     );
   };
 
@@ -290,7 +290,7 @@ export default function EpisodeForm() {
                         <Calendar
                           mode="single"
                           selected={field.value}
-                          onSelect={(date) => {
+                          onSelect={date => {
                             if (date) {
                               const newDate = new Date(field.value);
                               newDate.setFullYear(
@@ -308,7 +308,7 @@ export default function EpisodeForm() {
                     <Input
                       type="time"
                       value={format(field.value, 'HH:mm')}
-                      onChange={(e) => {
+                      onChange={e => {
                         const [hours, minutes] = e.target.value.split(':');
                         const newDate = new Date(field.value);
                         newDate.setHours(parseInt(hours), parseInt(minutes));
@@ -320,7 +320,9 @@ export default function EpisodeForm() {
                 )}
               />
               {errors.startTime && (
-                <p className="text-sm text-red-600">{errors.startTime.message}</p>
+                <p className="text-sm text-red-600">
+                  {errors.startTime.message}
+                </p>
               )}
             </div>
 
@@ -370,7 +372,7 @@ export default function EpisodeForm() {
                           <Calendar
                             mode="single"
                             selected={field.value || undefined}
-                            onSelect={(date) => {
+                            onSelect={date => {
                               if (date) {
                                 const currentTime = field.value || new Date();
                                 const newDate = new Date(currentTime);
@@ -389,7 +391,7 @@ export default function EpisodeForm() {
                       <Input
                         type="time"
                         value={field.value ? format(field.value, 'HH:mm') : ''}
-                        onChange={(e) => {
+                        onChange={e => {
                           const [hours, minutes] = e.target.value.split(':');
                           const newDate = field.value || new Date();
                           newDate.setHours(parseInt(hours), parseInt(minutes));
@@ -449,7 +451,7 @@ export default function EpisodeForm() {
                   <SelectValue placeholder="Trigger auswählen..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableTriggers.map((trigger) => (
+                  {availableTriggers.map(trigger => (
                     <SelectItem key={trigger} value={trigger}>
                       {trigger}
                     </SelectItem>
@@ -463,8 +465,8 @@ export default function EpisodeForm() {
               <Input
                 placeholder="Eigener Trigger..."
                 value={customTrigger}
-                onChange={(e) => setCustomTrigger(e.target.value)}
-                onKeyPress={(e) => {
+                onChange={e => setCustomTrigger(e.target.value)}
+                onKeyPress={e => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
                     addCustomTrigger();
@@ -484,7 +486,7 @@ export default function EpisodeForm() {
             {/* Ausgewählte Trigger */}
             {triggers.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {triggers.map((trigger) => (
+                {triggers.map(trigger => (
                   <Badge key={trigger} variant="secondary" className="gap-1">
                     {trigger}
                     <button
@@ -515,7 +517,7 @@ export default function EpisodeForm() {
                   <SelectValue placeholder="Medikament auswählen..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableMedicines.map((medicine) => (
+                  {availableMedicines.map(medicine => (
                     <SelectItem key={medicine} value={medicine}>
                       {medicine}
                     </SelectItem>
@@ -529,8 +531,8 @@ export default function EpisodeForm() {
               <Input
                 placeholder="Eigenes Medikament..."
                 value={customMedicine}
-                onChange={(e) => setCustomMedicine(e.target.value)}
-                onKeyPress={(e) => {
+                onChange={e => setCustomMedicine(e.target.value)}
+                onKeyPress={e => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
                     addCustomMedicine();
@@ -550,7 +552,7 @@ export default function EpisodeForm() {
             {/* Ausgewählte Medikamente */}
             {medicines.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {medicines.map((medicine) => (
+                {medicines.map(medicine => (
                   <Badge key={medicine} variant="secondary" className="gap-1">
                     {medicine}
                     <button
@@ -664,7 +666,11 @@ export default function EpisodeForm() {
           </Button>
           <Button type="submit" disabled={loading} className="flex-1">
             <Save className="h-4 w-4 mr-2" />
-            {loading ? 'Speichert...' : isEditMode ? 'Aktualisieren' : 'Erstellen'}
+            {loading
+              ? 'Speichert...'
+              : isEditMode
+                ? 'Aktualisieren'
+                : 'Erstellen'}
           </Button>
         </div>
       </form>

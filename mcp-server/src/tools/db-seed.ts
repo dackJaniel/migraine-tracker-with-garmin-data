@@ -59,8 +59,7 @@ export async function seedDatabase(args: DbSeedArgs): Promise<DbSeedResult> {
   if (validated.type === 'full') {
     const dataset = generateTestDataset({
       episodeCount: presetConfig.episodeCount,
-      garminDays: presetConfig.garminDays,
-      includeArchived: true,
+      year: new Date().getFullYear(),
     });
     episodes = dataset.episodes;
     garminData = dataset.garminData;

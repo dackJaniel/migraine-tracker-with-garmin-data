@@ -361,7 +361,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     switch (name) {
       // DB Inspector
       case 'db-inspect':
-        return { content: [{ type: 'text', text: JSON.stringify(await inspectDatabase(args || {}), null, 2) }] };
+        return { content: [{ type: 'text', text: JSON.stringify(await inspectDatabase(args as any || {}), null, 2) }] };
       
       case 'db-schema':
         return { content: [{ type: 'text', text: JSON.stringify(await getDbSchema(), null, 2) }] };
@@ -371,7 +371,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       // DB Seed
       case 'db-seed':
-        return { content: [{ type: 'text', text: JSON.stringify(await seedDatabase(args || {}), null, 2) }] };
+        return { content: [{ type: 'text', text: JSON.stringify(await seedDatabase(args as any || {}), null, 2) }] };
       
       case 'db-quick-seed': {
         const preset = (args as any)?.preset || 'demo';
@@ -380,7 +380,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       // DB Clear
       case 'db-clear':
-        return { content: [{ type: 'text', text: JSON.stringify(await clearDatabase(args || {}), null, 2) }] };
+        return { content: [{ type: 'text', text: JSON.stringify(await clearDatabase(args as any || {}), null, 2) }] };
       
       case 'db-reset': {
         const type = (args as any)?.type || 'soft';
@@ -397,7 +397,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       // Tests
       case 'run-tests':
-        return { content: [{ type: 'text', text: JSON.stringify(await runTests(args || {}), null, 2) }] };
+        return { content: [{ type: 'text', text: JSON.stringify(await runTests(args as any || {}), null, 2) }] };
       
       case 'quick-test': {
         const preset = (args as any)?.preset || 'all';
@@ -406,7 +406,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       // Coverage
       case 'check-coverage':
-        return { content: [{ type: 'text', text: JSON.stringify(await checkCoverage(args || {}), null, 2) }] };
+        return { content: [{ type: 'text', text: JSON.stringify(await checkCoverage(args as any || {}), null, 2) }] };
       
       case 'coverage-summary':
         return { content: [{ type: 'text', text: await getCoverageSummary() }] };
