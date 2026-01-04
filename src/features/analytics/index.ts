@@ -1,2 +1,6 @@
-// Platzhalter für Analytics und Charts
-export { };
+// Analytics Feature Exports
+export * from './correlation-service';
+export * from './CorrelationInsights';
+export * from './EpisodeCharts';
+export * from './TriggerAnalysis';
+

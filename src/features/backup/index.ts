@@ -1,2 +1,4 @@
-// Platzhalter für Backup & Export
-export { };
+// Backup Feature Exports
+export * from './backup-service';
+export * from './BackupManager';
+
