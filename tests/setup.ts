@@ -5,5 +5,5 @@ import 'fake-indexeddb/auto';
 
 // Cleanup nach jedem Test
 afterEach(() => {
-  cleanup();
+    cleanup();
 });

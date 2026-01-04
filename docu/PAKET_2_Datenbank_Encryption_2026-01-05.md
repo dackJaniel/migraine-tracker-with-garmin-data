@@ -15,6 +15,7 @@ PAKET 2 wurde erfolgreich abgeschlossen. Die App verfügt nun über eine vollst�
 ## ✅ Erledigte Aufgaben
 
 ### 1. Dexie Schema & TypeScript Interfaces
+
 - ✅ `src/lib/db.ts` mit vollständigem Schema
 - ✅ TypeScript Interfaces für alle Tabellen:
   - `Episode`: Migräne-Episoden mit Triggers, Medicines, Symptoms
@@ -26,6 +27,7 @@ PAKET 2 wurde erfolgreich abgeschlossen. Die App verfügt nun über eine vollst�
 - ✅ Helper Functions: `addLog()`, `getSetting()`, `setSetting()`
 
 ### 2. Encryption Utils
+
 - ✅ `src/lib/encryption.ts` mit Web Crypto API
 - ✅ PBKDF2 Key Derivation (100.000 Iterationen)
 - ✅ PIN Hashing mit SHA-256 + Salt
@@ -34,6 +36,7 @@ PAKET 2 wurde erfolgreich abgeschlossen. Die App verfügt nun über eine vollst�
 - ✅ Helper Functions für Base64 Conversion
 
 ### 3. PIN Service
+
 - ✅ `src/features/auth/pin-service.ts`
 - ✅ PIN Setup (erstmalig)
 - ✅ PIN Verification mit Failed Attempts Counter (max 3)
@@ -43,6 +46,7 @@ PAKET 2 wurde erfolgreich abgeschlossen. Die App verfügt nun über eine vollst�
 - ✅ Lock State Management
 
 ### 4. Custom Hooks für DB
+
 - ✅ `src/hooks/use-episodes.ts`:
   - `useEpisodes(filter)` → Reaktive Episode Queries
   - `useGarminData(startDate, endDate)` → Garmin Daten Range
@@ -54,6 +58,7 @@ PAKET 2 wurde erfolgreich abgeschlossen. Die App verfügt nun über eine vollst�
   - `getAllTriggers()`, `getAllMedicines()` (für Autocomplete)
 
 ### 5. Archivierungs-Service
+
 - ✅ `src/lib/archive-service.ts`
 - ✅ `archiveOldEpisodes()` → Episoden >2 Jahre archivieren
 - ✅ `getArchivedCount()`, `getArchivedEpisodes()`
@@ -61,6 +66,7 @@ PAKET 2 wurde erfolgreich abgeschlossen. Die App verfügt nun über eine vollst�
 - ✅ Automatischer Cleanup mit date-fns
 
 ### 6. Seed-Script für Test-Daten
+
 - ✅ `src/lib/seed.ts`
 - ✅ `seedEpisodes(days)` → Realistische Dummy-Episoden
 - ✅ `seedGarminData(days)` → Realistische Garmin-Metriken
@@ -68,6 +74,7 @@ PAKET 2 wurde erfolgreich abgeschlossen. Die App verfügt nun über eine vollst�
 - ✅ `seedAllData()` → Seed alles auf einmal
 
 ### 7. Unit Tests
+
 - ✅ `tests/unit/encryption.test.ts` (10 Tests):
   - PIN Validation (Format, Weak PINs)
   - PIN Hashing & Verification
@@ -85,6 +92,7 @@ PAKET 2 wurde erfolgreich abgeschlossen. Die App verfügt nun über eine vollst�
 ## 📊 Datenmodell Details
 
 ### Episode Schema
+
 ```typescript
 {
   id: number (auto-increment),
@@ -106,6 +114,7 @@ PAKET 2 wurde erfolgreich abgeschlossen. Die App verfügt nun über eine vollst�
 ```
 
 ### GarminData Schema
+
 ```typescript
 {
   date: string (Primary Key: YYYY-MM-DD),
@@ -129,12 +138,14 @@ PAKET 2 wurde erfolgreich abgeschlossen. Die App verfügt nun über eine vollst�
 ## 🔐 Security Implementation
 
 ### PIN Management
+
 - **Hash Algorithm:** SHA-256 mit Random Salt (16 bytes)
 - **Storage:** `@capacitor/preferences` (Platform KeyStore)
 - **Failed Attempts:** Max 3, dann Lock State
 - **Weak PIN Protection:** Blockt "123456", "000000", etc.
 
 ### Encryption
+
 - **Key Derivation:** PBKDF2 (100k iterations, SHA-256)
 - **Backup Encryption:** AES-GCM mit separatem Passwort
 - **IV Generation:** Crypto.getRandomValues (12 bytes)
@@ -145,11 +156,13 @@ PAKET 2 wurde erfolgreich abgeschlossen. Die App verfügt nun über eine vollst�
 ## 🧪 Testing
 
 ### Test Coverage
+
 - **Files:** 2 Test Suites
 - **Tests:** 15 Tests passed
 - **Modules:** encryption.ts, db.ts, PIN Service (via encryption)
 
 ### Test Infrastructure
+
 - **Runner:** Vitest
 - **Environment:** jsdom mit fake-indexeddb
 - **Mocking:** Web Crypto API nativ in Node.js (>= 15.0)
@@ -173,12 +186,13 @@ useEffect(() => {
 ## 📝 API Highlights
 
 ### Reactive Queries
+
 ```typescript
 // Reaktive Episode Liste
 const episodes = useEpisodes({
   startDate: new Date('2024-01-01'),
   minIntensity: 7,
-  triggers: ['Stress', 'Schlafmangel']
+  triggers: ['Stress', 'Schlafmangel'],
 });
 
 // Statistiken
@@ -188,8 +202,13 @@ console.log(stats.mostCommonTriggers); // Top 5
 ```
 
 ### Episode CRUD
+
 ```typescript
-import { createEpisode, updateEpisode, deleteEpisode } from '@/features/episodes/episode-service';
+import {
+  createEpisode,
+  updateEpisode,
+  deleteEpisode,
+} from '@/features/episodes/episode-service';
 
 // Create
 const id = await createEpisode({
@@ -197,7 +216,12 @@ const id = await createEpisode({
   intensity: 8,
   triggers: ['Stress'],
   medicines: ['Ibuprofen 400mg'],
-  symptoms: { nausea: true, photophobia: true, phonophobia: false, aura: false }
+  symptoms: {
+    nausea: true,
+    photophobia: true,
+    phonophobia: false,
+    aura: false,
+  },
 });
 
 // Update
@@ -208,6 +232,7 @@ await deleteEpisode(id);
 ```
 
 ### Seed Data (für Development)
+
 ```typescript
 import { seedAllData } from '@/lib/seed';
 
@@ -220,11 +245,13 @@ const { episodes, garminData } = await seedAllData();
 ## 🐛 Bekannte Issues & Lösungen
 
 ### dexie-encrypted Kompatibilität
+
 - **Problem:** Noch nicht mit dexie v4 kompatibel
 - **Status:** `--legacy-peer-deps` verwendet
 - **Tracking:** Prüfen ob Update verfügbar wird
 
 ### TypeScript BufferSource
+
 - **Problem:** Web Crypto API Types mit Uint8Array
 - **Lösung:** Type Assertions `as BufferSource`
 - **Status:** ✅ Behoben
@@ -234,12 +261,14 @@ const { episodes, garminData } = await seedAllData();
 ## 📦 Nächste Schritte
 
 **PAKET 3: UI Core & PIN Setup** (kann parallel mit PAKET 4 laufen)
+
 - [ ] PIN Setup Flow (PinSetup.tsx, PinUnlock.tsx)
 - [ ] Episode Form mit react-hook-form + zod
 - [ ] Dashboard mit Episode Liste & Charts
 - [ ] Settings Page mit Debug Log
 
 **PAKET 4: Garmin API Integration** (parallel möglich)
+
 - [ ] Garmin Client (Login, Session Management)
 - [ ] API Endpoints (Sleep, Stress, HR, HRV, Body Battery)
 - [ ] Sync Service mit Auto-Sync Logic
