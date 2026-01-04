@@ -29,7 +29,14 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Lock, Database, AlertCircle, Copy, Trash2, FileDown } from 'lucide-react';
+import {
+  Lock,
+  Database,
+  AlertCircle,
+  Copy,
+  Trash2,
+  FileDown,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { useLiveQuery } from 'dexie-react-hooks';
 
@@ -118,7 +125,7 @@ export default function Settings() {
 
     const logsText = logs
       .map(
-        (log) =>
+        log =>
           `[${new Date(log.timestamp).toLocaleString('de-DE')}] ${log.level.toUpperCase()}: ${log.message}`
       )
       .join('\n');
@@ -192,7 +199,7 @@ export default function Settings() {
                         inputMode="numeric"
                         maxLength={6}
                         value={oldPin}
-                        onChange={(e) => setOldPin(e.target.value)}
+                        onChange={e => setOldPin(e.target.value)}
                         placeholder="●●●●●●"
                       />
                     </div>
@@ -204,7 +211,7 @@ export default function Settings() {
                         inputMode="numeric"
                         maxLength={6}
                         value={newPin}
-                        onChange={(e) => setNewPin(e.target.value)}
+                        onChange={e => setNewPin(e.target.value)}
                         placeholder="●●●●●●"
                       />
                     </div>
@@ -216,7 +223,7 @@ export default function Settings() {
                         inputMode="numeric"
                         maxLength={6}
                         value={confirmPin}
-                        onChange={(e) => setConfirmPin(e.target.value)}
+                        onChange={e => setConfirmPin(e.target.value)}
                         placeholder="●●●●●●"
                       />
                     </div>
@@ -243,7 +250,9 @@ export default function Settings() {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>PIN wirklich zurücksetzen?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                      PIN wirklich zurücksetzen?
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
                       Dies setzt die PIN komplett zurück. Du musst eine neue PIN
                       erstellen. Die App wird neu geladen.
@@ -344,11 +353,19 @@ export default function Settings() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
-                <Button onClick={handleCopyLogs} variant="outline" className="flex-1">
+                <Button
+                  onClick={handleCopyLogs}
+                  variant="outline"
+                  className="flex-1"
+                >
                   <Copy className="h-4 w-4 mr-2" />
                   Logs kopieren
                 </Button>
-                <Button onClick={handleClearLogs} variant="outline" className="flex-1">
+                <Button
+                  onClick={handleClearLogs}
+                  variant="outline"
+                  className="flex-1"
+                >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Logs löschen
                 </Button>
@@ -360,7 +377,7 @@ export default function Settings() {
                 </div>
               ) : (
                 <div className="space-y-2 max-h-[400px] overflow-y-auto border rounded-lg p-4 bg-slate-50 font-mono text-xs">
-                  {logs.map((log) => (
+                  {logs.map(log => (
                     <div
                       key={log.id}
                       className={`flex gap-2 ${

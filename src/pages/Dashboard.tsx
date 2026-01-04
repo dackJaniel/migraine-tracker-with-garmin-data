@@ -74,7 +74,8 @@ export default function Dashboard() {
               {stats?.daysSinceLastEpisode ?? '-'}
             </div>
             <p className="text-xs text-slate-600 mt-1">
-              {stats && stats.daysSinceLastEpisode !== null &&
+              {stats &&
+              stats.daysSinceLastEpisode !== null &&
               stats.daysSinceLastEpisode !== undefined &&
               stats.daysSinceLastEpisode > 7
                 ? 'Gut gemacht! 🎉'
@@ -91,16 +92,16 @@ export default function Dashboard() {
             <Activity className="h-4 w-4 text-slate-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{stats?.totalEpisodes ?? 0}</div>
+            <div className="text-3xl font-bold">
+              {stats?.totalEpisodes ?? 0}
+            </div>
             <p className="text-xs text-slate-600 mt-1">Alle Zeit</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Ø Intensität
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Ø Intensität</CardTitle>
             <TrendingUp className="h-4 w-4 text-slate-600" />
           </CardHeader>
           <CardContent>
@@ -147,7 +148,7 @@ export default function Dashboard() {
             </div>
           ) : (
             <div className="space-y-4">
-              {episodes.slice(0, 10).map((episode) => (
+              {episodes.slice(0, 10).map(episode => (
                 <div
                   key={episode.id}
                   className="flex items-center justify-between p-4 border rounded-lg hover:bg-slate-50 transition-colors"
@@ -165,7 +166,7 @@ export default function Dashboard() {
                     </div>
                     {episode.triggers.length > 0 && (
                       <div className="flex gap-2 mt-2">
-                        {episode.triggers.map((trigger) => (
+                        {episode.triggers.map(trigger => (
                           <span
                             key={trigger}
                             className="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 text-xs font-medium text-slate-700"
@@ -207,7 +208,10 @@ export default function Dashboard() {
       </Card>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteId !== null} onOpenChange={() => setDeleteId(null)}>
+      <AlertDialog
+        open={deleteId !== null}
+        onOpenChange={() => setDeleteId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Episode löschen?</AlertDialogTitle>

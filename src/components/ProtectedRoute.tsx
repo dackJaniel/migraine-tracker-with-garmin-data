@@ -14,10 +14,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     async function checkAuth() {
-      const [setup, lockStatus] = await Promise.all([
-        isPinSetup(),
-        isLocked(),
-      ]);
+      const [setup, lockStatus] = await Promise.all([isPinSetup(), isLocked()]);
 
       setPinSetup(setup);
       setLocked(lockStatus);

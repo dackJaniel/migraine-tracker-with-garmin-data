@@ -15,9 +15,11 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
 ## ✅ Abgeschlossene Tasks
 
 ### 1. PIN Setup Flow (PinSetup.tsx)
+
 **Datei:** [src/pages/PinSetup.tsx](../src/pages/PinSetup.tsx)
 
 **Features:**
+
 - Erstmalige PIN-Erstellung (6-stellig, numerisch)
 - PIN-Bestätigung mit Validierung
 - Gradient-Hintergrund mit zentriertem Card-Layout
@@ -26,6 +28,7 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
 - Auto-Navigation nach erfolgreicher Setup
 
 **Validierungen:**
+
 - PIN-Match Check (pin === confirmPin)
 - 6-Digit Format Check
 - Weak PIN Detection (via `validatePinFormat`)
@@ -33,9 +36,11 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
 ---
 
 ### 2. PIN Unlock Screen (PinUnlock.tsx)
+
 **Datei:** [src/pages/PinUnlock.tsx](../src/pages/PinUnlock.tsx)
 
 **Features:**
+
 - Lock-Mechanismus mit 3-Versuch-Limit
 - Countdown Anzeige für verbleibende Versuche
 - Locked Screen mit Reset-Option
@@ -44,22 +49,27 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
 - Navigation zum Dashboard nach Erfolg
 
 **States:**
+
 - `pin`, `loading`, `locked`, `attemptsLeft`
 - Lock Status Check via `useEffect`
 
 ---
 
 ### 3. Toast Notifications & App-Routing
+
 **Dateien:**
+
 - [src/main.tsx](../src/main.tsx) - Toaster Integration
 - [src/components/ProtectedRoute.tsx](../src/components/ProtectedRoute.tsx) - Route Guard
 - [src/App.tsx](../src/App.tsx) - Routing Setup
 
 **Toast Integration:**
+
 - `sonner` Library (`<Toaster position="top-center" richColors closeButton />`)
 - Konsistente Notifications in allen Components
 
 **Routing:**
+
 - **Public Routes:** `/pin-setup`, `/pin-unlock`
 - **Protected Routes:** `/`, `/dashboard`, `/settings`
 - **Route Guard:** `ProtectedRoute` prüft:
@@ -72,27 +82,28 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
 ---
 
 ### 4. Dashboard mit Stats und Liste
+
 **Datei:** [src/pages/Dashboard.tsx](../src/pages/Dashboard.tsx)
 
 **Features:**
+
 - **Stats Cards (4x):**
   - Tage seit letzter Migräne (mit Emoji-Feedback: 🎉 bei >7 Tagen)
   - Gesamt Episoden (alle Zeit)
   - Ø Intensität (1-10 Scale)
   - Episoden diesen Monat + häufigster Trigger
-  
 - **Episode Liste:**
   - Anzeige letzter 10 Episoden
   - Intensität, Datum/Uhrzeit, Trigger-Tags, Notizen
   - Edit/Delete Buttons (Edit = disabled, Delete = funktioniert)
   - Empty State: "Noch keine Episoden" mit Icon
-  
 - **Delete Confirmation:**
   - AlertDialog für Sicherheitsabfrage
   - Integration mit `deleteEpisode()` Service
   - Toast Feedback bei Erfolg/Fehler
 
 **Integration:**
+
 - `useEpisodes()` Hook für reaktive Episode-Liste
 - `useStats()` Hook für aggregierte Statistiken
 - `format()` von `date-fns` mit `de` Locale
@@ -100,15 +111,18 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
 ---
 
 ### 5. Settings Page mit Debug Log
+
 **Datei:** [src/pages/Settings.tsx](../src/pages/Settings.tsx)
 
 **Features:**
+
 - **Tab-Navigation (3 Tabs):**
   - Sicherheit
   - Daten
   - Debug
 
 **Sicherheit Tab:**
+
 - PIN ändern Dialog
   - Input: Alte PIN, Neue PIN, Bestätigung
   - Validierung: 6-Digit, PIN-Match
@@ -118,6 +132,7 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
   - Reload der App nach Reset
 
 **Daten Tab:**
+
 - Dummy-Daten laden (`seedAllData()`)
   - Generiert 30 Tage Episoden & Garmin-Daten
 - Backup erstellen (Placeholder - "bald verfügbar")
@@ -125,6 +140,7 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
   - Mit AlertDialog Bestätigung
 
 **Debug Tab:**
+
 - Log-Anzeige aus DB (`useLiveQuery` auf `db.logs`)
   - Maximal 100 neueste Logs
   - Reverse chronologisch sortiert
@@ -134,6 +150,7 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
 - App Version & Build Info
 
 **UI:**
+
 - Responsive Tab-Layout
 - Icons von `lucide-react`
 - AlertDialog für destruktive Aktionen
@@ -143,6 +160,7 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
 ## 📁 Erstellte/Geänderte Dateien
 
 **Neu erstellt:**
+
 - `src/components/ProtectedRoute.tsx` (57 Zeilen)
 - `src/pages/PinSetup.tsx` (122 Zeilen)
 - `src/pages/PinUnlock.tsx` (188 Zeilen)
@@ -150,6 +168,7 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
 - `src/pages/Settings.tsx` (361 Zeilen)
 
 **Geändert:**
+
 - `src/main.tsx` - Toaster Integration
 - `src/App.tsx` - Routing Setup mit Public/Protected Routes
 
@@ -160,6 +179,7 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
 ## 🔧 Technische Details
 
 ### ProtectedRoute Pattern
+
 ```typescript
 // Prüft 3 States:
 1. Checking → Loading Screen
@@ -169,6 +189,7 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
 ```
 
 ### Dashboard Stats Berechnung
+
 - `useStats()` Hook aus [use-episodes.ts](../src/hooks/use-episodes.ts)
 - Aggregationen:
   - `totalEpisodes`: Anzahl aller Episoden
@@ -178,6 +199,7 @@ Implementierung der Kern-UI-Komponenten mit PIN-Authentifizierung, Dashboard und
   - `episodesThisMonth`: Filter auf `startOfMonth()` bis `endOfMonth()`
 
 ### Settings Integration
+
 - Nutzt `useLiveQuery()` für reaktive Log-Anzeige
 - Clipboard API für Log-Copy Funktion
 - `navigator.clipboard.writeText()`
@@ -200,6 +222,7 @@ dist/assets/index-SCX_kdm_.js   511.69 kB │ gzip: 161.54 kB
 **TypeScript:** Alle Errors behoben, strict mode aktiv
 
 **Manuelle Tests empfohlen:**
+
 1. PIN Setup Flow durchgehen
 2. App sperren (3x falsche PIN) → Unlock testen
 3. Dashboard mit/ohne Episoden anzeigen
@@ -213,6 +236,7 @@ dist/assets/index-SCX_kdm_.js   511.69 kB │ gzip: 161.54 kB
 ## 📝 Bekannte Issues & TODOs
 
 ### Episode Form (verschoben)
+
 - **Grund:** Komplexität zu hoch für aktuellen Sprint
 - **Features benötigt:**
   - DateTime Picker (Start/End)
@@ -227,6 +251,7 @@ dist/assets/index-SCX_kdm_.js   511.69 kB │ gzip: 161.54 kB
 → **Wird in separater Phase nach PAKET 4 implementiert**
 
 ### Weitere TODOs
+
 - [ ] Biometric Unlock (Fingerprint, Face ID) → v2
 - [ ] Dark Mode Toggle → v2
 - [ ] Episode Filter im Dashboard (Datum, Intensität, Trigger) → v2
@@ -252,22 +277,26 @@ dist/assets/index-SCX_kdm_.js   511.69 kB │ gzip: 161.54 kB
 ## 🔗 Dependencies
 
 **UI Libraries:**
+
 - ShadCN UI: card, button, input, dialog, alert-dialog, tabs
 - Lucide React: Plus, Calendar, TrendingUp, Activity, Tag, Trash2, Pencil, Lock, Database, AlertCircle, Copy, FileDown, ShieldAlert
 - Sonner: toast, Toaster
 
 **Hooks:**
+
 - React: useState, useEffect
 - React Router: useNavigate, useLocation, Navigate
 - Dexie: useLiveQuery
 
 **Services:**
+
 - [pin-service.ts](../src/features/auth/pin-service.ts)
 - [episode-service.ts](../src/features/episodes/episode-service.ts)
 - [seed.ts](../src/lib/seed.ts)
 - [db.ts](../src/lib/db.ts)
 
 **Date Handling:**
+
 - date-fns: format, de locale
 
 ---
