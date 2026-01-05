@@ -13,7 +13,7 @@
 ```
 [HTTP Client] Tokens available: oauth1=true, oauth1Secret=false, oauth2=true
 [Sleep API] Got HTML instead of JSON for 2026-01-05
-[Heart Rate API] Got HTML instead of JSON for 2026-01-05  
+[Heart Rate API] Got HTML instead of JSON for 2026-01-05
 [Stress API] Got HTML instead of JSON for 2026-01-05
 ```
 
@@ -26,6 +26,7 @@
 ### Problem-Kette
 
 1. **Auth.ts speichert OAuth1 Token falsch:**
+
 ```typescript
 // auth.ts - Line 712
 return {
@@ -42,13 +43,14 @@ return {
 ```
 
 2. **Http-client.ts liest Token falsch:**
+
 ```typescript
 // http-client.ts - VORHER
 const tokens = JSON.parse(result.value);
 return {
-    oauth1: tokens.oauth1Token,           // ❌ Ist ein JSON-String, nicht der Token!
-    oauth1Secret: tokens.oauth1TokenSecret, // ❌ Existiert nicht!
-    oauth2: tokens.oauth2Token,
+  oauth1: tokens.oauth1Token, // ❌ Ist ein JSON-String, nicht der Token!
+  oauth1Secret: tokens.oauth1TokenSecret, // ❌ Existiert nicht!
+  oauth2: tokens.oauth2Token,
 };
 ```
 
@@ -66,41 +68,43 @@ return {
 
 ```typescript
 async function getStoredTokens(): Promise<{
-    oauth1?: string;
-    oauth1Secret?: string;
-    oauth2?: string;
+  oauth1?: string;
+  oauth1Secret?: string;
+  oauth2?: string;
 } | null> {
-    try {
-        const result = await Preferences.get({ key: SESSION_CONFIG.PREFERENCES_KEY_TOKENS });
-        if (result.value) {
-            const tokens = JSON.parse(result.value);
-            
-            // ✅ NEU: Parse oauth1Token JSON-String
-            let oauth1Token: string | undefined;
-            let oauth1Secret: string | undefined;
-            
-            if (tokens.oauth1Token) {
-                try {
-                    // oauth1Token ist ein JSON-String mit oauth_token und oauth_token_secret
-                    const oauth1Data = JSON.parse(tokens.oauth1Token);
-                    oauth1Token = oauth1Data.oauth_token;
-                    oauth1Secret = oauth1Data.oauth_token_secret;
-                } catch (e) {
-                    // Fallback für alte Daten (backwards compatibility)
-                    oauth1Token = tokens.oauth1Token;
-                }
-            }
-            
-            return {
-                oauth1: oauth1Token,        // ✅ Jetzt der echte Token
-                oauth1Secret: oauth1Secret, // ✅ Jetzt das Secret!
-                oauth2: tokens.oauth2Token,
-            };
+  try {
+    const result = await Preferences.get({
+      key: SESSION_CONFIG.PREFERENCES_KEY_TOKENS,
+    });
+    if (result.value) {
+      const tokens = JSON.parse(result.value);
+
+      // ✅ NEU: Parse oauth1Token JSON-String
+      let oauth1Token: string | undefined;
+      let oauth1Secret: string | undefined;
+
+      if (tokens.oauth1Token) {
+        try {
+          // oauth1Token ist ein JSON-String mit oauth_token und oauth_token_secret
+          const oauth1Data = JSON.parse(tokens.oauth1Token);
+          oauth1Token = oauth1Data.oauth_token;
+          oauth1Secret = oauth1Data.oauth_token_secret;
+        } catch (e) {
+          // Fallback für alte Daten (backwards compatibility)
+          oauth1Token = tokens.oauth1Token;
         }
-    } catch (error) {
-        console.error('Failed to get stored tokens:', error);
+      }
+
+      return {
+        oauth1: oauth1Token, // ✅ Jetzt der echte Token
+        oauth1Secret: oauth1Secret, // ✅ Jetzt das Secret!
+        oauth2: tokens.oauth2Token,
+      };
     }
-    return null;
+  } catch (error) {
+    console.error('Failed to get stored tokens:', error);
+  }
+  return null;
 }
 ```
 
@@ -159,12 +163,14 @@ async function getStoredTokens(): Promise<{
 ### Erwartete Log-Änderungen
 
 **Vorher:**
+
 ```
 [HTTP Client] Tokens available: oauth1=true, oauth1Secret=false, oauth2=true
 [Sleep API] Got HTML instead of JSON
 ```
 
 **Nachher:**
+
 ```
 [HTTP Client] Tokens available: oauth1=true, oauth1Secret=true, oauth2=true
 [Sleep API] Response for 2026-01-05: {"dailySleepDTO":{...}}
@@ -196,6 +202,7 @@ npm run build   # Build erfolgreich
 ```
 
 **Nach Deployment:**
+
 1. App öffnen
 2. Garmin Sync starten
 3. Debug-Logs prüfen
@@ -205,10 +212,12 @@ npm run build   # Build erfolgreich
 ## 📝 Lessons Learned
 
 ### 1. **Token Storage Format**
+
 - **Problem:** Inconsistent zwischen Speichern und Lesen
 - **Lösung:** Entweder beide Seiten anpassen, oder Parser hinzufügen
 
 ### 2. **Type Safety verloren bei JSON.stringify()**
+
 - `JSON.stringify()` wandelt strukturierte Daten in String
 - TypeScript kann nicht prüfen, wie der String wieder geparst wird
 - **Best Practice:** Nutze strukturierte Speicherung:
@@ -222,11 +231,13 @@ npm run build   # Build erfolgreich
   ```
 
 ### 3. **Debugging OAuth**
+
 - Log **immer** ob Secrets vorhanden sind (`oauth1Secret=true/false`)
 - Ohne Secret ist OAuth1-Signatur **immer** ungültig
 - HTML-Response von Garmin = Auth-Fehler (nicht JSON-Parse-Fehler)
 
 ### 4. **Backwards Compatibility**
+
 - Fallback eingebaut für alte Token-Formate
 - Bestehende Sessions funktionieren weiter
 - Neue Logins nutzen korrektes Format

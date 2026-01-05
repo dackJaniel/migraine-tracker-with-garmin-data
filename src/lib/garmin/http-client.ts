@@ -88,11 +88,11 @@ async function getStoredTokens(): Promise<{
         const result = await Preferences.get({ key: SESSION_CONFIG.PREFERENCES_KEY_TOKENS });
         if (result.value) {
             const tokens = JSON.parse(result.value);
-            
+
             // Parse oauth1Token (it's a JSON string containing oauth_token and oauth_token_secret)
             let oauth1Token: string | undefined;
             let oauth1Secret: string | undefined;
-            
+
             if (tokens.oauth1Token) {
                 try {
                     const oauth1Data = JSON.parse(tokens.oauth1Token);
@@ -103,7 +103,7 @@ async function getStoredTokens(): Promise<{
                     oauth1Token = tokens.oauth1Token;
                 }
             }
-            
+
             return {
                 oauth1: oauth1Token,
                 oauth1Secret: oauth1Secret,

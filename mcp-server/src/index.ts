@@ -41,6 +41,21 @@ import {
     startMockServer,
     GarminApiMockServer,
 } from './mocks/garmin-api-mock.js';
+import {
+    debugProblem,
+} from './tools/debug-orchestrator.js';
+import {
+    analyzeCode,
+} from './tools/code-analyzer.js';
+import {
+    scanErrors,
+} from './tools/error-scanner.js';
+import {
+    liveDebug,
+} from './tools/live-debugger.js';
+import {
+    fixCode,
+} from './tools/code-fixer.js';
 
 // Global Mock Server Instance
 let mockServerInstance: GarminApiMockServer | null = null;
@@ -347,6 +362,218 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                     properties: {},
                 },
             },
+
+            // Autonomous Debug Tools
+            {
+                name: 'debug-problem',
+                description: 'Startet autonomen Debug-Prozess für ein spezifisches Problem. Analysiert Code, findet Fehler, generiert Fixes, testet und iteriert bis zur Lösung.',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        problem: {
+                            type: 'string',
+                            description: 'Beschreibung des Problems (z.B. "Garmin Login funktioniert nicht")',
+                        },
+                        context: {
+                            type: 'object',
+                            description: 'Zusätzlicher Kontext zum Problem',
+                            properties: {
+                                feature: {
+                                    type: 'string',
+                                    description: 'Betroffenes Feature (z.B. "garmin-auth")',
+                                },
+                                symptom: {
+                                    type: 'string',
+                                    description: 'Symptom (z.B. "401 Unauthorized nach MFA")',
+                                },
+                                files: {
+                                    type: 'array',
+                                    items: { type: 'string' },
+                                    description: 'Relevante Files (z.B. ["src/lib/garmin/auth.ts"])',
+                                },
+                                errorMessage: {
+                                    type: 'string',
+                                    description: 'Spezifische Fehlermeldung',
+                                },
+                            },
+                        },
+                        options: {
+                            type: 'object',
+                            description: 'Debug-Optionen',
+                            properties: {
+                                maxIterations: {
+                                    type: 'number',
+                                    description: 'Max. Iterations (default: 5)',
+                                    default: 5,
+                                },
+                                runTests: {
+                                    type: 'boolean',
+                                    description: 'Tests ausführen (default: true)',
+                                    default: true,
+                                },
+                                createDocumentation: {
+                                    type: 'boolean',
+                                    description: 'Dokumentation erstellen (default: true)',
+                                    default: true,
+                                },
+                                useLiveDebug: {
+                                    type: 'boolean',
+                                    description: 'Live-Debugging mit Playwright (default: false)',
+                                    default: false,
+                                },
+                            },
+                        },
+                    },
+                    required: ['problem'],
+                },
+            },
+            {
+                name: 'analyze-code',
+                description: 'Analysiert Code auf Fehler und Warnungen (TypeScript, ESLint, Imports, Async Patterns)',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        files: {
+                            type: 'array',
+                            items: { type: 'string' },
+                            description: 'Files zum Analysieren (optional, default: alle)',
+                        },
+                        checks: {
+                            type: 'array',
+                            items: {
+                                type: 'string',
+                                enum: ['typescript', 'eslint', 'imports', 'async-patterns', 'all'],
+                            },
+                            description: 'Checks to run (default: all)',
+                            default: ['all'],
+                        },
+                        context: {
+                            type: 'string',
+                            description: 'Kontext für Analyse',
+                        },
+                        includeWarnings: {
+                            type: 'boolean',
+                            description: 'Warnings inkludieren (default: true)',
+                            default: true,
+                        },
+                    },
+                },
+            },
+            {
+                name: 'scan-errors',
+                description: 'Scannt verschiedene Quellen nach Runtime-Fehlern: DB Logs, Console Errors, Test Failures',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        sources: {
+                            type: 'array',
+                            items: {
+                                type: 'string',
+                                enum: ['db-logs', 'console', 'test-output', 'all'],
+                            },
+                            description: 'Fehlerquellen (default: all)',
+                            default: ['all'],
+                        },
+                        filter: {
+                            type: 'string',
+                            description: 'Filter-Regex (z.B. "garmin|oauth|401")',
+                        },
+                        since: {
+                            type: 'string',
+                            description: 'Ab Timestamp (ISO)',
+                        },
+                        limit: {
+                            type: 'number',
+                            description: 'Max. Anzahl (default: 50)',
+                            default: 50,
+                        },
+                    },
+                },
+            },
+            {
+                name: 'live-debug',
+                description: 'Live-Debugging mit Playwright: App öffnen, Aktionen ausführen, Errors tracken',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        scenario: {
+                            type: 'string',
+                            description: 'Debug-Szenario (z.B. "garmin-login")',
+                        },
+                        steps: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    action: {
+                                        type: 'string',
+                                        enum: ['navigate', 'click', 'fill', 'wait', 'screenshot', 'evaluate'],
+                                    },
+                                    selector: { type: 'string' },
+                                    url: { type: 'string' },
+                                    value: { type: 'string' },
+                                    timeout: { type: 'number' },
+                                    script: { type: 'string' },
+                                },
+                            },
+                            description: 'Debug-Schritte',
+                        },
+                        capture: {
+                            type: 'array',
+                            items: {
+                                type: 'string',
+                                enum: ['console', 'network', 'screenshot', 'trace'],
+                            },
+                            description: 'Was capturen (default: console, network)',
+                            default: ['console', 'network'],
+                        },
+                        headless: {
+                            type: 'boolean',
+                            description: 'Headless Mode (default: true)',
+                            default: true,
+                        },
+                    },
+                    required: ['scenario', 'steps'],
+                },
+            },
+            {
+                name: 'fix-code',
+                description: 'Generiert Code-Fixes basierend auf Fehleranalyse',
+                inputSchema: {
+                    type: 'object',
+                    properties: {
+                        problem: {
+                            type: 'string',
+                            description: 'Problem-Beschreibung',
+                        },
+                        file: {
+                            type: 'string',
+                            description: 'Betroffenes File',
+                        },
+                        context: {
+                            type: 'object',
+                            description: 'Kontext',
+                            properties: {
+                                errorMessage: { type: 'string' },
+                                affectedFunction: { type: 'string' },
+                                line: { type: 'number' },
+                                referenceCode: { type: 'string' },
+                                relatedFiles: {
+                                    type: 'array',
+                                    items: { type: 'string' },
+                                },
+                            },
+                        },
+                        strategy: {
+                            type: 'string',
+                            enum: ['conservative', 'aggressive', 'experimental'],
+                            description: 'Fix-Strategie (default: conservative)',
+                            default: 'conservative',
+                        },
+                    },
+                    required: ['problem', 'file'],
+                },
+            },
         ],
     };
 });
@@ -440,6 +667,22 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 return { content: [{ type: 'text', text: '✅ Garmin Mock Server stopped' }] };
             }
 
+            // Autonomous Debug Tools
+            case 'debug-problem':
+                return { content: [{ type: 'text', text: JSON.stringify(await debugProblem(args as any || {}), null, 2) }] };
+
+            case 'analyze-code':
+                return { content: [{ type: 'text', text: JSON.stringify(await analyzeCode(args as any || {}), null, 2) }] };
+
+            case 'scan-errors':
+                return { content: [{ type: 'text', text: JSON.stringify(await scanErrors(args as any || {}), null, 2) }] };
+
+            case 'live-debug':
+                return { content: [{ type: 'text', text: JSON.stringify(await liveDebug(args as any || {}), null, 2) }] };
+
+            case 'fix-code':
+                return { content: [{ type: 'text', text: JSON.stringify(await fixCode(args as any || {}), null, 2) }] };
+
             default:
                 throw new Error(`Unknown tool: ${name}`);
         }
@@ -459,10 +702,11 @@ async function main() {
     await server.connect(transport);
 
     console.error('🚀 Migraine Tracker MCP Server started');
-    console.error('📦 Available tools: 21');
+    console.error('📦 Available tools: 26 (21 base + 5 autonomous debug)');
     console.error('🔧 DB Inspector, Seed, Clear');
     console.error('🧪 Test Runner, Coverage');
     console.error('🌐 Garmin Mock Server');
+    console.error('🤖 Autonomous Debug: debug-problem, analyze-code, scan-errors, live-debug, fix-code');
 }
 
 main().catch((error) => {
