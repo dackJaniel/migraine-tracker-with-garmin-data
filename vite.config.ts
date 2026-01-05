@@ -31,7 +31,7 @@ export default defineConfig({
               proxyReq.setHeader('Authorization', req.headers.authorization);
             }
           });
-          
+
           proxy.on('proxyRes', (proxyRes, _req, res) => {
             // Forward Set-Cookie headers from Garmin to client
             const setCookie = proxyRes.headers['set-cookie'];
@@ -58,7 +58,7 @@ export default defineConfig({
               proxyReq.setHeader('Authorization', req.headers.authorization);
             }
           });
-          
+
           proxy.on('proxyRes', (proxyRes, _req, res) => {
             // Forward Set-Cookie headers from Garmin to client
             const setCookie = proxyRes.headers['set-cookie'];

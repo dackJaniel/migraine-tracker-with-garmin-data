@@ -65,7 +65,7 @@ proxy: {
           proxyReq.setHeader('Authorization', req.headers.authorization);
         }
       });
-      
+
       // Response Hook: Forward Set-Cookie to Client
       proxy.on('proxyRes', (proxyRes, _req, res) => {
         const setCookie = proxyRes.headers['set-cookie'];
@@ -88,12 +88,13 @@ proxy: {
 - ✅ `proxyRes` Event: Propagate Set-Cookie Headers
 - ❌ Removed `followRedirects` (caused header conflicts)
 - ❌ Removed manual Origin/Referer/User-Agent (Vite handles via `changeOrigin`)
-    changeOrigin: true,
-    rewrite: (path) => path.replace(/^\/api\/oauth-consumer/, '/oauth_consumer.json'),
-    secure: true,
+  changeOrigin: true,
+  rewrite: (path) => path.replace(/^\/api\/oauth-consumer/, '/oauth_consumer.json'),
+  secure: true,
   },
-}
-```
+  }
+
+````
 
 **Auth Anpassung (`src/lib/garmin/auth.ts`):**
 
@@ -103,7 +104,7 @@ const isDev = typeof window !== 'undefined' && import.meta.env.DEV;
 const OAUTH_CONSUMER_URL = isDev
   ? '/api/oauth-consumer'
   : 'https://thegarth.s3.amazonaws.com/oauth_consumer.json';
-```
+````
 
 ### 3. UI Update - Warnung anpassen
 

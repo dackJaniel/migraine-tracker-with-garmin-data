@@ -15,6 +15,11 @@ const SSO_SIGNIN_URL = `${SSO_URL}/signin`;
 const SSO_MFA_URL = `${SSO_URL}/verifyMFA/loginEnterMfaCode`;
 const SSO_EMBED_URL = `${SSO_URL}/embed`;
 
+// Real Garmin URLs for params (not proxied)
+// These are used in URL parameters sent to Garmin, must be real URLs
+const REAL_SSO_URL = 'https://sso.garmin.com/sso';
+const REAL_SSO_EMBED_URL = `${REAL_SSO_URL}/embed`;
+
 // OAuth URLs (from garth/python-garminconnect)
 const OAUTH_BASE_URL = 'https://connectapi.garmin.com/oauth-service/oauth';
 
@@ -456,14 +461,15 @@ export class GarminAuthService {
         await logAuth(`Initiating SSO login for ${email.split('@')[0]}@...`);
 
         // Use garth's SSO_EMBED pattern for better compatibility
+        // IMPORTANT: Use REAL URLs in params (not proxy paths), Garmin needs real URLs
         const params = new URLSearchParams({
             id: 'gauth-widget',
             embedWidget: 'true',
-            gauthHost: SSO_EMBED_URL,
-            service: SSO_EMBED_URL,
-            source: SSO_EMBED_URL,
-            redirectAfterAccountLoginUrl: SSO_EMBED_URL,
-            redirectAfterAccountCreationUrl: SSO_EMBED_URL,
+            gauthHost: REAL_SSO_EMBED_URL,
+            service: REAL_SSO_EMBED_URL,
+            source: REAL_SSO_EMBED_URL,
+            redirectAfterAccountLoginUrl: REAL_SSO_EMBED_URL,
+            redirectAfterAccountCreationUrl: REAL_SSO_EMBED_URL,
         });
 
         // Step 1: Get initial SSO page to extract CSRF token
@@ -823,15 +829,15 @@ export class GarminAuthService {
         let signinParamsString = this.mfaState.signinParams;
         if (!signinParamsString) {
             // Build SSO_EMBED params matching garth's implementation
-            const SSO_EMBED = `${SSO_URL}/embed`;
+            // Use REAL URLs in params (not proxy paths)
             const signinParams = new URLSearchParams({
                 id: 'gauth-widget',
                 embedWidget: 'true',
-                gauthHost: SSO_EMBED,
-                service: SSO_EMBED,
-                source: SSO_EMBED,
-                redirectAfterAccountLoginUrl: SSO_EMBED,
-                redirectAfterAccountCreationUrl: SSO_EMBED,
+                gauthHost: REAL_SSO_EMBED_URL,
+                service: REAL_SSO_EMBED_URL,
+                source: REAL_SSO_EMBED_URL,
+                redirectAfterAccountLoginUrl: REAL_SSO_EMBED_URL,
+                redirectAfterAccountCreationUrl: REAL_SSO_EMBED_URL,
             });
             signinParamsString = signinParams.toString();
         }
