@@ -1,0 +1,86 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vscode-copilot/main/schemas/copilot-agent.schema.json",
+    "name": "Autonomous Debug Agent",
+    "description": "Vollautomatisches Debugging-System für Migraine Tracker PWA mit MCP Tools",
+    "version": "1.0.0",
+    "publisher": "migraine-tracker",
+    "categories": [
+        "Testing",
+        "Debugging",
+        "Code Analysis"
+    ],
+    "activationEvents": [
+        "onCommand:migraineTracker.autonomousDebug",
+        "onCommand:migraineTracker.analyzeCode",
+        "onCommand:migraineTracker.scanErrors",
+        "onCommand:migraineTracker.liveDebug"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "migraineTracker.autonomousDebug",
+                "title": "🤖 Autonomous Debug: Problem lösen",
+                "category": "Migraine Tracker"
+            },
+            {
+                "command": "migraineTracker.analyzeCode",
+                "title": "🔍 Code analysieren (TypeScript + ESLint)",
+                "category": "Migraine Tracker"
+            },
+            {
+                "command": "migraineTracker.scanErrors",
+                "title": "📊 Runtime Errors scannen",
+                "category": "Migraine Tracker"
+            },
+            {
+                "command": "migraineTracker.liveDebug",
+                "title": "🎭 Live Browser Debugging",
+                "category": "Migraine Tracker"
+            },
+            {
+                "command": "migraineTracker.fixCode",
+                "title": "🛠️ Code Fix generieren",
+                "category": "Migraine Tracker"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "migraineTracker.autonomousDebug",
+                "key": "ctrl+shift+d",
+                "mac": "cmd+shift+d"
+            }
+        ],
+        "menus": {
+            "commandPalette": [
+                {
+                    "command": "migraineTracker.autonomousDebug",
+                    "when": "editorFocus"
+                },
+                {
+                    "command": "migraineTracker.analyzeCode",
+                    "when": "editorFocus"
+                },
+                {
+                    "command": "migraineTracker.scanErrors"
+                },
+                {
+                    "command": "migraineTracker.liveDebug"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "migraineTracker.autonomousDebug",
+                    "group": "1_debug@1"
+                },
+                {
+                    "command": "migraineTracker.analyzeCode",
+                    "group": "1_debug@2"
+                }
+            ]
+        }
+    },
+    "main": "./out/extension.js",
+    "engines": {
+        "vscode": "^1.85.0"
+    }
+}
