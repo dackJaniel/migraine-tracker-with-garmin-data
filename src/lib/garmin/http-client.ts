@@ -111,9 +111,22 @@ async function buildAuthHeaders(
     const tokens = await getStoredTokens();
     const headers: Record<string, string> = { ...DEFAULT_HEADERS };
 
+    // DEBUG: Log token availability
+    await db.logs.add({
+        timestamp: new Date().toISOString(),
+        level: 'info',
+        message: `[HTTP Client] Tokens available: oauth1=${!!tokens?.oauth1}, oauth1Secret=${!!tokens?.oauth1Secret}, oauth2=${!!tokens?.oauth2}`
+    });
+
     // Generate OAuth1 Authorization header
     if (tokens?.oauth1) {
         try {
+            await db.logs.add({
+                timestamp: new Date().toISOString(),
+                level: 'info',
+                message: `[HTTP Client] Building OAuth1 header for ${method} ${url.substring(0, 100)}`
+            });
+            
             const oauth1Header = await buildOAuth1Header(
                 method,
                 url,
@@ -124,16 +137,37 @@ async function buildAuthHeaders(
                 queryParams || {}
             );
             headers['Authorization'] = oauth1Header;
+            
+            await db.logs.add({
+                timestamp: new Date().toISOString(),
+                level: 'info',
+                message: `[HTTP Client] OAuth1 header generated: ${oauth1Header.substring(0, 80)}...`
+            });
         } catch (error) {
+            await db.logs.add({
+                timestamp: new Date().toISOString(),
+                level: 'error',
+                message: `[HTTP Client] Failed to build OAuth1 header: ${error}`
+            });
             console.error('Failed to build OAuth1 header:', error);
             // Fallback to OAuth2 if available
             if (tokens?.oauth2) {
                 headers['Authorization'] = `Bearer ${tokens.oauth2}`;
+                await db.logs.add({
+                    timestamp: new Date().toISOString(),
+                    level: 'warn',
+                    message: `[HTTP Client] Falling back to OAuth2 Bearer token`
+                });
             }
         }
     } else if (tokens?.oauth2) {
         // Fallback to OAuth2 Bearer token
         headers['Authorization'] = `Bearer ${tokens.oauth2}`;
+        await db.logs.add({
+            timestamp: new Date().toISOString(),
+            level: 'warn',
+            message: `[HTTP Client] No OAuth1 token, using OAuth2 Bearer token only`
+        });
     }
 
     return headers;
