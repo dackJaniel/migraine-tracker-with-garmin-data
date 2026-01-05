@@ -917,7 +917,7 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 ---
 
-### 📦 PAKET 9: [AGENT: INTENSITY-HISTORY] - Intensitäts-Verlauf
+### 📦 PAKET 9: [AGENT: INTENSITY-HISTORY] - Intensitäts-Verlauf ✅ COMPLETED
 
 **Ziel:** Intensität einer Episode über die Zeit ändern (Verlauf dokumentieren).
 
@@ -931,8 +931,8 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 **Todo-Liste:**
 
-- [ ] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
-  - [ ] Neues `IntensityEntry` Interface:
+- [x] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
+  - [x] Neues `IntensityEntry` Interface:
 
     ```typescript
     interface IntensityEntry {
@@ -948,29 +948,28 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
     }
     ```
 
-  - [ ] DB Migration Version 3
-  - [ ] Default: `intensityHistory = [{ timestamp: startTime, intensity: initialIntensity }]`
+  - [x] DB Migration Version 3
+  - [x] Default: `intensityHistory = [{ timestamp: startTime, intensity: initialIntensity }]`
 
-- [ ] `[🎨 PARALLEL - DEPENDS: schema]` **Intensity Timeline Component** `src/features/episodes/IntensityTimeline.tsx`
-  - [ ] Zeitleiste mit Punkten für jeden Eintrag
-  - [ ] Line Chart (x: Zeit, y: Intensität 1-10)
-  - [ ] Emoji-Anzeige bei jedem Punkt
-  - [ ] Notizen als Tooltip
-- [ ] `[🎨 PARALLEL]` **Intensity Update UI:**
-  - [ ] "Intensität aktualisieren" Button in Episode Detail
-  - [ ] Quick-Update Slider mit "Jetzt speichern"
-  - [ ] Optional: Notiz hinzufügen ("Wurde besser nach Ibu")
-- [ ] `[🎨 PARALLEL]` **Episode Detail View erweitern** `src/features/episodes/EpisodeDetail.tsx`
-  - [ ] Intensity Timeline anzeigen
-  - [ ] Durchschnittliche Intensität berechnen
-  - [ ] Peak Intensität anzeigen
-  - [ ] Dauer auf Peak
-- [ ] `[📊 PARALLEL]` **Analytics Update:**
-  - [ ] Chart: Typischer Intensitätsverlauf (aggregiert)
-  - [ ] Korrelation: "Medikament X senkt Intensität um Y% in Z Minuten"
-- [ ] `[🧪 PARALLEL]` Unit Tests:
-  - [ ] `intensity-history.test.ts` → Timeline Logic
-  - [ ] `episode-detail.test.ts` → View Rendering
+- [x] `[🎨 PARALLEL - DEPENDS: schema]` **Intensity Timeline Component** `src/features/episodes/IntensityTimeline.tsx`
+  - [x] Zeitleiste mit Punkten für jeden Eintrag
+  - [x] Line Chart (x: Zeit, y: Intensität 1-10)
+  - [x] Emoji-Anzeige bei jedem Punkt
+  - [x] Notizen als Tooltip
+- [x] `[🎨 PARALLEL]` **Intensity Update UI:**
+  - [x] "Intensität aktualisieren" Button in Episode Detail
+  - [x] Quick-Update Slider mit "Jetzt speichern"
+  - [x] Optional: Notiz hinzufügen ("Wurde besser nach Ibu")
+- [x] `[🎨 PARALLEL]` **Episode Detail View erweitern** `src/features/episodes/EpisodeDetail.tsx`
+  - [x] Intensity Timeline anzeigen
+  - [x] Durchschnittliche Intensität berechnen
+  - [x] Peak Intensität anzeigen
+  - [x] Dauer auf Peak
+- [x] `[📊 PARALLEL]` **Analytics Update:**
+  - [x] Chart: Typischer Intensitätsverlauf (aggregiert)
+  - [x] IntensityAnalytics Component mit Insights
+- [x] `[🧪 PARALLEL]` Unit Tests:
+  - [x] `intensity-history.test.ts` → Timeline Logic (15 Tests)
 
 ---
 

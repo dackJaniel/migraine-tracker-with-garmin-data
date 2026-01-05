@@ -146,7 +146,11 @@ export function IntensityAnalytics() {
                 width={25}
               />
               <Tooltip
-                formatter={(value) => value !== undefined ? [`${value}/10`, 'Intensität'] : ['-', 'Intensität']}
+                formatter={value =>
+                  value !== undefined
+                    ? [`${value}/10`, 'Intensität']
+                    : ['-', 'Intensität']
+                }
                 contentStyle={{ borderRadius: '8px' }}
               />
               <Bar dataKey="value" radius={[4, 4, 0, 0]}>

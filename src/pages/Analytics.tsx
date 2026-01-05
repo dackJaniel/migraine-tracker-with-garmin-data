@@ -23,7 +23,9 @@ export function Analytics() {
   useEffect(() => {
     if (
       tabFromUrl &&
-      ['overview', 'triggers', 'correlations', 'intensity', 'export'].includes(tabFromUrl)
+      ['overview', 'triggers', 'correlations', 'intensity', 'export'].includes(
+        tabFromUrl
+      )
     ) {
       setActiveTab(tabFromUrl);
     }
