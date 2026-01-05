@@ -62,11 +62,11 @@ async function main() {
 
 async function runDebugProblem() {
     console.log('\n🤖 Autonomous Debug\n');
-    
+
     const problem = await question('Problem beschreiben: ');
     const feature = await question('Feature (z.B. garmin-auth): ');
     const files = await question('Relevante Dateien (kommagetrennt): ');
-    
+
     console.log('\n⏳ Starte Debug-Loop...\n');
 
     try {
@@ -110,9 +110,9 @@ async function runDebugProblem() {
 
 async function runAnalyzeCode() {
     console.log('\n🔍 Code-Analyse\n');
-    
+
     const files = await question('Dateien (kommagetrennt): ');
-    
+
     if (!files.trim()) {
         console.log('❌ Keine Dateien angegeben');
         return;
@@ -152,9 +152,9 @@ async function runAnalyzeCode() {
 
 async function runScanErrors() {
     console.log('\n📊 Runtime Error Scanner\n');
-    
+
     const filter = await question('Filter (optional, z.B. "garmin|oauth"): ');
-    
+
     console.log('\n⏳ Scanne Errors...\n');
 
     try {
@@ -188,22 +188,22 @@ async function runScanErrors() {
 async function runLiveDebug() {
     console.log('\n🎭 Live Browser Debugging\n');
     console.log('⚠️  Dev Server muss auf localhost:5173 laufen!\n');
-    
+
     console.log('Szenarien:');
     console.log('1. garmin-login');
     console.log('2. episode-create');
     console.log('3. sync-test\n');
-    
+
     const scenario = await question('Szenario (1-3): ');
-    
+
     const scenarioMap: Record<string, string> = {
         '1': 'garmin-login',
         '2': 'episode-create',
         '3': 'sync-test'
     };
-    
+
     const selectedScenario = scenarioMap[scenario.trim()];
-    
+
     if (!selectedScenario) {
         console.log('❌ Ungültiges Szenario');
         return;
@@ -222,7 +222,7 @@ async function runLiveDebug() {
         console.log(`\n✅ Live Debug abgeschlossen!\n`);
         console.log(`Console Errors: ${result.consoleErrors.length}`);
         console.log(`Network Errors: ${result.networkErrors.length}`);
-        
+
         if (result.screenshots && result.screenshots.length > 0) {
             console.log(`Screenshots: ${result.screenshots.length}`);
             console.log(`Location: ${result.screenshots[0]}`);
