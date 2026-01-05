@@ -99,36 +99,69 @@ async function httpRequest<T>(
 }
 
 /**
- * Generate CSRF token for SSO requests
+ * Extract CSRF token from SSO HTML page
  */
-function generateCSRF(): string {
-    const array = new Uint8Array(32);
-    crypto.getRandomValues(array);
-    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+function extractCSRFToken(html: string): string | null {
+    // Try multiple patterns as Garmin changes their HTML sometimes
+    const patterns = [
+        /name="_csrf"\s+value="([^"]+)"/,
+        /name='_csrf'\s+value='([^']+)'/,
+        /"_csrf":\s*"([^"]+)"/,
+        /csrf['"]\s*:\s*['"]([^'"]+)['"]/i,
+    ];
+
+    for (const pattern of patterns) {
+        const match = html.match(pattern);
+        if (match) {
+            return match[1];
+        }
+    }
+    return null;
 }
 
 /**
  * Parse SSO response from HTML or JSON
  */
-function parseSSORespsonse(html: string): { ticket?: string; error?: string } {
-    // Look for service ticket in response
+function parseSSORespsonse(html: string): { ticket?: string; error?: string; csrf?: string } {
+    // Look for service ticket in response (success case)
     const ticketMatch = html.match(/ticket=([A-Za-z0-9\-]+)/);
     if (ticketMatch) {
         return { ticket: ticketMatch[1] };
     }
 
-    // Look for error messages
-    const errorMatch = html.match(/<span class="error">([^<]+)<\/span>/);
-    if (errorMatch) {
-        return { error: errorMatch[1] };
+    // Extract CSRF token from HTML form using helper
+    const csrf = extractCSRFToken(html) || undefined;
+
+    // Look for error messages in multiple formats
+    const errorPatterns = [
+        /<span[^>]*class="[^"]*error[^"]*"[^>]*>([^<]+)<\/span>/i,
+        /<div[^>]*class="[^"]*error[^"]*"[^>]*>([^<]+)<\/div>/i,
+        /"errorMessage"\s*:\s*"([^"]+)"/,
+    ];
+
+    for (const pattern of errorPatterns) {
+        const errorMatch = html.match(pattern);
+        if (errorMatch) {
+            return { error: errorMatch[1].trim(), csrf };
+        }
+    }
+
+    // Check for invalid credentials message
+    if (html.includes('credentials') && (html.includes('invalid') || html.includes('incorrect'))) {
+        return { error: 'INVALID_CREDENTIALS', csrf };
+    }
+
+    // Check for locked account
+    if (html.includes('locked') || html.includes('gesperrt')) {
+        return { error: 'ACCOUNT_LOCKED', csrf };
     }
 
     // Check for MFA required
-    if (html.includes('verifyMFA') || html.includes('MFA')) {
-        return { error: 'MFA_REQUIRED' };
+    if (html.includes('verifyMFA') || html.includes('MFA') || html.includes('verification') || html.includes('two-factor')) {
+        return { error: 'MFA_REQUIRED', csrf };
     }
 
-    return {};
+    return { csrf };
 }
 
 export class GarminAuthService {
@@ -225,7 +258,6 @@ export class GarminAuthService {
     private async initiateSSO(email: string, password: string): Promise<{ ticket: string } | { mfaRequired: true; clientState: string }> {
         await logAuth(`Initiating SSO login for ${email.split('@')[0]}@...`);
 
-        const csrf = generateCSRF();
         const params = new URLSearchParams({
             service: OAUTH_URL,
             webhost: GARMIN_BASE_URL,
@@ -265,17 +297,34 @@ export class GarminAuthService {
             rememberMyBrowserChecked: 'false',
         });
 
-        // Step 1: Get initial SSO page (sets cookies)
+        // Step 1: Get initial SSO page to extract CSRF token
         const initUrl = `${SSO_SIGNIN_URL}?${params.toString()}`;
-        await httpRequest(initUrl, 'GET');
+        await logAuth(`Fetching SSO page: ${initUrl.substring(0, 100)}...`);
 
-        // Step 2: Submit login credentials
+        const initResponse = await httpRequest<string>(initUrl, 'GET');
+        await logAuth(`SSO page response status: ${initResponse.status}`);
+
+        // Extract CSRF token from the page
+        const initParsed = parseSSORespsonse(initResponse.data);
+        const csrf = initParsed.csrf;
+
+        if (!csrf) {
+            await logAuth('Could not extract CSRF token from SSO page', 'error');
+            await logAuth(`Response snippet: ${initResponse.data.substring(0, 500)}`, 'error');
+            throw new Error('Login fehlgeschlagen: CSRF Token nicht gefunden');
+        }
+
+        await logAuth(`CSRF token extracted: ${csrf.substring(0, 10)}...`);
+
+        // Step 2: Submit login credentials with real CSRF token
         const loginBody = new URLSearchParams({
             username: email,
             password: password,
             embed: 'false',
             _csrf: csrf,
         });
+
+        await logAuth('Submitting login credentials...');
 
         const loginResponse = await httpRequest<string>(
             `${SSO_SIGNIN_URL}?${params.toString()}`,
@@ -288,6 +337,8 @@ export class GarminAuthService {
             }
         );
 
+        await logAuth(`Login response status: ${loginResponse.status}`);
+
         const parsed = parseSSORespsonse(loginResponse.data);
 
         if (parsed.error === 'MFA_REQUIRED') {
@@ -299,13 +350,24 @@ export class GarminAuthService {
         }
 
         if (parsed.error) {
+            await logAuth(`Login error: ${parsed.error}`, 'error');
+            if (parsed.error === 'INVALID_CREDENTIALS') {
+                throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
+            }
+            if (parsed.error === 'ACCOUNT_LOCKED') {
+                throw new Error('Konto gesperrt. Bitte versuche es später erneut.');
+            }
             throw new Error(parsed.error);
         }
 
         if (!parsed.ticket) {
+            // Log response for debugging
+            await logAuth(`No ticket found. Response length: ${loginResponse.data.length}`, 'warn');
+            await logAuth(`Response snippet: ${loginResponse.data.substring(0, 1000)}`, 'warn');
             throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
         }
 
+        await logAuth(`Service ticket received: ${parsed.ticket.substring(0, 10)}...`);
         return { ticket: parsed.ticket };
     }
 

@@ -62,6 +62,8 @@ import type { GarminProfile } from '@/lib/garmin/types';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
+import { seedGarminData } from '@/lib/seed';
+import { Capacitor } from '@capacitor/core';
 
 // Verfügbare Metriken
 const AVAILABLE_METRICS = [
@@ -75,6 +77,9 @@ const AVAILABLE_METRICS = [
   { icon: Wind, label: 'Atmung', description: 'Atemfrequenz' },
   { icon: Eye, label: 'SpO2', description: 'Sauerstoffsättigung' },
 ];
+
+// Prüfe ob wir im Browser (Dev) sind
+const isWebDev = !Capacitor.isNativePlatform();
 
 export default function GarminSettings() {
   const navigate = useNavigate();
@@ -97,6 +102,9 @@ export default function GarminSettings() {
   // Sync State
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState<SyncProgress | null>(null);
+
+  // Demo Mode State
+  const [isLoadingDemo, setIsLoadingDemo] = useState(false);
 
   // Lade Session-Status beim Mount
   const loadSessionState = useCallback(async () => {
@@ -281,6 +289,23 @@ export default function GarminSettings() {
     setLoginError(null);
   };
 
+  // Demo Mode Handler - lädt Test-Daten ohne echten Login
+  const handleLoadDemoData = async () => {
+    setIsLoadingDemo(true);
+    try {
+      const count = await seedGarminData(30);
+      toast.success(`${count} Tage Demo-Daten geladen!`);
+
+      // Navigiere zur Daten-Ansicht
+      navigate('/garmin/data');
+    } catch (error) {
+      console.error('Failed to load demo data:', error);
+      toast.error('Fehler beim Laden der Demo-Daten');
+    } finally {
+      setIsLoadingDemo(false);
+    }
+  };
+
   // Format last sync date
   const formatLastSync = (dateStr: string | null) => {
     if (!dateStr) return 'Nie';
@@ -296,7 +321,7 @@ export default function GarminSettings() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-4 flex items-center justify-center min-h-[400px]">
+      <div className="container mx-auto p-4 flex items-center justify-center min-h-100">
         <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
       </div>
     );
@@ -315,12 +340,10 @@ export default function GarminSettings() {
             Synchronisiere deine Gesundheitsdaten von Garmin
           </p>
         </div>
-        {isConnected && (
-          <Button variant="outline" onClick={() => navigate('/garmin/data')}>
-            <Eye className="h-4 w-4 mr-2" />
-            Daten ansehen
-          </Button>
-        )}
+        <Button variant="outline" onClick={() => navigate('/garmin/data')}>
+          <Eye className="h-4 w-4 mr-2" />
+          Daten ansehen
+        </Button>
       </div>
 
       {/* Connection Status Card */}
@@ -435,102 +458,134 @@ export default function GarminSettings() {
               </div>
             </>
           ) : (
-            <Dialog open={loginDialogOpen} onOpenChange={setLoginDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="w-full sm:w-auto">
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Mit Garmin Connect anmelden
+            <div className="space-y-4">
+              {/* Browser Dev Mode Warning */}
+              {isWebDev && (
+                <div className="text-sm text-amber-700 bg-amber-50 p-3 rounded-lg border border-amber-200">
+                  <strong>⚠️ Entwicklungsmodus:</strong> Die Garmin-Anmeldung
+                  funktioniert nur in der Android-App (wegen
+                  CORS-Beschränkungen). Du kannst Demo-Daten laden, um die
+                  Funktionen zu testen.
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-2">
+                <Dialog
+                  open={loginDialogOpen}
+                  onOpenChange={setLoginDialogOpen}
+                >
+                  <DialogTrigger asChild>
+                    <Button className="flex-1 sm:flex-none">
+                      <LogIn className="h-4 w-4 mr-2" />
+                      Mit Garmin Connect anmelden
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Garmin Connect Login</DialogTitle>
+                      <DialogDescription>
+                        Melde dich mit deinen Garmin Connect Zugangsdaten an
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    {!mfaRequired ? (
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="email">E-Mail</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            placeholder="deine@email.de"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            disabled={isLoggingIn}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="password">Passwort</Label>
+                          <Input
+                            id="password"
+                            type="password"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            disabled={isLoggingIn}
+                          />
+                        </div>
+                        {loginError && (
+                          <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+                            {loginError}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="space-y-4 py-4">
+                        <div className="text-sm text-slate-600 bg-blue-50 p-3 rounded-lg">
+                          Ein Verifizierungscode wurde an deine E-Mail oder
+                          Authenticator-App gesendet.
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="mfa">6-stelliger Code</Label>
+                          <Input
+                            id="mfa"
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={6}
+                            placeholder="123456"
+                            value={mfaCode}
+                            onChange={e =>
+                              setMfaCode(e.target.value.replace(/\D/g, ''))
+                            }
+                            disabled={isLoggingIn}
+                          />
+                        </div>
+                        {loginError && (
+                          <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+                            {loginError}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <DialogFooter>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setLoginDialogOpen(false);
+                          resetLoginForm();
+                        }}
+                      >
+                        Abbrechen
+                      </Button>
+                      <Button
+                        onClick={mfaRequired ? handleMFA : handleLogin}
+                        disabled={isLoggingIn}
+                      >
+                        {isLoggingIn ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : null}
+                        {mfaRequired ? 'Verifizieren' : 'Anmelden'}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+
+                {/* Demo Mode Button */}
+                <Button
+                  variant="outline"
+                  onClick={handleLoadDemoData}
+                  disabled={isLoadingDemo}
+                  className="flex-1 sm:flex-none"
+                >
+                  {isLoadingDemo ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Database className="h-4 w-4 mr-2" />
+                  )}
+                  Demo-Daten laden
                 </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Garmin Connect Login</DialogTitle>
-                  <DialogDescription>
-                    Melde dich mit deinen Garmin Connect Zugangsdaten an
-                  </DialogDescription>
-                </DialogHeader>
-
-                {!mfaRequired ? (
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">E-Mail</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="deine@email.de"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        disabled={isLoggingIn}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="password">Passwort</Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        disabled={isLoggingIn}
-                      />
-                    </div>
-                    {loginError && (
-                      <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
-                        {loginError}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-4 py-4">
-                    <div className="text-sm text-slate-600 bg-blue-50 p-3 rounded-lg">
-                      Ein Verifizierungscode wurde an deine E-Mail oder
-                      Authenticator-App gesendet.
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="mfa">6-stelliger Code</Label>
-                      <Input
-                        id="mfa"
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={6}
-                        placeholder="123456"
-                        value={mfaCode}
-                        onChange={e =>
-                          setMfaCode(e.target.value.replace(/\D/g, ''))
-                        }
-                        disabled={isLoggingIn}
-                      />
-                    </div>
-                    {loginError && (
-                      <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
-                        {loginError}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setLoginDialogOpen(false);
-                      resetLoginForm();
-                    }}
-                  >
-                    Abbrechen
-                  </Button>
-                  <Button
-                    onClick={mfaRequired ? handleMFA : handleLogin}
-                    disabled={isLoggingIn}
-                  >
-                    {isLoggingIn ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : null}
-                    {mfaRequired ? 'Verifizieren' : 'Anmelden'}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -571,7 +626,7 @@ export default function GarminSettings() {
       <Card className="bg-blue-50 border-blue-200">
         <CardContent className="pt-6">
           <div className="flex gap-4">
-            <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
             <div className="space-y-2">
               <h4 className="font-medium text-blue-900">
                 Hinweise zur Nutzung
