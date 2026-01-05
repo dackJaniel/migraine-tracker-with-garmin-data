@@ -47,14 +47,26 @@ interface OAuth2TokenResponse {
  * Log authentication events
  */
 async function logAuth(message: string, level: 'info' | 'warn' | 'error' = 'info'): Promise<void> {
+    const fullMessage = `[Garmin Auth] ${message}`;
+
+    // Always log to browser console
+    if (level === 'error') {
+        console.error(fullMessage);
+    } else if (level === 'warn') {
+        console.warn(fullMessage);
+    } else {
+        console.log(fullMessage);
+    }
+
+    // Also save to DB for persistent logging
     try {
         await db.logs.add({
             timestamp: new Date().toISOString(),
             level,
-            message: `[Garmin Auth] ${message}`,
+            message: fullMessage,
         });
     } catch (e) {
-        console.error('Failed to log:', e);
+        console.error('Failed to save log to DB:', e);
     }
 }
 
@@ -268,6 +280,7 @@ function parseSSORespsonse(html: string): { ticket?: string; error?: string; csr
     for (const pattern of ticketPatterns) {
         const ticketMatch = html.match(pattern);
         if (ticketMatch) {
+            console.log('[parseSSO] Found ticket:', ticketMatch[1].substring(0, 10) + '...');
             return { ticket: ticketMatch[1] };
         }
     }
@@ -280,6 +293,7 @@ function parseSSORespsonse(html: string): { ticket?: string; error?: string; csr
         // Look for error spans/divs with actual error text, but exclude generic containers
         /<span[^>]*class="[^"]*status-error[^"]*"[^>]*>([^<]+)<\/span>/i,
         /<p[^>]*class="[^"]*error-message[^"]*"[^>]*>([^<]+)<\/p>/i,
+        /<div[^>]*class="[^"]*error[^"]*"[^>]*>([^<]+)<\/div>/i,
         /"errorMessage"\s*:\s*"([^"]+)"/,
         /"error"\s*:\s*"([^"]+)"/,
     ];
@@ -290,6 +304,7 @@ function parseSSORespsonse(html: string): { ticket?: string; error?: string; csr
             const errorText = errorMatch[1].trim();
             // Skip empty, generic messages, or messages that are just technical codes
             if (errorText && errorText.length > 5 && !errorText.startsWith('error') && !errorText.match(/^[A-Z_]+$/)) {
+                console.log('[parseSSO] Found error message:', errorText);
                 return { error: errorText, csrf };
             }
         }
@@ -297,13 +312,15 @@ function parseSSORespsonse(html: string): { ticket?: string; error?: string; csr
 
     // Check for invalid credentials message in page content
     const lowerHtml = html.toLowerCase();
-    if ((lowerHtml.includes('credentials') || lowerHtml.includes('kennwort') || lowerHtml.includes('passwort')) &&
+    if ((lowerHtml.includes('credentials') || lowerHtml.includes('kennwort') || lowerHtml.includes('passwort') || lowerHtml.includes('e-mail')) &&
         (lowerHtml.includes('invalid') || lowerHtml.includes('incorrect') || lowerHtml.includes('falsch') || lowerHtml.includes('ungültig'))) {
+        console.log('[parseSSO] Detected invalid credentials from page content');
         return { error: 'INVALID_CREDENTIALS', csrf };
     }
 
     // Check for locked account
     if (lowerHtml.includes('locked') || lowerHtml.includes('gesperrt')) {
+        console.log('[parseSSO] Detected account locked');
         return { error: 'ACCOUNT_LOCKED', csrf };
     }
 
@@ -313,6 +330,7 @@ function parseSSORespsonse(html: string): { ticket?: string; error?: string; csr
         html.includes('mfa-code') ||
         html.includes('verify-mfa-code-form') ||
         html.includes('loginEnterMfaCode')) {
+        console.log('[parseSSO] MFA code entry required');
         return { error: 'MFA_REQUIRED', csrf };
     }
 
@@ -328,13 +346,17 @@ function parseSSORespsonse(html: string): { ticket?: string; error?: string; csr
             html.includes('einrichten') ||
             html.includes('set up') ||
             html.includes('Ohne die Einrichtung')) {
+            console.log('[parseSSO] MFA setup required');
             return { error: 'MFA_SETUP_REQUIRED', csrf };
         }
 
         // Fallback to MFA code entry if we can't distinguish
+        console.log('[parseSSO] MFA required (fallback)');
         return { error: 'MFA_REQUIRED', csrf };
     }
 
+    console.log('[parseSSO] No ticket or error found. HTML length:', html.length);
+    console.log('[parseSSO] HTML snippet:', html.substring(0, 500).replace(/[\n\r\t]+/g, ' '));
     return { csrf };
 }
 
