@@ -971,7 +971,9 @@ export class GarminAuthService {
      * Check if session is valid
      */
     async isSessionValid(): Promise<boolean> {
-        if (!this.tokens?.oauth2Token) {
+        // Need both OAuth1 and OAuth2 tokens for API requests
+        if (!this.tokens?.oauth1Token || !this.tokens?.oauth2Token) {
+            await logAuth('Session invalid: Missing tokens', 'warn');
             return false;
         }
 

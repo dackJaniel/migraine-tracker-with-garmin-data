@@ -78,11 +78,12 @@ async function waitForRateLimit(): Promise<void> {
 
 /**
  * Get stored OAuth tokens (including token secrets)
+ * Returns GarminAuthTokens-compatible structure
  */
 async function getStoredTokens(): Promise<{
-    oauth1?: string;
+    oauth1Token?: string;
     oauth1Secret?: string;
-    oauth2?: string;
+    oauth2Token?: string;
 } | null> {
     try {
         const result = await Preferences.get({ key: SESSION_CONFIG.PREFERENCES_KEY_TOKENS });
@@ -105,9 +106,9 @@ async function getStoredTokens(): Promise<{
             }
 
             return {
-                oauth1: oauth1Token,
+                oauth1Token: oauth1Token,
                 oauth1Secret: oauth1Secret,
-                oauth2: tokens.oauth2Token,
+                oauth2Token: tokens.oauth2Token,
             };
         }
     } catch (error) {
@@ -131,11 +132,11 @@ async function buildAuthHeaders(
     await db.logs.add({
         timestamp: new Date().toISOString(),
         level: 'info',
-        message: `[HTTP Client] Tokens available: oauth1=${!!tokens?.oauth1}, oauth1Secret=${!!tokens?.oauth1Secret}, oauth2=${!!tokens?.oauth2}`
+        message: `[HTTP Client] Tokens available: oauth1Token=${!!tokens?.oauth1Token}, oauth1Secret=${!!tokens?.oauth1Secret}, oauth2Token=${!!tokens?.oauth2Token}`
     });
 
     // Generate OAuth1 Authorization header
-    if (tokens?.oauth1) {
+    if (tokens?.oauth1Token) {
         try {
             await db.logs.add({
                 timestamp: new Date().toISOString(),
@@ -148,7 +149,7 @@ async function buildAuthHeaders(
                 url,
                 OAUTH_CONSUMER.KEY,
                 OAUTH_CONSUMER.SECRET,
-                tokens.oauth1,
+                tokens.oauth1Token,
                 tokens.oauth1Secret || '',
                 queryParams || {}
             );
@@ -167,8 +168,8 @@ async function buildAuthHeaders(
             });
             console.error('Failed to build OAuth1 header:', error);
             // Fallback to OAuth2 if available
-            if (tokens?.oauth2) {
-                headers['Authorization'] = `Bearer ${tokens.oauth2}`;
+            if (tokens?.oauth2Token) {
+                headers['Authorization'] = `Bearer ${tokens.oauth2Token}`;
                 await db.logs.add({
                     timestamp: new Date().toISOString(),
                     level: 'warn',
@@ -176,9 +177,9 @@ async function buildAuthHeaders(
                 });
             }
         }
-    } else if (tokens?.oauth2) {
+    } else if (tokens?.oauth2Token) {
         // Fallback to OAuth2 Bearer token
-        headers['Authorization'] = `Bearer ${tokens.oauth2}`;
+        headers['Authorization'] = `Bearer ${tokens.oauth2Token}`;
         await db.logs.add({
             timestamp: new Date().toISOString(),
             level: 'warn',
@@ -393,7 +394,8 @@ export class GarminHttpClient {
      */
     async canMakeRequests(): Promise<boolean> {
         const tokens = await getStoredTokens();
-        return !!(tokens?.oauth1 && tokens?.oauth2);
+        // Check for correct token property names from GarminAuthTokens interface
+        return !!(tokens?.oauth1Token && tokens?.oauth2Token);
     }
 
     /**

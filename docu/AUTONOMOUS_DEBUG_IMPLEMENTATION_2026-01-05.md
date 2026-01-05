@@ -16,13 +16,13 @@ Das **Autonomous Debug System** ist ein vollautomatisches Debugging-Framework f�
 
 ### Layer 1: Core Tools (5 Tools)
 
-| Tool | Funktion | Input | Output |
-|------|----------|-------|--------|
-| **analyze-code** | TypeScript/ESLint/Import/Async Analyse | Files, Checks | Errors, Warnings, Suggestions |
-| **scan-errors** | Runtime Error Scanner | Sources, Filter | Error Entries, Patterns |
-| **live-debug** | Playwright E2E Debugging | Scenario, Steps | Console Errors, Network, Screenshots |
-| **fix-code** | Code-Fix Generator | Problem, File, Context | Code Fixes mit Confidence |
-| **debug-problem** | Haupt-Orchestrator | Problem, Context, Options | Full Debug Result |
+| Tool              | Funktion                               | Input                     | Output                               |
+| ----------------- | -------------------------------------- | ------------------------- | ------------------------------------ |
+| **analyze-code**  | TypeScript/ESLint/Import/Async Analyse | Files, Checks             | Errors, Warnings, Suggestions        |
+| **scan-errors**   | Runtime Error Scanner                  | Sources, Filter           | Error Entries, Patterns              |
+| **live-debug**    | Playwright E2E Debugging               | Scenario, Steps           | Console Errors, Network, Screenshots |
+| **fix-code**      | Code-Fix Generator                     | Problem, File, Context    | Code Fixes mit Confidence            |
+| **debug-problem** | Haupt-Orchestrator                     | Problem, Context, Options | Full Debug Result                    |
 
 ### Layer 2: Orchestration
 
@@ -52,17 +52,20 @@ debug-problem (Main Loop)
 ### 1. Code Analyzer (`code-analyzer.ts`)
 
 **Checks:**
+
 - ✅ TypeScript Compiler (tsc --noEmit)
 - ✅ ESLint (JSON Output)
 - ✅ Import Analysis (Unused Imports Detection)
 - ✅ Async Patterns (Missing await, Floating Promises, Missing try-catch)
 
 **Pattern Detection:**
+
 - Unused imports via Regex
 - Missing error handlers in async functions
 - Unhandled Promises (fetch, axios, http)
 
 **Output:**
+
 ```typescript
 {
   errors: CodeIssue[];      // Severity: error
@@ -82,11 +85,13 @@ debug-problem (Main Loop)
 ### 2. Error Scanner (`error-scanner.ts`)
 
 **Sources:**
+
 - 📊 **DB Logs:** IndexedDB `logs` table (via Browser Script)
 - 🖥️ **Console:** Saved debug sessions (`debug-console.log`)
 - 🧪 **Test Output:** Vitest results (`.vitest/results.json`)
 
 **Pattern Recognition:**
+
 - 401/Unauthorized → Authentication failures
 - OAuth → OAuth issues
 - Garmin → Garmin API errors
@@ -96,6 +101,7 @@ debug-problem (Main Loop)
 - Signature → Crypto/Signature errors
 
 **Output:**
+
 ```typescript
 {
   errors: ErrorEntry[];
@@ -113,6 +119,7 @@ debug-problem (Main Loop)
 ### 3. Live Debugger (`live-debugger.ts`)
 
 **Features:**
+
 - 🎭 Playwright Browser Automation
 - 📸 Screenshot Capture
 - 🌐 Network Request Monitoring
@@ -121,11 +128,13 @@ debug-problem (Main Loop)
 - 🔍 Trace Generation
 
 **Predefined Scenarios:**
+
 - `garmin-login`: Login-Flow mit MFA
 - `episode-create`: Episode-Erstellung
 - `analytics-view`: Analytics-Page Load
 
 **Actions:**
+
 - `navigate`: URL aufrufen
 - `click`: Element klicken
 - `fill`: Input ausfüllen
@@ -134,6 +143,7 @@ debug-problem (Main Loop)
 - `evaluate`: JavaScript ausführen
 
 **Output:**
+
 ```typescript
 {
   success: boolean;
@@ -153,6 +163,7 @@ debug-problem (Main Loop)
 **Fix-Strategien:**
 
 #### Pattern-Based Fixes
+
 - **OAuth1 Signature:** Body params in Signatur einbeziehen
 - **Missing await:** `await` vor async calls hinzufügen
 - **Missing try-catch:** Error handling wrappen
@@ -160,16 +171,19 @@ debug-problem (Main Loop)
 - **Import Extensions:** `.js` für ESM Imports hinzufügen
 
 #### Context-Aware Fixes
+
 - Analysiert Funktions-Kontext
 - Prüft umliegenden Code
 - Berücksichtigt Projekt-Patterns
 
 #### Reference-Based Fixes
+
 - Vergleicht mit Referenz-Code (z.B. python-garminconnect)
 - Extrahiert Key Patterns
 - Generiert ähnliche Lösungen
 
 **Confidence Scoring:**
+
 - 0.85+: OAuth/Signature Fixes (bekannte Patterns)
 - 0.75+: Missing await (eindeutig)
 - 0.70+: Missing try-catch (heuristisch)
@@ -177,6 +191,7 @@ debug-problem (Main Loop)
 - 0.60+: Reference-based fixes
 
 **Output:**
+
 ```typescript
 {
   fixes: CodeFix[];
@@ -202,25 +217,26 @@ interface CodeFix {
 ### 5. Debug Orchestrator (`debug-orchestrator.ts`)
 
 **Main Loop:**
+
 ```typescript
 for (iteration = 1; iteration <= maxIterations; iteration++) {
   // 1. Code Analysis
   codeIssues = analyzeCode(files);
-  
+
   // 2. Error Scanning
   runtimeErrors = scanErrors(filter);
-  
+
   // 3. Live Debugging (optional, first iteration only)
   if (useLiveDebug && iteration === 1) {
     liveDebugResult = liveDebug(scenario);
   }
-  
+
   // 4. Generate Fixes
   fixes = generateFixes(problem, analysis);
-  
+
   // 5. Apply Fixes (top candidate only)
   appliedChanges = applyFixes(fixes[0]);
-  
+
   // 6. Run Tests
   if (runTests) {
     testResults = runTests();
@@ -229,7 +245,7 @@ for (iteration = 1; iteration <= maxIterations; iteration++) {
       break;
     }
   }
-  
+
   // 7. Check if solved
   if (codeIssues.errors.length === 0) {
     problemSolved = true;
@@ -239,18 +255,21 @@ for (iteration = 1; iteration <= maxIterations; iteration++) {
 ```
 
 **Fix Generation:**
+
 - Top 3 Code Errors → Fixes generieren
 - Top 2 Error Patterns → Fixes generieren
 - Sortiert nach Confidence
 - Nur Top Fix wird angewendet (Conservative Strategy)
 
 **Documentation Generation:**
+
 - Automatisch nach Completion
 - Format: Markdown
 - Location: `docu/AUTO_DEBUG_*.md`
 - Inhalt: Alle Iterationen mit Details
 
 **Output:**
+
 ```typescript
 {
   success: boolean;
@@ -271,6 +290,7 @@ for (iteration = 1; iteration <= maxIterations; iteration++) {
 ## 📦 Integration in MCP Server
 
 **Neue Tools in `index.ts`:**
+
 ```typescript
 // 5 neue Tools hinzugefügt
 'debug-problem'    → debugProblem()
@@ -289,6 +309,7 @@ for (iteration = 1; iteration <= maxIterations; iteration++) {
 ### Test Script: `test-autonomous-debug.ts`
 
 **Tests:**
+
 1. ✅ Code Analyzer
 2. ✅ Error Scanner
 3. ⏭️ Live Debugger (requires dev server)
@@ -296,6 +317,7 @@ for (iteration = 1; iteration <= maxIterations; iteration++) {
 5. ✅ Full Debug Loop
 
 **Run Tests:**
+
 ```bash
 cd mcp-server
 npm run test:debug
@@ -414,16 +436,19 @@ mcp-server/
 ### Fix-Strategien
 
 **Conservative (Default):**
+
 - Nur sichere Fixes
 - Hohe Confidence (>0.75)
 - Keine Breaking Changes
 
 **Aggressive:**
+
 - Mehr Änderungen
 - Mittlere Confidence (>0.60)
 - Mögliche Breaking Changes
 
 **Experimental:**
+
 - Alle möglichen Fixes
 - Niedrige Confidence (>0.50)
 - High Risk
@@ -445,14 +470,14 @@ mcp-server/
 
 **Geschätzte Laufzeiten:**
 
-| Operation | Duration |
-|-----------|----------|
-| Code Analyze | 2-5s |
-| Error Scan | 1-2s |
-| Live Debug | 5-10s |
-| Fix Generation | 1-3s |
-| Apply Fixes | <1s |
-| Run Tests | 5-15s |
+| Operation          | Duration   |
+| ------------------ | ---------- |
+| Code Analyze       | 2-5s       |
+| Error Scan         | 1-2s       |
+| Live Debug         | 5-10s      |
+| Fix Generation     | 1-3s       |
+| Apply Fixes        | <1s        |
+| Run Tests          | 5-15s      |
 | **Full Iteration** | **15-35s** |
 
 **Worst Case:** 5 Iterations × 35s = ~3min
@@ -509,24 +534,28 @@ mcp-server/
 ## 🎯 Nächste Schritte
 
 1. **Playwright Browser installieren:**
+
    ```bash
    cd mcp-server
    npx playwright install chromium
    ```
 
 2. **Dev Server starten** (für Live Debug):
+
    ```bash
    cd /home/daniel/Desktop/garmin
    npm run dev
    ```
 
 3. **MCP Server starten:**
+
    ```bash
    cd mcp-server
    npm start
    ```
 
 4. **Test durchführen:**
+
    ```bash
    npm run test:debug
    ```
