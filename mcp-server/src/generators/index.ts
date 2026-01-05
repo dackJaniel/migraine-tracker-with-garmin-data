@@ -48,11 +48,11 @@ export function generateTestDataset(options: {
     garminData: import('./garmin-generator.js').GarminData[];
 } {
     const { year, episodeCount } = options;
-    
+
     // Importiere benötigte Funktionen
     const { generateEpisodesForYear } = require('./episode-generator.js');
     const { generateGarminDataForYear } = require('./garmin-generator.js');
-    
+
     // Generiere Episoden (8-12 pro Jahr oder spezifische Anzahl)
     const episodes = episodeCount
         ? (() => {
@@ -63,10 +63,10 @@ export function generateTestDataset(options: {
             });
         })()
         : generateEpisodesForYear(year);
-    
+
     // Generiere Garmin-Daten für das ganze Jahr
     const garminData = generateGarminDataForYear(year);
-    
+
     return {
         episodes,
         garminData

@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import PinSetup from './pages/PinSetup';
 import PinUnlock from './pages/PinUnlock';
+import { Analytics } from './pages/Analytics';
 import EpisodeForm from './features/episodes/EpisodeForm';
 
 function App() {
@@ -28,10 +29,8 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="episodes/new" element={<EpisodeForm />} />
           <Route path="episodes/:id/edit" element={<EpisodeForm />} />
-          <Route path="settings" element={<Settings />} />
-          {/* TODO: Analytics später hinzufügen
           <Route path="analytics" element={<Analytics />} />
-          */}
+          <Route path="settings" element={<Settings />} />
         </Route>
 
         {/* Fallback für unbekannte Routen */}

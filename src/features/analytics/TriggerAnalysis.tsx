@@ -1,7 +1,24 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from 'recharts';
 
 const COLORS = [
   'hsl(var(--chart-1))',
@@ -15,10 +32,10 @@ export function TriggerAnalysis() {
   // Trigger Häufigkeit (Top 10)
   const triggerFrequency = useLiveQuery(async () => {
     const allEpisodes = await db.episodes.toArray();
-    
+
     const triggerMap = new Map<string, number>();
-    allEpisodes.forEach((ep) => {
-      ep.triggers.forEach((trigger) => {
+    allEpisodes.forEach(ep => {
+      ep.triggers.forEach(trigger => {
         triggerMap.set(trigger, (triggerMap.get(trigger) || 0) + 1);
       });
     });
@@ -32,18 +49,20 @@ export function TriggerAnalysis() {
   // Medikamenten-Wirksamkeit
   const medicineEffectiveness = useLiveQuery(async () => {
     const allEpisodes = await db.episodes.toArray();
-    
+
     const medicineMap = new Map<string, { total: number; helped: number }>();
-    
-    allEpisodes.forEach((ep) => {
-      ep.medicines.forEach((medicine) => {
+
+    allEpisodes.forEach(ep => {
+      ep.medicines.forEach(medicine => {
         const current = medicineMap.get(medicine) || { total: 0, helped: 0 };
         // Annahme: Episode half wenn Intensität <= 4 oder Dauer < 4h
-        const duration = ep.endTime 
-          ? (ep.endTime.getTime() - ep.startTime.getTime()) / (1000 * 60 * 60)
+        const duration = ep.endTime
+          ? (new Date(ep.endTime).getTime() -
+              new Date(ep.startTime).getTime()) /
+            (1000 * 60 * 60)
           : 0;
         const helped = ep.intensity <= 4 || duration < 4;
-        
+
         medicineMap.set(medicine, {
           total: current.total + 1,
           helped: current.helped + (helped ? 1 : 0),
@@ -57,7 +76,7 @@ export function TriggerAnalysis() {
         successRate: Math.round((stats.helped / stats.total) * 100),
         count: stats.total,
       }))
-      .filter((m) => m.count >= 3) // Nur Medikamente mit mind. 3 Anwendungen
+      .filter(m => m.count >= 3) // Nur Medikamente mit mind. 3 Anwendungen
       .sort((a, b) => b.successRate - a.successRate)
       .slice(0, 8);
   }, []);
@@ -68,7 +87,9 @@ export function TriggerAnalysis() {
       <Card className="col-span-2 md:col-span-1">
         <CardHeader>
           <CardTitle>Top Trigger</CardTitle>
-          <CardDescription>Die 10 häufigsten Auslöser deiner Migräne-Episoden</CardDescription>
+          <CardDescription>
+            Die 10 häufigsten Auslöser deiner Migräne-Episoden
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {!triggerFrequency || triggerFrequency.length === 0 ? (
@@ -83,15 +104,18 @@ export function TriggerAnalysis() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ trigger, percent }) =>
-                    `${trigger} (${(percent * 100).toFixed(0)}%)`
+                  label={(entry: any) =>
+                    `${entry.trigger} (${((entry.percent || 0) * 100).toFixed(0)}%)`
                   }
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="count"
                 >
-                  {triggerFrequency.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  {triggerFrequency.map((_, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -121,7 +145,11 @@ export function TriggerAnalysis() {
                 <XAxis type="number" domain={[0, 100]} />
                 <YAxis dataKey="medicine" type="category" width={100} />
                 <Tooltip />
-                <Bar dataKey="successRate" fill="hsl(var(--primary))" name="Erfolgsrate %" />
+                <Bar
+                  dataKey="successRate"
+                  fill="hsl(var(--primary))"
+                  name="Erfolgsrate %"
+                />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -132,7 +160,9 @@ export function TriggerAnalysis() {
       <Card className="col-span-2">
         <CardHeader>
           <CardTitle>Trigger-Details</CardTitle>
-          <CardDescription>Detaillierte Aufschlüsselung aller Trigger</CardDescription>
+          <CardDescription>
+            Detaillierte Aufschlüsselung aller Trigger
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {!triggerFrequency || triggerFrequency.length === 0 ? (
@@ -142,9 +172,14 @@ export function TriggerAnalysis() {
           ) : (
             <div className="space-y-2">
               {triggerFrequency.map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50">
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50"
+                >
                   <span className="font-medium">{item.trigger}</span>
-                  <span className="text-sm text-muted-foreground">{item.count} Episoden</span>
+                  <span className="text-sm text-muted-foreground">
+                    {item.count} Episoden
+                  </span>
                 </div>
               ))}
             </div>

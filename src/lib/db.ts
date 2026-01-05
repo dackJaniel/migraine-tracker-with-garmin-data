@@ -1,19 +1,94 @@
 import Dexie, { type EntityTable } from 'dexie';
 
 // TypeScript Interfaces für alle Tabellen
+
+/**
+ * Erweiterte Symptom-Struktur (PAKET 8)
+ * Kategorisiert in: Schmerz, Sensorisch, Neurologisch, Allgemein, Eigene
+ */
+export interface Symptoms {
+    // Kategorie: Allgemein
+    nausea: boolean;           // Übelkeit
+    vomiting: boolean;         // Erbrechen
+    fatigue: boolean;          // Müdigkeit
+    vertigo: boolean;          // Schwindel
+    
+    // Kategorie: Sensorisch
+    photophobia: boolean;      // Lichtempfindlichkeit
+    phonophobia: boolean;      // Lärmempfindlichkeit
+    aura: boolean;             // Aura
+    visualDisturbance: boolean; // Sehstörungen (z.B. Flimmern, Blitze)
+    
+    // Kategorie: Neurologisch
+    concentration: boolean;    // Konzentrationsprobleme
+    tinglingNumbness: boolean; // Kribbeln/Taubheit
+    speechDifficulty: boolean; // Sprachschwierigkeiten
+    
+    // Kategorie: Schmerz
+    neckPain: boolean;         // Nackenschmerzen
+    
+    // Benutzerdefinierte Symptome
+    custom: string[];          // ["Augenflimmern", "Ohrensausen"]
+}
+
+/**
+ * Erstellt ein leeres Symptoms-Objekt mit allen Defaults
+ */
+export function createEmptySymptoms(): Symptoms {
+    return {
+        nausea: false,
+        vomiting: false,
+        fatigue: false,
+        vertigo: false,
+        photophobia: false,
+        phonophobia: false,
+        aura: false,
+        visualDisturbance: false,
+        concentration: false,
+        tinglingNumbness: false,
+        speechDifficulty: false,
+        neckPain: false,
+        custom: [],
+    };
+}
+
+/**
+ * Einzelner Eintrag im Intensitätsverlauf (PAKET 9)
+ * Ermöglicht das Dokumentieren der Schmerzintensität über die Zeit
+ */
+export interface IntensityEntry {
+    timestamp: string; // ISO 8601 Date String
+    intensity: number; // 1-10
+    note?: string; // Optional: "Nach Medikament besser"
+}
+
+/**
+ * Migriert alte Symptome (v1) zu neuem Format (v2)
+ */
+export function migrateSymptoms(oldSymptoms: {
+    nausea: boolean;
+    photophobia: boolean;
+    phonophobia: boolean;
+    aura: boolean;
+}): Symptoms {
+    return {
+        ...createEmptySymptoms(),
+        nausea: oldSymptoms.nausea,
+        photophobia: oldSymptoms.photophobia,
+        phonophobia: oldSymptoms.phonophobia,
+        aura: oldSymptoms.aura,
+    };
+}
+
 export interface Episode {
     id?: number;
     startTime: string; // ISO 8601 Date String
     endTime?: string; // ISO 8601 Date String
-    intensity: number; // 1-10
+    intensity: number; // 1-10 (Aktuelle/letzte Intensität)
+    intensityHistory: IntensityEntry[]; // Verlauf der Intensität über Zeit (PAKET 9)
     triggers: string[]; // ["stress", "weather", "caffeine"]
     medicines: string[]; // ["ibuprofen 400mg", "sumatriptan"]
-    symptoms: {
-        nausea: boolean;
-        photophobia: boolean;
-        phonophobia: boolean;
-        aura: boolean;
-    };
+    symptoms: Symptoms;
     notes?: string;
     createdAt: string; // ISO 8601 Date String
     updatedAt: string; // ISO 8601 Date String
@@ -65,15 +140,16 @@ export interface ArchivedEpisode {
     startTime: string;
     endTime?: string;
     intensity: number;
+    intensityHistory: IntensityEntry[]; // Verlauf der Intensität über Zeit (PAKET 9)
     triggers: string[];
     medicines: string[];
-    symptoms: {
-        nausea: boolean;
-        photophobia: boolean;
-        phonophobia: boolean;
-        aura: boolean;
-    };
+    symptoms: Symptoms;
     notes?: string;
+    // Night-Onset Tracking (PAKET 10)
+    nightOnset?: boolean;
+    nightEnd?: boolean;
+    wokeUpWithMigraine?: boolean;
+    sleepQualityBefore?: number;
     archivedAt: string; // ISO 8601 Date String
 }
 
@@ -88,6 +164,7 @@ export class MigraineDB extends Dexie {
     constructor() {
         super('MigraineTrackerDB');
 
+        // Version 1: Initiales Schema
         this.version(1).stores({
             episodes:
                 '++id, startTime, endTime, intensity, *triggers, *medicines, createdAt',
@@ -95,6 +172,48 @@ export class MigraineDB extends Dexie {
             logs: '++id, timestamp, level',
             settings: 'key',
             archivedEpisodes: '++id, startTime, archivedAt',
+        });
+
+        // Version 2: Erweiterte Symptome (PAKET 8)
+        // Migration von altem 4-Feld Symptoms zu neuem 13-Feld + Custom Format
+        this.version(2).stores({
+            episodes:
+                '++id, startTime, endTime, intensity, *triggers, *medicines, createdAt',
+            garminData: 'date, syncedAt',
+            logs: '++id, timestamp, level',
+            settings: 'key',
+            archivedEpisodes: '++id, startTime, archivedAt',
+        }).upgrade(tx => {
+            // Migriere bestehende Episoden
+            return tx.table('episodes').toCollection().modify(episode => {
+                const oldSymptoms = episode.symptoms;
+                // Prüfe ob bereits neues Format (hat 'custom' Array)
+                if (!('custom' in oldSymptoms)) {
+                    episode.symptoms = migrateSymptoms(oldSymptoms);
+                }
+            });
+        });
+
+        // Version 3: IntensityHistory hinzufügen (PAKET 9)
+        // Ermöglicht das Dokumentieren der Schmerzintensität über die Zeit
+        this.version(3).stores({
+            episodes:
+                '++id, startTime, endTime, intensity, *triggers, *medicines, createdAt',
+            garminData: 'date, syncedAt',
+            logs: '++id, timestamp, level',
+            settings: 'key',
+            archivedEpisodes: '++id, startTime, archivedAt',
+        }).upgrade(tx => {
+            // Migriere bestehende Episoden mit initialem IntensityHistory
+            return tx.table('episodes').toCollection().modify(episode => {
+                if (!episode.intensityHistory) {
+                    episode.intensityHistory = [{
+                        timestamp: episode.startTime,
+                        intensity: episode.intensity,
+                        note: 'Initial',
+                    }];
+                }
+            });
         });
     }
 }

@@ -25,7 +25,7 @@ export interface DbClearResult {
  */
 export async function clearDatabase(args: DbClearArgs): Promise<DbClearResult> {
   const validated = DbClearArgsSchema.parse(args);
-  
+
   if (!validated.confirm) {
     return {
       success: false,
@@ -34,13 +34,13 @@ export async function clearDatabase(args: DbClearArgs): Promise<DbClearResult> {
       instructions: 'This will permanently delete data. Use with caution!',
     };
   }
-  
-  const tablesToClear = validated.tables.includes('all') 
+
+  const tablesToClear = validated.tables.includes('all')
     ? ['episodes', 'garminData', 'logs', 'archivedEpisodes']
     : validated.tables.filter(t => t !== 'all'); // Exclude 'settings' by default
-  
+
   const browserScript = generateClearScript(tablesToClear as string[]);
-  
+
   return {
     success: true,
     cleared: tablesToClear,
@@ -129,7 +129,7 @@ export async function clearLogs(): Promise<DbClearResult> {
  */
 export async function clearOldData(daysOld: number = 30): Promise<DbClearResult> {
   const cutoffDate = new Date(Date.now() - daysOld * 24 * 60 * 60 * 1000);
-  
+
   const browserScript = `
 // Clear Old Data Script - Migraine Tracker
 (async () => {
@@ -169,7 +169,7 @@ export async function clearOldData(daysOld: number = 30): Promise<DbClearResult>
   };
 })();
   `.trim();
-  
+
   return {
     success: true,
     cleared: [`Data older than ${daysOld} days`],

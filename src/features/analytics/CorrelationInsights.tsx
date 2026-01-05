@@ -1,8 +1,24 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useEffect, useState } from 'react';
-import { analyzeAllCorrelations, CorrelationResult } from './correlation-service';
-import { TrendingUp, AlertCircle, Activity, Brain, Battery, Zap } from 'lucide-react';
+import {
+  analyzeAllCorrelations,
+  type CorrelationResult,
+} from './correlation-service';
+import {
+  TrendingUp,
+  AlertCircle,
+  Activity,
+  Brain,
+  Battery,
+  Zap,
+} from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export function CorrelationInsights() {
@@ -42,7 +58,7 @@ export function CorrelationInsights() {
     }
   };
 
-  const significantCorrelations = correlations.filter((c) => c.isSignificant);
+  const significantCorrelations = correlations.filter(c => c.isSignificant);
 
   if (loading) {
     return (
@@ -59,7 +75,9 @@ export function CorrelationInsights() {
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12 space-y-2">
           <Brain className="h-12 w-12 text-muted-foreground" />
-          <p className="text-muted-foreground">Nicht genügend Daten für Korrelationsanalyse</p>
+          <p className="text-muted-foreground">
+            Nicht genügend Daten für Korrelationsanalyse
+          </p>
           <p className="text-sm text-muted-foreground">
             Erfasse mindestens 5 Episoden mit Garmin-Daten
           </p>
@@ -76,8 +94,9 @@ export function CorrelationInsights() {
           <TrendingUp className="h-4 w-4" />
           <AlertTitle>🔍 Muster erkannt</AlertTitle>
           <AlertDescription>
-            Es wurden {significantCorrelations.length} signifikante Zusammenhänge zwischen deinen
-            Gesundheitsdaten und Migräne-Episoden gefunden.
+            Es wurden {significantCorrelations.length} signifikante
+            Zusammenhänge zwischen deinen Gesundheitsdaten und Migräne-Episoden
+            gefunden.
           </AlertDescription>
         </Alert>
       )}
@@ -97,13 +116,17 @@ export function CorrelationInsights() {
                 key={index}
                 className="flex items-start gap-3 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
               >
-                <div className="mt-1 text-primary">{getIcon(correlation.type)}</div>
+                <div className="mt-1 text-primary">
+                  {getIcon(correlation.type)}
+                </div>
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center gap-2">
                     <h4 className="font-semibold">{correlation.title}</h4>
                     <Badge variant="default">Signifikant</Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{correlation.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {correlation.description}
+                  </p>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
                     <span>Datenbasis: {correlation.sampleSize} Einträge</span>
                     {correlation.pValue && (
@@ -127,21 +150,26 @@ export function CorrelationInsights() {
         <CardHeader>
           <CardTitle>Weitere Analysen</CardTitle>
           <CardDescription>
-            Alle untersuchten Zusammenhänge zwischen Gesundheitsmetriken und Migräne
+            Alle untersuchten Zusammenhänge zwischen Gesundheitsmetriken und
+            Migräne
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {correlations
-            .filter((c) => !c.isSignificant)
+            .filter(c => !c.isSignificant)
             .map((correlation, index) => (
               <div
                 key={index}
                 className="flex items-start gap-3 p-4 rounded-lg border hover:bg-muted/50 transition-colors"
               >
-                <div className="mt-1 text-muted-foreground">{getIcon(correlation.type)}</div>
+                <div className="mt-1 text-muted-foreground">
+                  {getIcon(correlation.type)}
+                </div>
                 <div className="flex-1 space-y-1">
                   <h4 className="font-semibold">{correlation.title}</h4>
-                  <p className="text-sm text-muted-foreground">{correlation.description}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {correlation.description}
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1">
                     Datenbasis: {correlation.sampleSize} Einträge
                   </p>
@@ -153,7 +181,7 @@ export function CorrelationInsights() {
                 </div>
               </div>
             ))}
-          {correlations.filter((c) => !c.isSignificant).length === 0 && (
+          {correlations.filter(c => !c.isSignificant).length === 0 && (
             <p className="text-sm text-muted-foreground text-center py-4">
               Alle gefundenen Zusammenhänge sind signifikant
             </p>
@@ -168,15 +196,18 @@ export function CorrelationInsights() {
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground space-y-2">
           <p>
-            Diese Analyse zeigt statistische Zusammenhänge zwischen deinen Gesundheitsdaten und
-            Migräne-Episoden. Ein Zusammenhang bedeutet nicht automatisch eine Ursache-Wirkungs-Beziehung.
+            Diese Analyse zeigt statistische Zusammenhänge zwischen deinen
+            Gesundheitsdaten und Migräne-Episoden. Ein Zusammenhang bedeutet
+            nicht automatisch eine Ursache-Wirkungs-Beziehung.
           </p>
           <p>
-            <strong>Signifikant:</strong> Muster mit hoher statistischer Aussagekraft (p-Wert &lt; 0.05)
-            und mindestens 20% Unterschied zur Baseline.
+            <strong>Signifikant:</strong> Muster mit hoher statistischer
+            Aussagekraft (p-Wert &lt; 0.05) und mindestens 20% Unterschied zur
+            Baseline.
           </p>
           <p>
-            Nutze diese Erkenntnisse als Hinweise für Gespräche mit medizinischem Fachpersonal.
+            Nutze diese Erkenntnisse als Hinweise für Gespräche mit
+            medizinischem Fachpersonal.
           </p>
         </CardContent>
       </Card>

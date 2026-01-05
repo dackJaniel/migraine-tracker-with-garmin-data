@@ -12,7 +12,9 @@ import {
   getAllMedicines,
 } from '@/features/episodes/episode-service';
 import { useEpisode } from '@/hooks/use-episodes';
-import { episodeSchema, type EpisodeFormData } from './episode-schema';
+import { episodeSchema, DEFAULT_SYMPTOMS, type EpisodeFormData } from './episode-schema';
+import { saveCustomSymptoms } from './symptom-service';
+import SymptomSelector from './SymptomSelector';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,7 +36,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon, Plus, X, Save, ArrowLeft } from 'lucide-react';
+import { CalendarIcon, Plus, X, Save, ArrowLeft, Moon, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Intensität Emojis
@@ -100,14 +102,13 @@ export default function EpisodeForm() {
       intensity: 5,
       triggers: [],
       medicines: [],
-      symptoms: {
-        nausea: false,
-        photophobia: false,
-        phonophobia: false,
-        aura: false,
-      },
+      symptoms: DEFAULT_SYMPTOMS,
       notes: '',
       isOngoing: false,
+      // Night-Onset Tracking (PAKET 10)
+      nightOnset: false,
+      wokeUpWithMigraine: false,
+      sleepQualityBefore: null,
     },
   });
 
@@ -115,6 +116,9 @@ export default function EpisodeForm() {
   const triggers = watch('triggers');
   const medicines = watch('medicines');
   const isOngoing = watch('isOngoing');
+  const startTime = watch('startTime');
+  const nightOnset = watch('nightOnset');
+  const wokeUpWithMigraine = watch('wokeUpWithMigraine');
 
   // Lade vorhandene Trigger und Medikamente
   useEffect(() => {
@@ -153,6 +157,10 @@ export default function EpisodeForm() {
       setValue('symptoms', existingEpisode.symptoms);
       setValue('notes', existingEpisode.notes || '');
       setValue('isOngoing', !existingEpisode.endTime);
+      // Night-Onset Tracking (PAKET 10)
+      setValue('nightOnset', existingEpisode.nightOnset || false);
+      setValue('wokeUpWithMigraine', existingEpisode.wokeUpWithMigraine || false);
+      setValue('sleepQualityBefore', existingEpisode.sleepQualityBefore || null);
     }
   }, [isEditMode, existingEpisode, setValue]);
 
@@ -162,6 +170,17 @@ export default function EpisodeForm() {
       setValue('endTime', null);
     }
   }, [isOngoing, setValue]);
+
+  // Auto-Detect Night Onset (PAKET 10)
+  useEffect(() => {
+    if (startTime && !isEditMode) {
+      const isNight = isNightTime(startTime);
+      if (isNight && !nightOnset) {
+        // Schlägt automatisch vor, nightOnset zu aktivieren
+        setValue('nightOnset', true);
+      }
+    }
+  }, [startTime, isEditMode, nightOnset, setValue]);
 
   const onSubmit = async (data: EpisodeFormData) => {
     setLoading(true);
@@ -174,7 +193,17 @@ export default function EpisodeForm() {
         medicines: data.medicines,
         symptoms: data.symptoms,
         notes: data.notes || undefined,
+        // Night-Onset Tracking (PAKET 10)
+        nightOnset: data.nightOnset || false,
+        nightEnd: data.endTime ? isNightTime(data.endTime) : false,
+        wokeUpWithMigraine: data.wokeUpWithMigraine || false,
+        sleepQualityBefore: data.sleepQualityBefore || undefined,
       };
+
+      // Speichere Custom-Symptome für zukünftige Autocomplete (PAKET 8)
+      if (data.symptoms.custom && data.symptoms.custom.length > 0) {
+        await saveCustomSymptoms(data.symptoms.custom);
+      }
 
       if (isEditMode && id) {
         await updateEpisode(parseInt(id), episodeData);
@@ -407,6 +436,108 @@ export default function EpisodeForm() {
           </CardContent>
         </Card>
 
+        {/* Nacht-Tracking (PAKET 10) */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Moon className="h-5 w-5" />
+              Nacht-Tracking
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Auto-Detect Hinweis */}
+            {isNightTime(startTime) && (
+              <div className="bg-slate-100 p-3 rounded-lg text-sm text-slate-600">
+                <p>Die Startzeit liegt zwischen 22:00 und 06:00 Uhr (Nacht).</p>
+              </div>
+            )}
+
+            {/* Nacht-Beginn */}
+            <Controller
+              name="nightOnset"
+              control={control}
+              render={({ field }) => (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="nightOnset">Während der Nacht begonnen</Label>
+                    <p className="text-xs text-slate-500">22:00 - 06:00 Uhr</p>
+                  </div>
+                  <Switch
+                    id="nightOnset"
+                    checked={field.value || false}
+                    onCheckedChange={field.onChange}
+                  />
+                </div>
+              )}
+            />
+
+            {/* Mit Migräne aufgewacht */}
+            <Controller
+              name="wokeUpWithMigraine"
+              control={control}
+              render={({ field }) => (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="wokeUpWithMigraine">Mit Migräne aufgewacht</Label>
+                    <p className="text-xs text-slate-500">Migräne war beim Aufwachen bereits da</p>
+                  </div>
+                  <Switch
+                    id="wokeUpWithMigraine"
+                    checked={field.value || false}
+                    onCheckedChange={field.onChange}
+                  />
+                </div>
+              )}
+            />
+
+            {/* Schlafqualität vor Episode */}
+            {(nightOnset || wokeUpWithMigraine) && (
+              <div className="space-y-3">
+                <Label>Schlafqualität vor der Episode</Label>
+                <Controller
+                  name="sleepQualityBefore"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="space-y-2">
+                      <div className="flex justify-between gap-2">
+                        {[1, 2, 3, 4, 5].map(rating => (
+                          <Button
+                            key={rating}
+                            type="button"
+                            variant={field.value === rating ? 'default' : 'outline'}
+                            size="sm"
+                            className="flex-1 flex-col h-auto py-2"
+                            onClick={() => field.onChange(field.value === rating ? null : rating)}
+                          >
+                            <div className="flex">
+                              {Array.from({ length: rating }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={cn(
+                                    'h-3 w-3',
+                                    field.value === rating
+                                      ? 'fill-white text-white'
+                                      : 'fill-yellow-400 text-yellow-400'
+                                  )}
+                                />
+                              ))}
+                            </div>
+                          </Button>
+                        ))}
+                      </div>
+                      {field.value && (
+                        <p className="text-sm text-center text-slate-600">
+                          {SLEEP_QUALITY_LABELS[field.value]}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Intensität */}
         <Card>
           <CardHeader>
@@ -569,70 +700,8 @@ export default function EpisodeForm() {
           </CardContent>
         </Card>
 
-        {/* Symptome */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Symptome</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Controller
-              name="symptoms.nausea"
-              control={control}
-              render={({ field }) => (
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="nausea">Übelkeit</Label>
-                  <Switch
-                    id="nausea"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </div>
-              )}
-            />
-            <Controller
-              name="symptoms.photophobia"
-              control={control}
-              render={({ field }) => (
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="photophobia">Lichtempfindlichkeit</Label>
-                  <Switch
-                    id="photophobia"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </div>
-              )}
-            />
-            <Controller
-              name="symptoms.phonophobia"
-              control={control}
-              render={({ field }) => (
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="phonophobia">Lärmempfindlichkeit</Label>
-                  <Switch
-                    id="phonophobia"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </div>
-              )}
-            />
-            <Controller
-              name="symptoms.aura"
-              control={control}
-              render={({ field }) => (
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="aura">Aura</Label>
-                  <Switch
-                    id="aura"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </div>
-              )}
-            />
-          </CardContent>
-        </Card>
+        {/* Symptome (PAKET 8: Erweiterte Symptom-Erfassung) */}
+        <SymptomSelector control={control} setValue={setValue} />
 
         {/* Notizen */}
         <Card>

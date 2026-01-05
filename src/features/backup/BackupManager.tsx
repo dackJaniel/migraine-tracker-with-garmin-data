@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -10,7 +11,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   AlertDialog,
@@ -23,15 +23,26 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { Download, Upload, AlertTriangle } from 'lucide-react';
+import {
+  Download,
+  Upload,
+  AlertTriangle,
+  CheckCircle2,
+  Circle,
+  FileArchive,
+  Shield,
+  Info,
+} from 'lucide-react';
 import {
   exportData,
   importData,
   validateBackup,
   validatePasswordStrength,
-  BackupData,
+  type BackupData,
 } from './backup-service';
 import { Badge } from '@/components/ui/badge';
+import { db } from '@/lib/db';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 export function BackupManager() {
   const [exportPassword, setExportPassword] = useState('');
@@ -43,6 +54,10 @@ export function BackupManager() {
   const [backupPreview, setBackupPreview] = useState<BackupData | null>(null);
   const [importMode, setImportMode] = useState<'merge' | 'replace'>('merge');
   const [showReplaceWarning, setShowReplaceWarning] = useState(false);
+
+  // Aktuelle Datenbank-Statistiken für Export-Vorschau
+  const episodeCount = useLiveQuery(() => db.episodes.count(), []) ?? 0;
+  const garminCount = useLiveQuery(() => db.garminData.count(), []) ?? 0;
 
   const passwordStrength = validatePasswordStrength(exportPassword);
 
@@ -64,7 +79,8 @@ export function BackupManager() {
     } catch (error) {
       console.error('Export Fehler:', error);
       toast.error('Backup fehlgeschlagen', {
-        description: error instanceof Error ? error.message : 'Unbekannter Fehler',
+        description:
+          error instanceof Error ? error.message : 'Unbekannter Fehler',
       });
     } finally {
       setIsExporting(false);
@@ -95,7 +111,10 @@ export function BackupManager() {
     } catch (error) {
       console.error('Validierung Fehler:', error);
       toast.error('Backup ungültig', {
-        description: error instanceof Error ? error.message : 'Falsches Passwort oder beschädigte Datei',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Falsches Passwort oder beschädigte Datei',
       });
     } finally {
       setIsImporting(false);
@@ -123,7 +142,7 @@ export function BackupManager() {
     try {
       const fileContent = await importFile.text();
       const stats = await importData(fileContent, importPassword, importMode);
-      
+
       toast.success('Import erfolgreich', {
         description: `${stats.episodes} Episoden, ${stats.garminData} Garmin-Einträge importiert`,
       });
@@ -132,13 +151,14 @@ export function BackupManager() {
       setImportFile(null);
       setImportPassword('');
       setBackupPreview(null);
-      
+
       // Seite neu laden um Daten anzuzeigen
       setTimeout(() => window.location.reload(), 1000);
     } catch (error) {
       console.error('Import Fehler:', error);
       toast.error('Import fehlgeschlagen', {
-        description: error instanceof Error ? error.message : 'Unbekannter Fehler',
+        description:
+          error instanceof Error ? error.message : 'Unbekannter Fehler',
       });
     } finally {
       setIsImporting(false);
@@ -146,28 +166,70 @@ export function BackupManager() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Schritt-für-Schritt Anleitung */}
+      <Card className="bg-slate-50 border-slate-200">
+        <CardContent className="pt-4">
+          <div className="flex items-start gap-3">
+            <Info className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-slate-600">
+              <p className="font-medium text-slate-800 mb-1">So funktioniert die Datensicherung:</p>
+              <ol className="list-decimal list-inside space-y-1">
+                <li>Wähle ein sicheres Passwort (mindestens 8 Zeichen)</li>
+                <li>Das Backup wird als verschlüsselte .enc Datei gespeichert</li>
+                <li>Bewahre das Passwort sicher auf - ohne es kannst du das Backup nicht wiederherstellen</li>
+              </ol>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Export Section */}
       <div className="space-y-4">
-        <div>
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Download className="h-5 w-5" />
-            Backup erstellen
-          </h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            Exportiere alle Daten als verschlüsselte Backup-Datei
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Download className="h-5 w-5" />
+              Backup erstellen
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Exportiere alle Daten als verschlüsselte Backup-Datei
+            </p>
+          </div>
         </div>
+
+        {/* Vorschau was exportiert wird */}
+        <Card className="bg-green-50/50 border-green-200">
+          <CardContent className="pt-4">
+            <div className="flex items-center gap-2 mb-3">
+              <FileArchive className="h-4 w-4 text-green-600" />
+              <span className="text-sm font-medium text-green-800">Was wird exportiert:</span>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <span className="text-sm">{episodeCount} Episoden</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <span className="text-sm">{garminCount} Garmin-Einträge</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="space-y-3">
           <div className="space-y-2">
-            <Label htmlFor="export-password">Backup-Passwort</Label>
+            <Label htmlFor="export-password" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Backup-Passwort
+            </Label>
             <Input
               id="export-password"
               type="password"
               placeholder="Mindestens 8 Zeichen"
               value={exportPassword}
-              onChange={(e) => setExportPassword(e.target.value)}
+              onChange={e => setExportPassword(e.target.value)}
             />
             {exportPassword && (
               <div className="space-y-1">
@@ -177,8 +239,8 @@ export function BackupManager() {
                       passwordStrength.strength === 'strong'
                         ? 100
                         : passwordStrength.strength === 'medium'
-                        ? 60
-                        : 30
+                          ? 60
+                          : 30
                     }
                     className="h-1"
                   />
@@ -187,29 +249,37 @@ export function BackupManager() {
                       passwordStrength.strength === 'strong'
                         ? 'default'
                         : passwordStrength.strength === 'medium'
-                        ? 'secondary'
-                        : 'destructive'
+                          ? 'secondary'
+                          : 'destructive'
                     }
                   >
                     {passwordStrength.strength === 'strong'
                       ? 'Stark'
                       : passwordStrength.strength === 'medium'
-                      ? 'Mittel'
-                      : 'Schwach'}
+                        ? 'Mittel'
+                        : 'Schwach'}
                   </Badge>
                 </div>
-                <p className="text-xs text-muted-foreground">{passwordStrength.message}</p>
+                <p className="text-xs text-muted-foreground">
+                  {passwordStrength.message}
+                </p>
               </div>
             )}
           </div>
 
           <Button
             onClick={handleExport}
-            disabled={isExporting || !passwordStrength.isValid}
+            disabled={isExporting || !passwordStrength.isValid || (episodeCount === 0 && garminCount === 0)}
             className="w-full"
           >
             {isExporting ? 'Erstelle Backup...' : 'Backup jetzt erstellen'}
           </Button>
+          {episodeCount === 0 && garminCount === 0 && (
+            <p className="text-xs text-amber-600 flex items-center gap-1">
+              <AlertTriangle className="h-3 w-3" />
+              Keine Daten zum Exportieren vorhanden
+            </p>
+          )}
         </div>
       </div>
 
@@ -235,6 +305,24 @@ export function BackupManager() {
           </p>
         </div>
 
+        {/* Import Schritte Anzeige */}
+        <div className="flex items-center gap-2 text-sm">
+          <div className={`flex items-center gap-1 ${importFile ? 'text-green-600' : 'text-muted-foreground'}`}>
+            {importFile ? <CheckCircle2 className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
+            <span>1. Datei</span>
+          </div>
+          <span className="text-muted-foreground">→</span>
+          <div className={`flex items-center gap-1 ${importPassword ? 'text-green-600' : 'text-muted-foreground'}`}>
+            {importPassword ? <CheckCircle2 className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
+            <span>2. Passwort</span>
+          </div>
+          <span className="text-muted-foreground">→</span>
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <Circle className="h-4 w-4" />
+            <span>3. Validieren</span>
+          </div>
+        </div>
+
         <div className="space-y-3">
           <div className="space-y-2">
             <Label htmlFor="import-file">Backup-Datei</Label>
@@ -246,7 +334,8 @@ export function BackupManager() {
             />
             {importFile && (
               <p className="text-xs text-muted-foreground">
-                Datei: {importFile.name} ({(importFile.size / 1024).toFixed(1)} KB)
+                Datei: {importFile.name} ({(importFile.size / 1024).toFixed(1)}{' '}
+                KB)
               </p>
             )}
           </div>
@@ -258,7 +347,7 @@ export function BackupManager() {
               type="password"
               placeholder="Passwort eingeben"
               value={importPassword}
-              onChange={(e) => setImportPassword(e.target.value)}
+              onChange={e => setImportPassword(e.target.value)}
             />
           </div>
 
@@ -287,11 +376,15 @@ export function BackupManager() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <p className="text-sm font-medium">Episoden</p>
-                  <p className="text-2xl font-bold">{backupPreview.episodes.length}</p>
+                  <p className="text-2xl font-bold">
+                    {backupPreview.episodes.length}
+                  </p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm font-medium">Garmin-Daten</p>
-                  <p className="text-2xl font-bold">{backupPreview.garminData.length}</p>
+                  <p className="text-2xl font-bold">
+                    {backupPreview.garminData.length}
+                  </p>
                 </div>
                 <div className="space-y-1 col-span-2">
                   <p className="text-sm font-medium">Erstellt am</p>
@@ -329,7 +422,10 @@ export function BackupManager() {
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowImportDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowImportDialog(false)}
+            >
               Abbrechen
             </Button>
             <Button onClick={handleImport}>Jetzt importieren</Button>
@@ -338,7 +434,10 @@ export function BackupManager() {
       </Dialog>
 
       {/* Replace Warning Dialog */}
-      <AlertDialog open={showReplaceWarning} onOpenChange={setShowReplaceWarning}>
+      <AlertDialog
+        open={showReplaceWarning}
+        onOpenChange={setShowReplaceWarning}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
@@ -346,13 +445,17 @@ export function BackupManager() {
               Achtung: Alle Daten werden gelöscht
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Du bist dabei, alle bestehenden Daten zu löschen und durch das Backup zu ersetzen.
-              Diese Aktion kann nicht rückgängig gemacht werden.
+              Du bist dabei, alle bestehenden Daten zu löschen und durch das
+              Backup zu ersetzen. Diese Aktion kann nicht rückgängig gemacht
+              werden.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-            <AlertDialogAction onClick={executeImport} className="bg-destructive">
+            <AlertDialogAction
+              onClick={executeImport}
+              className="bg-destructive"
+            >
               Trotzdem fortfahren
             </AlertDialogAction>
           </AlertDialogFooter>

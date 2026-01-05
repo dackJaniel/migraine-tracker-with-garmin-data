@@ -78,6 +78,7 @@ mcp-server/
 ```
 
 **Presets:**
+
 - `minimal`: 5 Episodes, 7 Tage Garmin Data
 - `realistic`: 15 Episodes, 30 Tage Garmin Data
 - `extensive`: 50 Episodes, 90 Tage Garmin Data
@@ -103,6 +104,7 @@ mcp-server/
 ```
 
 **Features:**
+
 - Watch Mode Support
 - Coverage Integration
 - File-spezifische Tests
@@ -123,11 +125,13 @@ mcp-server/
 
 ### 7. Mock Data Generators (11 Functions)
 
-**Files:** 
+**Files:**
+
 - `src/generators/episode-generator.ts` (220 LOC)
 - `src/generators/garmin-generator.ts` (280 LOC)
 
 **Episode Generators (4):**
+
 ```typescript
 - generateEpisodes(count, dateRange)
 - generateActiveEpisode(startDate?)
@@ -136,6 +140,7 @@ mcp-server/
 ```
 
 **Garmin Generators (6):**
+
 ```typescript
 - generateGarminDataForDate(date, options?)
 - generateGarminData(dateRange)
@@ -146,6 +151,7 @@ mcp-server/
 ```
 
 **Korrelationen:**
+
 - Schlechter Schlaf → Niedriger Body Battery
 - Hoher Stress → Hoher Resting HR
 - Niedriger HRV → Hoher Stress
@@ -156,6 +162,7 @@ mcp-server/
 **File:** `src/mocks/garmin-api-mock.ts` (500+ LOC)
 
 **Express Server Features:**
+
 - CORS Support
 - Simulierte Latenz (konfigurierbar)
 - Error Rate Injection (konfigurierbar)
@@ -165,11 +172,13 @@ mcp-server/
 **Implementierte Endpoints:**
 
 **Auth:**
+
 - `POST /auth/login` → OAuth Token Flow
 - `POST /auth/logout`
 - `POST /auth/refresh` → Token Refresh
 
 **Wellness Service:**
+
 - `GET /wellness-service/wellness/dailySleepData/:date`
 - `GET /wellness-service/wellness/dailyStress/:date`
 - `GET /wellness-service/wellness/dailyHeartRate/:date`
@@ -178,13 +187,16 @@ mcp-server/
 - `GET /wellness-service/wellness/daily/respiration/:date`
 
 **HRV Service:**
+
 - `GET /hrv-service/hrv/:date`
 
 **User Summary Service:**
+
 - `GET /usersummary-service/hydration/allData/:date`
 - `GET /usersummary-service/usersummary/daily/:date`
 
 **Konfigurationsoptionen:**
+
 ```typescript
 {
   port: 3001,
@@ -221,6 +233,7 @@ mcp-server/
 **File:** `.vscode/tasks.json`
 
 **Tasks:**
+
 - `MCP Server: Start` → Startet MCP Server
 - `MCP Server: Build` → Kompiliert TypeScript
 - `MCP Server: Watch` → Watch Mode
@@ -229,17 +242,20 @@ mcp-server/
 - `Run Tests with Coverage`
 
 **Nutzung:**
+
 - `Ctrl+Shift+P` → "Run Task" → Task auswählen
 - Terminal Panel zeigt Output
 
 ## 🤖 Claude Desktop Integration
 
 **Config Location:**
+
 - Linux: `~/.config/Claude/claude_desktop_config.json`
 - Mac: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
 **Config:**
+
 ```json
 {
   "mcpServers": {
@@ -256,6 +272,7 @@ Nach Config-Änderung: Claude Desktop neustarten
 ## 📊 Tool Usage Examples
 
 ### DB Inspector
+
 ```javascript
 // Tool: db-inspect
 {
@@ -266,6 +283,7 @@ Nach Config-Änderung: Claude Desktop neustarten
 ```
 
 ### DB Seed
+
 ```javascript
 // Tool: db-quick-seed
 {
@@ -275,6 +293,7 @@ Nach Config-Änderung: Claude Desktop neustarten
 ```
 
 ### Test Runner
+
 ```javascript
 // Tool: run-tests
 {
@@ -285,13 +304,16 @@ Nach Config-Änderung: Claude Desktop neustarten
 ```
 
 ### Coverage Check
+
 ```javascript
 // Tool: coverage-summary
-{}
+{
+}
 // → Gibt formatted Coverage Report aus
 ```
 
 ### Garmin Mock Server
+
 ```javascript
 // Tool: garmin-mock-start
 {
@@ -307,6 +329,7 @@ Nach Config-Änderung: Claude Desktop neustarten
 ### Unit Tests (Noch nicht implementiert)
 
 **Geplante Tests:**
+
 - `mcp-tools.test.ts` → Tool Execution Logic
 - `generators.test.ts` → Mock Data Validation
 - `mock-server.test.ts` → API Endpoint Tests
@@ -316,6 +339,7 @@ Nach Config-Änderung: Claude Desktop neustarten
 ### Integration Tests
 
 Über Claude Desktop:
+
 1. MCP Server starten
 2. Tools aufrufen via Claude Chat
 3. Browser-Scripts in DevTools ausführen
@@ -324,6 +348,7 @@ Nach Config-Änderung: Claude Desktop neustarten
 ## 📈 Statistiken
 
 **Lines of Code:**
+
 - MCP Server Core: ~400 LOC
 - DB Tools: ~600 LOC
 - Generators: ~500 LOC
@@ -337,11 +362,13 @@ Nach Config-Änderung: Claude Desktop neustarten
 ## 🚀 Nächste Schritte
 
 ### Sofort möglich:
+
 1. MCP Server in Claude Desktop registrieren
 2. Tools im Chat testen
 3. Garmin Mock Server für Garmin API Client nutzen
 
 ### Zukünftige Erweiterungen:
+
 - [ ] Playwright Integration für automatische Browser-Script Execution
 - [ ] Snapshot Testing für Generated Data
 - [ ] Performance Benchmarks für Generators
@@ -366,6 +393,7 @@ Nach Config-Änderung: Claude Desktop neustarten
 ## 🎉 Fazit
 
 PAKET 6 ist vollständig abgeschlossen. Der MCP Server bietet ein umfassendes Testing-Toolkit mit:
+
 - DB Inspektion und Manipulation
 - Test Execution und Coverage
 - Mock Data Generation

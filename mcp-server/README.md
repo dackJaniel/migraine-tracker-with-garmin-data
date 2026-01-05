@@ -47,21 +47,27 @@ Füge folgende Config zu `~/.config/Claude/claude_desktop_config.json` hinzu:
 ## Available Tools
 
 ### db-inspect
+
 Liest IndexedDB Daten aus der Migraine Tracker DB.
 
 ### db-seed
+
 Generiert realistische Test-Daten für Development und Testing.
 
 ### db-clear
+
 Löscht alle Daten aus der Datenbank (für Test-Reset).
 
 ### garmin-mock
+
 Startet Mock-Server für Garmin Connect API auf localhost:3001.
 
 ### run-tests
+
 Führt Vitest/Playwright Tests aus.
 
 ### check-coverage
+
 Gibt Test Coverage Report aus.
 
 ## Architecture

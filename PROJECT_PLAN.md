@@ -633,7 +633,7 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
 
 ---
 
-### 📦 PAKET 5: [AGENT: ANALYTICS] - Charts, Korrelationen & Export
+### 📦 PAKET 5: [AGENT: ANALYTICS] - Charts, Korrelationen & Export ✅ COMPLETED
 
 **Ziel:** Visualisierung mit Korrelations-Insights und verschlüsselte Datensicherung.
 
@@ -648,47 +648,47 @@ Jedes Paket ist so formuliert, dass es direkt von einer KI bearbeitet werden kan
 
 **Todo-Liste:**
 
-- [ ] `[📊 SEQ]` **Stats Page:** `src/pages/Analytics.tsx`
-  - [ ] Tab-Navigation: "Übersicht", "Trigger", "Korrelationen", "Export"
-- [ ] `[📊 PARALLEL]` **SUB-AGENT 1: Charts (Recharts):**
-  - [ ] Anzahl Episoden pro Monat (BarChart)
-  - [ ] Durchschnittliche Intensität pro Wochentag (BarChart)
-  - [ ] Trigger Häufigkeit (PieChart, Top 10)
-  - [ ] Medikamenten-Wirksamkeit (Success Rate)
-  - [ ] Garmin-Metriken Timeline (Line Chart mit Multiple Lines)
-- [ ] `[📊 PARALLEL]` **SUB-AGENT 2: Korrelations-Engine:** `src/features/analytics/correlation-service.ts`
-  - [ ] `analyzeSleptCorrelation()` → "Bei <6h Schlaf: X% mehr Episoden"
-  - [ ] `analyzeStressCorrelation()` → "Hoher Stress (>70): X% mehr Episoden"
-  - [ ] `analyzeHRVCorrelation()` → "Niedriger HRV: X% mehr Episoden"
-  - [ ] `analyzeTriggerPatterns()` → "Trigger X führt in Y% der Fälle zu Episoden"
-  - [ ] Statistical Significance Check (Chi-Square Test, p-value)
-- [ ] `[📊 PARALLEL - DEPENDS: correlation-service]` **Korrelations-Anzeige:** `src/features/analytics/CorrelationInsights.tsx`
-  - [ ] Card-basierte Insights
-  - [ ] "🔍 Muster erkannt" Badge bei signifikanten Korrelationen
-  - [ ] Detail-Modal mit Erklärung
-  - [ ] Beispiel: "An Tagen mit <6h Schlaf hattest du 3x häufiger Migräne (15 von 20 Tagen)"
-- [ ] `[📊 PARALLEL]` **SUB-AGENT 3: Backup Service:** `src/features/backup/backup-service.ts`
-  - [ ] `exportData(password)`:
-    - [ ] Holt alle Daten aus DB
-    - [ ] Serialisiert zu JSON
-    - [ ] Verschlüsselt mit AES-GCM (WebCrypto)
-    - [ ] Speichert als `migraine-backup-[DATUM].enc` via Filesystem API
-    - [ ] Nutzt Share API für Export
-  - [ ] `importData(fileUri, password)`:
-    - [ ] Liest Datei
-    - [ ] Entschlüsselt
-    - [ ] Validiert JSON Schema
-    - [ ] Merged/Replaces DB (User-Auswahl)
-    - [ ] Zeigt Diff vor Import
-- [ ] `[📊 PARALLEL - DEPENDS: backup-service]` **Backup UI:** `src/features/backup/BackupManager.tsx`
-  - [ ] Button "Backup erstellen"
-  - [ ] Password-Input mit Stärke-Anzeige
-  - [ ] Button "Backup wiederherstellen"
-  - [ ] File-Picker
-  - [ ] Import-Vorschau: "X Episoden, Y Garmin-Einträge"
-- [ ] `[🧪 PARALLEL]` Unit Tests:
-  - [ ] `correlation-service.test.ts` → Statistical Logic
-  - [ ] `backup-service.test.ts` → Encrypt/Decrypt Roundtrip
+- [x] `[📊 SEQ]` **Stats Page:** `src/pages/Analytics.tsx`
+  - [x] Tab-Navigation: "Übersicht", "Trigger", "Korrelationen", "Export"
+- [x] `[📊 PARALLEL]` **SUB-AGENT 1: Charts (Recharts):**
+  - [x] Anzahl Episoden pro Monat (BarChart)
+  - [x] Durchschnittliche Intensität pro Wochentag (BarChart)
+  - [x] Trigger Häufigkeit (PieChart, Top 10)
+  - [x] Medikamenten-Wirksamkeit (Success Rate)
+  - [x] Garmin-Metriken Timeline (Line Chart mit Multiple Lines)
+- [x] `[📊 PARALLEL]` **SUB-AGENT 2: Korrelations-Engine:** `src/features/analytics/correlation-service.ts`
+  - [x] `analyzeSleptCorrelation()` → "Bei <6h Schlaf: X% mehr Episoden"
+  - [x] `analyzeStressCorrelation()` → "Hoher Stress (>70): X% mehr Episoden"
+  - [x] `analyzeHRVCorrelation()` → "Niedriger HRV: X% mehr Episoden"
+  - [x] `analyzeTriggerPatterns()` → "Trigger X führt in Y% der Fälle zu Episoden"
+  - [x] Statistical Significance Check (Chi-Square Test, p-value)
+- [x] `[📊 PARALLEL - DEPENDS: correlation-service]` **Korrelations-Anzeige:** `src/features/analytics/CorrelationInsights.tsx`
+  - [x] Card-basierte Insights
+  - [x] "🔍 Muster erkannt" Badge bei signifikanten Korrelationen
+  - [x] Detail-Modal mit Erklärung
+  - [x] Beispiel: "An Tagen mit <6h Schlaf hattest du 3x häufiger Migräne (15 von 20 Tagen)"
+- [x] `[📊 PARALLEL]` **SUB-AGENT 3: Backup Service:** `src/features/backup/backup-service.ts`
+  - [x] `exportData(password)`:
+    - [x] Holt alle Daten aus DB
+    - [x] Serialisiert zu JSON
+    - [x] Verschlüsselt mit AES-GCM (WebCrypto)
+    - [x] Speichert als `migraine-backup-[DATUM].enc` via Filesystem API
+    - [x] Nutzt Share API für Export
+  - [x] `importData(fileUri, password)`:
+    - [x] Liest Datei
+    - [x] Entschlüsselt
+    - [x] Validiert JSON Schema
+    - [x] Merged/Replaces DB (User-Auswahl)
+    - [x] Zeigt Diff vor Import
+- [x] `[📊 PARALLEL - DEPENDS: backup-service]` **Backup UI:** `src/features/backup/BackupManager.tsx`
+  - [x] Button "Backup erstellen"
+  - [x] Password-Input mit Stärke-Anzeige
+  - [x] Button "Backup wiederherstellen"
+  - [x] File-Picker
+  - [x] Import-Vorschau: "X Episoden, Y Garmin-Einträge"
+- [x] `[🧪 PARALLEL]` Unit Tests:
+  - [x] `correlation-service.test.ts` → Statistical Logic
+  - [x] `backup-service.test.ts` → Encrypt/Decrypt Roundtrip
 - [ ] `[🧪 PARALLEL]` E2E Tests:
   - [ ] `analytics.e2e.test.ts` → Chart Rendering
   - [ ] `backup.e2e.test.ts` → Export/Import Flow
@@ -799,13 +799,347 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 ---
 
+### 📦 PAKET 7: [AGENT: GARMIN-REAL] - Echte Garmin API Synchronisation
+
+**Ziel:** Implementierung der echten Garmin Connect API Synchronisation (Stubs → Real API).
+
+**🏷️ Execution Mode:** `[🔗 SEQUENTIAL - DEPENDS: PAKET 4]` (Baut auf bestehenden Stubs auf)
+
+**🤖 Sub-Agent Strategy:**
+
+- `subagent-auth-real` → Echte OAuth Implementierung
+- `subagent-endpoints-real` → Echte API Calls (PARALLEL)
+- `subagent-sync-real` → Sync Logic mit Error Handling
+- **Sync Point:** Auth → Endpoints → Sync
+
+**Referenz:** python-garminconnect Library (garth für OAuth)
+
+**Todo-Liste:**
+
+- [x] `[🔗 SEQ]` **Echte OAuth Implementierung** `src/lib/garmin/auth.ts`
+  - [x] SSO Login Flow basierend auf `garth` Library Pattern
+  - [x] OAuth1 + OAuth2 Token Handling
+  - [x] Token Storage in `@capacitor/preferences`
+  - [x] Token Refresh Logic (24h Lifetime)
+  - [x] MFA Support (Two-Phase Login)
+- [x] `[🔗 SEQ]` **HTTP Client Wrapper** `src/lib/garmin/http-client.ts`
+  - [x] Nutze `@capacitor-community/http` (CORS Bypass)
+  - [x] Auto-Retry bei 401/403 (max 1x)
+  - [x] Rate Limiting (120 req/min)
+  - [x] Request/Response Logging für Debug
+- [x] `[🔗 PARALLEL - DEPENDS: auth.ts]` **Echte API Endpoints** (Stubs ersetzen):
+  - [x] `getSleepData(date)` → Real API Call
+  - [x] `getStressData(date)` → Real API Call
+  - [x] `getHeartRates(date)` → Real API Call
+  - [x] `getHRVData(date)` → Real API Call
+  - [x] `getBodyBattery(start, end)` → Real API Call
+  - [x] `getStepsData(date)` → Real API Call
+  - [x] `getHydrationData(date)` → Real API Call
+  - [x] `getRespirationData(date)` → Real API Call
+  - [x] `getSpo2Data(date)` → Real API Call
+  - [x] `getUserSummary(date)` → Real API Call
+- [x] `[🔗 SEQ - DEPENDS: endpoints]` **Sync Service Update** `src/lib/garmin/sync-service.ts`
+  - [x] Replace Mock Data mit echten API Calls
+  - [x] Batch Sync für Date Ranges
+  - [x] Progress Tracking mit Callback
+  - [x] Error Recovery (einzelne Tage fehlschlagen → weitermachen)
+  - [x] Partial Sync (nur fehlende Metriken)
+- [ ] `[🔗 SEQ]` **Auto-Sync Verbesserungen** `src/hooks/use-garmin-sync.ts`
+  - [ ] Background Sync (wenn App im Hintergrund)
+  - [ ] Sync Queue für offline gesammelte Requests
+  - [x] Sync Status Persistenz (letzter erfolgreicher Sync)
+- [x] `[🧪 SEQ]` **Unit Tests:**
+  - [x] `garmin-client.test.ts` → Client Tests
+  - [x] `garmin-endpoints.test.ts` → Endpoint Tests
+- [ ] `[🧪 SEQ]` **Integration Tests:**
+  - [ ] `garmin-real-api.integration.test.ts` → VCR Pattern (recorded responses)
+  - [ ] Mock Server Fallback für CI/CD
+
+---
+
+### 📦 PAKET 8: [AGENT: SYMPTOMS] - Erweiterte Symptom-Erfassung
+
+**Ziel:** Mehr vordefinierte Symptome + benutzerdefinierte Symptome hinzufügen.
+
+**🏷️ Execution Mode:** `[🎨 PARALLEL]` (Unabhängig von anderen Paketen)
+
+**🤖 Sub-Agent Strategy:**
+
+- `subagent-schema` → DB Schema Migration
+- `subagent-ui` → Form Updates
+- **Sync Point:** Schema → UI
+
+**Todo-Liste:**
+
+
+- [ ] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
+  - [ ] Neues `symptoms` Interface:
+    ```typescript
+    symptoms: {
+      // Vordefiniert
+      nausea: boolean;           // Übelkeit
+      photophobia: boolean;      // Lichtempfindlichkeit
+      phonophobia: boolean;      // Lärmempfindlichkeit
+      aura: boolean;             // Aura
+      vomiting: boolean;         // Erbrechen
+      vertigo: boolean;          // Schwindel
+      neckPain: boolean;         // Nackenschmerzen
+      fatigue: boolean;          // Müdigkeit
+      concentration: boolean;    // Konzentrationsprobleme
+      visualDisturbance: boolean; // Sehstörungen
+      tinglingNumbness: boolean; // Kribbeln/Taubheit
+      speechDifficulty: boolean; // Sprachschwierigkeiten
+      // Benutzerdefiniert
+      custom: string[];          // ["Augenflimmern", "Ohrensausen"]
+    }
+    ```
+  - [ ] DB Migration Version 2 mit Upgrade-Logik
+- [ ] `[🎨 PARALLEL - DEPENDS: schema]` **EpisodeForm erweitern** `src/features/episodes/EpisodeForm.tsx`
+  - [ ] Gruppierte Symptom-Checkboxen (kategorisiert)
+  - [ ] "Weitere Symptome hinzufügen" Button
+  - [ ] Custom Symptom Input mit Autocomplete (aus vorherigen)
+  - [ ] Custom Symptom Tags mit Remove-Button
+- [ ] `[💾 SEQ]` **Custom Symptoms Service** `src/features/episodes/symptom-service.ts`
+  - [ ] `getAllCustomSymptoms()` → Alle jemals verwendeten
+  - [ ] `getCommonCustomSymptoms()` → Top 5 häufigste
+  - [ ] Persistierung in Settings Tabelle
+- [ ] `[🎨 PARALLEL]` **Symptom-Kategorien UI:**
+  - [ ] Kategorie "Schmerz": Nackenschmerzen
+  - [ ] Kategorie "Sensorisch": Licht, Lärm, Aura, Sehstörungen
+  - [ ] Kategorie "Neurologisch": Kribbeln, Sprache, Konzentration
+  - [ ] Kategorie "Allgemein": Übelkeit, Erbrechen, Müdigkeit, Schwindel
+  - [ ] Kategorie "Eigene": Custom Symptoms
+- [ ] `[📊 PARALLEL]` **Analytics Update:**
+  - [ ] Symptom-Häufigkeit Chart erweitern
+  - [ ] Korrelationen für neue Symptome
+- [ ] `[🧪 PARALLEL]` Unit Tests:
+  - [ ] `symptom-service.test.ts` → Custom Symptom Logic
+  - [ ] `episode-form.test.ts` → Form Validation mit neuen Symptomen
+
+---
+
+### 📦 PAKET 9: [AGENT: INTENSITY-HISTORY] - Intensitäts-Verlauf
+
+**Ziel:** Intensität einer Episode über die Zeit ändern (Verlauf dokumentieren).
+
+**🏷️ Execution Mode:** `[🎨 SEQUENTIAL - DEPENDS: PAKET 3]` (Erweitert Episode Schema)
+
+**🤖 Sub-Agent Strategy:**
+
+- `subagent-schema` → DB Schema für Intensity History
+- `subagent-ui` → Timeline UI Component
+- **Sync Point:** Schema → UI
+
+**Todo-Liste:**
+
+- [ ] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
+  - [ ] Neues `IntensityEntry` Interface:
+
+    ```typescript
+    interface IntensityEntry {
+      timestamp: string; // ISO 8601
+      intensity: number; // 1-10
+      note?: string; // Optional: "Nach Medikament besser"
+    }
+
+    interface Episode {
+      // ... bestehende Felder
+      intensity: number; // Aktuelle/letzte Intensität
+      intensityHistory: IntensityEntry[]; // Verlauf
+    }
+    ```
+
+  - [ ] DB Migration Version 3
+  - [ ] Default: `intensityHistory = [{ timestamp: startTime, intensity: initialIntensity }]`
+- [ ] `[🎨 PARALLEL - DEPENDS: schema]` **Intensity Timeline Component** `src/features/episodes/IntensityTimeline.tsx`
+  - [ ] Zeitleiste mit Punkten für jeden Eintrag
+  - [ ] Line Chart (x: Zeit, y: Intensität 1-10)
+  - [ ] Emoji-Anzeige bei jedem Punkt
+  - [ ] Notizen als Tooltip
+- [ ] `[🎨 PARALLEL]` **Intensity Update UI:**
+  - [ ] "Intensität aktualisieren" Button in Episode Detail
+  - [ ] Quick-Update Slider mit "Jetzt speichern"
+  - [ ] Optional: Notiz hinzufügen ("Wurde besser nach Ibu")
+- [ ] `[🎨 PARALLEL]` **Episode Detail View erweitern** `src/features/episodes/EpisodeDetail.tsx`
+  - [ ] Intensity Timeline anzeigen
+  - [ ] Durchschnittliche Intensität berechnen
+  - [ ] Peak Intensität anzeigen
+  - [ ] Dauer auf Peak
+- [ ] `[📊 PARALLEL]` **Analytics Update:**
+  - [ ] Chart: Typischer Intensitätsverlauf (aggregiert)
+  - [ ] Korrelation: "Medikament X senkt Intensität um Y% in Z Minuten"
+- [ ] `[🧪 PARALLEL]` Unit Tests:
+  - [ ] `intensity-history.test.ts` → Timeline Logic
+  - [ ] `episode-detail.test.ts` → View Rendering
+
+---
+
+### 📦 PAKET 10: [AGENT: NIGHT-ONSET] - Nacht-Beginn Tracking
+
+**Ziel:** Erfassen ob Migräne in der Nacht begonnen oder geendet hat.
+
+**🏷️ Execution Mode:** `[🎨 PARALLEL]` (Einfache Schema-Erweiterung)
+
+**🤖 Sub-Agent Strategy:**
+
+- Kein Sub-Agent nötig (kleine Änderungen)
+
+**Todo-Liste:**
+
+- [ ] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
+  - [ ] Neue Felder in Episode:
+    ```typescript
+    interface Episode {
+      // ... bestehende Felder
+      nightOnset: boolean; // Beginn während Schlaf (22:00-06:00)
+      nightEnd: boolean; // Ende während Schlaf
+      wokeUpWithMigraine: boolean; // Aufgewacht mit Migräne
+      sleepQualityBefore?: number; // 1-5 Schlafqualität vor Episode
+    }
+    ```
+  - [ ] DB Migration Version 4
+- [ ] `[🎨 SEQ - DEPENDS: schema]` **EpisodeForm erweitern:**
+  - [ ] Checkbox: "Während der Nacht begonnen (22-06 Uhr)"
+  - [ ] Checkbox: "Mit Migräne aufgewacht"
+  - [ ] Auto-Detect: Wenn startTime zwischen 22:00-06:00 → Vorschlag
+  - [ ] Optional: Schlafqualität Slider (1-5 Sterne)
+- [ ] `[📊 PARALLEL]` **Analytics Update:**
+  - [ ] Statistik: "X% deiner Migränen beginnen nachts"
+  - [ ] Korrelation: Nacht-Migräne vs. Garmin Sleep Score
+  - [ ] Chart: Verteilung nach Tageszeit (Nacht/Morgen/Tag/Abend)
+- [ ] `[🧪 PARALLEL]` Unit Tests:
+  - [ ] `night-onset.test.ts` → Auto-Detection Logic
+
+---
+
+### 📦 PAKET 11: [AGENT: BACKUP-CONSOLIDATION] - Export/Import Konsolidierung
+
+**Ziel:** Export/Import nur an einer Stelle (Settings entfernen, nur in Analytics).
+
+**🏷️ Execution Mode:** `[🎨 PARALLEL]` (UI Refactoring)
+
+**🤖 Sub-Agent Strategy:**
+
+- Kein Sub-Agent nötig (UI Cleanup)
+
+**Todo-Liste:**
+
+- [ ] `[🎨 SEQ]` **Settings Page bereinigen** `src/pages/Settings.tsx`
+  - [ ] Export-Button entfernen (falls vorhanden)
+  - [ ] Stattdessen: Link zu "Analyse & Statistiken > Export"
+  - [ ] Hinweis: "Datensicherung findest du unter Analyse"
+- [ ] `[🎨 SEQ]` **Navigation Update:**
+  - [ ] Breadcrumb in BackupManager: "Einstellungen > Datensicherung" → nur "Analyse > Export"
+  - [ ] Deep Link Support: `/analytics?tab=export`
+- [ ] `[🎨 SEQ]` **BackupManager verbessern** `src/features/backup/BackupManager.tsx`
+  - [ ] Klarere UI mit Schritt-für-Schritt Anleitung
+  - [ ] Export: Vorschau was exportiert wird (X Episoden, Y Tage Garmin)
+  - [ ] Import: Merge-Strategie auswählen (Ersetzen/Zusammenführen)
+  - [ ] Import: Konflikt-Anzeige bei Duplikaten
+- [ ] `[🧪 PARALLEL]` E2E Tests:
+  - [ ] `backup-flow.e2e.test.ts` → Vollständiger Export/Import Zyklus
+
+---
+
+### 📦 PAKET 12: [AGENT: WEATHER] - Wetterdaten Integration
+
+**Ziel:** Tägliche Wetterdaten abrufen und für Korrelationsanalyse speichern.
+
+**🏷️ Execution Mode:** `[🌤️ SEQUENTIAL]` (Neue Feature-Schicht)
+
+**🤖 Sub-Agent Strategy:**
+
+- `subagent-api` → Weather API Client
+- `subagent-sync` → Daily Sync Service
+- `subagent-analytics` → Korrelationen
+- **Sync Point:** API → Sync → Analytics
+
+**API Empfehlung:** Open-Meteo (kostenlos, keine API Key nötig)
+
+**Todo-Liste:**
+
+- [ ] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
+  - [ ] Neue Tabelle `weatherData`:
+    ```typescript
+    interface WeatherData {
+      date: string; // YYYY-MM-DD (Primary Key)
+      location?: {
+        lat: number;
+        lon: number;
+        name: string;
+      };
+      temperature: {
+        min: number; // °C
+        max: number;
+        avg: number;
+      };
+      humidity: number; // %
+      pressure: number; // hPa (Luftdruck - wichtig für Migräne!)
+      pressureChange?: number; // hPa Änderung zum Vortag
+      precipitation: number; // mm
+      cloudCover: number; // %
+      windSpeed: number; // km/h
+      uvIndex?: number;
+      weatherCode: number; // WMO Weather Code
+      weatherDescription: string; // "Sonnig", "Bewölkt", etc.
+      syncedAt: string;
+    }
+    ```
+  - [ ] DB Migration Version 5
+  - [ ] Index auf `date` und `pressure`
+- [ ] `[🌤️ SEQ]` **Weather API Client** `src/lib/weather/client.ts`
+  - [ ] Open-Meteo API Integration (https://open-meteo.com/)
+  - [ ] `getWeatherForDate(date, lat, lon)` → Historical Data
+  - [ ] `getWeatherForecast(lat, lon)` → 7-Day Forecast
+  - [ ] Mapping: WMO Weather Code → Deutsche Beschreibung
+  - [ ] Kein API Key erforderlich (Rate Limit: 10.000/day)
+- [ ] `[🌤️ SEQ]` **Location Service** `src/lib/weather/location-service.ts`
+  - [ ] `@capacitor/geolocation` für aktuelle Position
+  - [ ] Standort in Settings speichern (einmalige Abfrage)
+  - [ ] Fallback: Manuelle Stadt-Eingabe
+  - [ ] Geocoding: Stadt → Koordinaten
+- [ ] `[🌤️ SEQ - DEPENDS: client]` **Weather Sync Service** `src/lib/weather/sync-service.ts`
+  - [ ] `syncTodayWeather()` → Heutiges Wetter abrufen
+  - [ ] `syncMissingWeather(dateRange)` → Historische Daten nachholen
+  - [ ] Auto-Sync: Täglich 1x (morgens oder bei App-Start)
+  - [ ] Luftdruck-Änderung berechnen (delta zum Vortag)
+- [ ] `[🌤️ PARALLEL]` **Weather Display** `src/features/weather/WeatherCard.tsx`
+  - [ ] Aktuelle Wetterdaten auf Dashboard
+  - [ ] Wetter-Icon basierend auf Code
+  - [ ] Luftdruck-Trend Anzeige (↑ steigend, ↓ fallend)
+  - [ ] "Migräne-Wetter-Warnung" bei Druckabfall >10hPa
+- [ ] `[📊 PARALLEL - DEPENDS: sync]` **Korrelations-Engine erweitern** `src/features/analytics/correlation-service.ts`
+  - [ ] `analyzePressureCorrelation()` → "Bei Druckabfall >10hPa: X% mehr Episoden"
+  - [ ] `analyzeTemperatureCorrelation()` → "Bei >30°C: X% mehr Episoden"
+  - [ ] `analyzeHumidityCorrelation()` → "Bei >80% Luftfeuchtigkeit..."
+  - [ ] `analyzeWeatherCodeCorrelation()` → "Bei Gewitter: X% mehr Episoden"
+  - [ ] Multi-Faktor Analyse: Kombinierte Wetter-Bedingungen
+- [ ] `[📊 PARALLEL]` **Weather Charts** `src/features/analytics/WeatherCharts.tsx`
+  - [ ] Luftdruck-Timeline mit Episode-Markern
+  - [ ] Wetter-Trigger Pie Chart
+  - [ ] Temperatur-Episode Scatter Plot
+- [ ] `[🎨 PARALLEL]` **Settings erweitern:**
+  - [ ] Standort festlegen
+  - [ ] Wetter-Sync ein/aus
+  - [ ] "Wetterdaten löschen" Button
+- [ ] `[🧪 PARALLEL]` Unit Tests:
+  - [ ] `weather-client.test.ts` → API Mocking
+  - [ ] `weather-correlation.test.ts` → Statistical Logic
+- [ ] `[🧪 PARALLEL]` Integration Tests:
+  - [ ] `weather-sync.integration.test.ts` → Full Sync Flow
+
+---
+
 ## 4. Ausführungs-Reihenfolge
+
+**Phase 1: Foundation (Sequenziell)**
 
 1.  **PAKET 1 (Architect)** → Setup & Infrastruktur
 2.  **PAKET 2 (Database)** → Datenbank & Encryption
-3.  **PAKET 3 (UI-Core)** & **PAKET 4 (Garmin)** → Parallel möglich
-4.  **PAKET 5 (Analytics)** → Nach 2, 3, 4
-5.  **PAKET 6 (MCP-Server)** → Parallel zu allem, aber Tests erst nach Core-Features
+
+**Phase 2: Core Features (Parallel)** 3. **PAKET 3 (UI-Core)** & **PAKET 4 (Garmin)** → Parallel möglich 4. **PAKET 5 (Analytics)** → Nach 2, 3, 4 5. **PAKET 6 (MCP-Server)** → Parallel zu allem, aber Tests erst nach Core-Features
+
+**Phase 3: Enhanced Features (Nach Phase 2)** 6. **PAKET 7 (Garmin-Real)** → Echte Garmin API (nach PAKET 4) 7. **PAKET 8 (Symptoms)** & **PAKET 9 (Intensity-History)** & **PAKET 10 (Night-Onset)** → Parallel möglich 8. **PAKET 11 (Backup-Consolidation)** → UI Cleanup (nach PAKET 5) 9. **PAKET 12 (Weather)** → Neue Feature-Schicht (nach PAKET 5)
 
 ---
 
@@ -1150,15 +1484,21 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL - Requires 2,3,4]
 
 ### 📊 Parallelization Matrix
 
-| Paket     | Phase             | Parallele Tasks                   | Sub-Agents | Duration (Solo) | Duration (Parallel) |
-| --------- | ----------------- | --------------------------------- | ---------- | --------------- | ------------------- |
-| 1         | Foundation        | 0                                 | 0          | 2-3h            | 2-3h                |
-| 2         | Core              | 1 (Tests)                         | 1          | 3-4h            | 3-4h                |
-| 3         | Features (UI)     | 3 (PIN, Form, Dashboard)          | 3          | 4-5h            | 2-3h                |
-| 4         | Features (Garmin) | 5 (Auth, 4 Endpoint Groups, Sync) | 5          | 6-8h            | 3-4h                |
-| 5         | Analytics         | 3 (Charts, Corr, Backup)          | 3          | 4-5h            | 2-3h                |
-| 6         | MCP               | 2 (Tools, Mocks)                  | 2          | 2-3h            | 1-2h                |
-| **Total** | -                 | **14**                            | **14**     | **21-28h**      | **13-19h**          |
+| Paket     | Phase                | Parallele Tasks                   | Sub-Agents | Duration (Solo) | Duration (Parallel) |
+| --------- | -------------------- | --------------------------------- | ---------- | --------------- | ------------------- |
+| 1         | Foundation           | 0                                 | 0          | 2-3h            | 2-3h                |
+| 2         | Core                 | 1 (Tests)                         | 1          | 3-4h            | 3-4h                |
+| 3         | Features (UI)        | 3 (PIN, Form, Dashboard)          | 3          | 4-5h            | 2-3h                |
+| 4         | Features (Garmin)    | 5 (Auth, 4 Endpoint Groups, Sync) | 5          | 6-8h            | 3-4h                |
+| 5         | Analytics            | 3 (Charts, Corr, Backup)          | 3          | 4-5h            | 2-3h                |
+| 6         | MCP                  | 2 (Tools, Mocks)                  | 2          | 2-3h            | 1-2h                |
+| 7         | Garmin Real API      | 3 (Auth, Endpoints, Sync)         | 3          | 5-7h            | 3-4h                |
+| 8         | Symptoms             | 2 (Schema, UI)                    | 2          | 3-4h            | 2-3h                |
+| 9         | Intensity History    | 2 (Schema, UI)                    | 2          | 2-3h            | 1-2h                |
+| 10        | Night Onset          | 0                                 | 0          | 1-2h            | 1-2h                |
+| 11        | Backup Consolidation | 0                                 | 0          | 1-2h            | 1-2h                |
+| 12        | Weather              | 3 (API, Sync, Analytics)          | 3          | 5-6h            | 3-4h                |
+| **Total** | -                    | **24**                            | **24**     | **38-53h**      | **24-34h**          |
 
 **Speedup:** ~35-40% durch Parallelisierung
 

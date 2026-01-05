@@ -35,7 +35,7 @@ import {
   AlertCircle,
   Copy,
   Trash2,
-  FileDown,
+  ExternalLink,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -298,13 +298,17 @@ export default function Settings() {
               </div>
 
               <div className="space-y-2">
-                <h3 className="font-semibold">Backup & Export</h3>
+                <h3 className="font-semibold">Datensicherung</h3>
                 <p className="text-sm text-slate-600">
-                  Exportiere deine Daten als verschlüsseltes Backup
+                  Backups findest du unter Analyse & Statistiken
                 </p>
-                <Button disabled className="w-full" variant="outline">
-                  <FileDown className="h-4 w-4 mr-2" />
-                  Backup erstellen (bald verfügbar)
+                <Button
+                  onClick={() => navigate('/analytics?tab=export')}
+                  className="w-full"
+                  variant="outline"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Zur Datensicherung
                 </Button>
               </div>
 

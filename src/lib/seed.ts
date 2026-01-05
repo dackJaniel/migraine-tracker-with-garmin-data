@@ -1,10 +1,20 @@
-import { db, type Episode, type GarminData } from '@/lib/db';
+import { db, type Episode, type GarminData, createEmptySymptoms } from '@/lib/db';
 import { subDays } from 'date-fns';
 
 /**
  * Seed Script für Test-Daten
  * Generiert realistische Dummy-Daten für Entwicklung und Testing
  */
+
+// Vordefinierte Custom-Symptome für Seed-Daten
+const CUSTOM_SYMPTOMS_POOL = [
+    'Augenflimmern',
+    'Ohrensausen',
+    'Appetitlosigkeit',
+    'Kältegefühl',
+    'Schwitzen',
+    'Herzrasen',
+];
 
 /**
  * Generiert Dummy Episoden für die letzten X Tage
@@ -58,18 +68,36 @@ export async function seedEpisodes(days = 90): Promise<number> {
             .sort(() => Math.random() - 0.5)
             .slice(0, medicineCount);
 
+        // Erweiterte Symptome (PAKET 8)
+        const symptoms = createEmptySymptoms();
+        symptoms.nausea = Math.random() > 0.5;
+        symptoms.vomiting = symptoms.nausea && Math.random() > 0.7;
+        symptoms.fatigue = Math.random() > 0.4;
+        symptoms.vertigo = Math.random() > 0.7;
+        symptoms.photophobia = Math.random() > 0.4;
+        symptoms.phonophobia = Math.random() > 0.6;
+        symptoms.aura = Math.random() > 0.8;
+        symptoms.visualDisturbance = symptoms.aura || Math.random() > 0.85;
+        symptoms.concentration = Math.random() > 0.5;
+        symptoms.tinglingNumbness = Math.random() > 0.85;
+        symptoms.speechDifficulty = Math.random() > 0.9;
+        symptoms.neckPain = Math.random() > 0.6;
+        
+        // Zufällige Custom-Symptome (0-2)
+        if (Math.random() > 0.7) {
+            const customCount = Math.floor(Math.random() * 2) + 1;
+            symptoms.custom = CUSTOM_SYMPTOMS_POOL
+                .sort(() => Math.random() - 0.5)
+                .slice(0, customCount);
+        }
+
         episodes.push({
             startTime: startDate.toISOString(),
             endTime: endDate.toISOString(),
             intensity,
             triggers: selectedTriggers,
             medicines: selectedMedicines,
-            symptoms: {
-                nausea: Math.random() > 0.5,
-                photophobia: Math.random() > 0.4,
-                phonophobia: Math.random() > 0.6,
-                aura: Math.random() > 0.8,
-            },
+            symptoms,
             notes:
                 Math.random() > 0.7
                     ? 'Testnotiz für diese Episode'

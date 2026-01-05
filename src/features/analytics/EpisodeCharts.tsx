@@ -1,8 +1,13 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useEpisodes } from '@/hooks/use-episodes';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
-import { format, startOfMonth, endOfMonth, getDay, subMonths } from 'date-fns';
+import { format, getDay, subMonths } from 'date-fns';
 import { de } from 'date-fns/locale';
 import {
   BarChart,
@@ -18,8 +23,6 @@ import {
 } from 'recharts';
 
 export function EpisodeCharts() {
-  const episodes = useEpisodes({});
-
   // Episoden pro Monat (letzte 6 Monate)
   const episodesPerMonth = useLiveQuery(async () => {
     const sixMonthsAgo = subMonths(new Date(), 6);
@@ -29,7 +32,7 @@ export function EpisodeCharts() {
       .toArray();
 
     const monthMap = new Map<string, number>();
-    allEpisodes.forEach((ep) => {
+    allEpisodes.forEach(ep => {
       const monthKey = format(ep.startTime, 'MMM yyyy', { locale: de });
       monthMap.set(monthKey, (monthMap.get(monthKey) || 0) + 1);
     });
@@ -42,9 +45,9 @@ export function EpisodeCharts() {
   // Durchschnittliche Intensität pro Wochentag
   const intensityByWeekday = useLiveQuery(async () => {
     const allEpisodes = await db.episodes.toArray();
-    
+
     const weekdayMap = new Map<number, { total: number; count: number }>();
-    allEpisodes.forEach((ep) => {
+    allEpisodes.forEach(ep => {
       const day = getDay(ep.startTime);
       const current = weekdayMap.get(day) || { total: 0, count: 0 };
       weekdayMap.set(day, {
@@ -73,7 +76,7 @@ export function EpisodeCharts() {
 
     return garminData
       .sort((a, b) => a.date.localeCompare(b.date))
-      .map((data) => ({
+      .map(data => ({
         date: format(new Date(data.date), 'dd.MM', { locale: de }),
         schlaf: data.sleepStages
           ? Math.round(
@@ -96,7 +99,9 @@ export function EpisodeCharts() {
       <Card className="col-span-2">
         <CardHeader>
           <CardTitle>Episoden pro Monat</CardTitle>
-          <CardDescription>Anzahl der Migräne-Episoden in den letzten 6 Monaten</CardDescription>
+          <CardDescription>
+            Anzahl der Migräne-Episoden in den letzten 6 Monaten
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -115,7 +120,9 @@ export function EpisodeCharts() {
       <Card>
         <CardHeader>
           <CardTitle>Intensität pro Wochentag</CardTitle>
-          <CardDescription>Durchschnittliche Schmerzintensität nach Wochentag</CardDescription>
+          <CardDescription>
+            Durchschnittliche Schmerzintensität nach Wochentag
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={250}>
@@ -124,7 +131,11 @@ export function EpisodeCharts() {
               <XAxis dataKey="day" />
               <YAxis domain={[0, 10]} />
               <Tooltip />
-              <Bar dataKey="intensity" fill="hsl(var(--destructive))" name="Ø Intensität" />
+              <Bar
+                dataKey="intensity"
+                fill="hsl(var(--destructive))"
+                name="Ø Intensität"
+              />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>

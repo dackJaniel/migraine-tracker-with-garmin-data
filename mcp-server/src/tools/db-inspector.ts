@@ -34,12 +34,12 @@ export interface DbInspectResult {
  */
 export async function inspectDatabase(args: DbInspectArgs): Promise<DbInspectResult> {
   const validated = DbInspectArgsSchema.parse(args);
-  
+
   // Da wir im Node.js Context sind, können wir nicht direkt auf IndexedDB zugreifen
   // Stattdessen geben wir ein JavaScript Snippet zurück, das im Browser ausgeführt werden kann
-  
+
   const browserScript = generateBrowserInspectionScript(validated);
-  
+
   return {
     database: validated.database,
     table: validated.table,
@@ -61,7 +61,7 @@ export async function inspectDatabase(args: DbInspectArgs): Promise<DbInspectRes
  */
 function generateBrowserInspectionScript(args: DbInspectArgs): string {
   const { table, limit, filter } = args;
-  
+
   if (table === 'all' || !table) {
     return `
 // IndexedDB Inspector - Alle Tabellen
@@ -87,7 +87,7 @@ function generateBrowserInspectionScript(args: DbInspectArgs): string {
 })();
     `.trim();
   }
-  
+
   return `
 // IndexedDB Inspector - Tabelle: ${table}
 (async () => {
