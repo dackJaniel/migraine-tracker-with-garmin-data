@@ -5,15 +5,15 @@ import { Preferences } from '@capacitor/preferences';
 import { CapacitorHttp } from '@capacitor/core';
 import type { HttpOptions } from '@capacitor/core';
 import { Capacitor } from '@capacitor/core';
-import { SESSION_CONFIG, DEFAULT_HEADERS, ERROR_MESSAGES, GARMIN_BASE_URL } from './constants';
+import { SESSION_CONFIG, DEFAULT_HEADERS, ERROR_MESSAGES, GARMIN_BASE_URL, GARMIN_SSO_URL } from './constants';
 import type { GarminAuthTokens, GarminProfile, GarminLoginResponse, GarminMFAState } from './types';
 import { db } from '../db';
 
-// Garmin SSO URLs
-const SSO_URL = 'https://sso.garmin.com/sso';
+// Garmin SSO URLs - use proxy in dev mode
+const SSO_URL = `${GARMIN_SSO_URL}/sso`;
 const SSO_SIGNIN_URL = `${SSO_URL}/signin`;
 const SSO_MFA_URL = `${SSO_URL}/verifyMFA/loginEnterMfaCode`;
-const OAUTH_URL = 'https://connect.garmin.com/modern/di-oauth/exchange';
+const OAUTH_URL = `${GARMIN_BASE_URL}/modern/di-oauth/exchange`;
 
 // OAuth Consumer Credentials (from garth/python-garminconnect)
 const CONSUMER_KEY = 'fc3e99d2-118c-44b8-8ae3-03370dde24c0';

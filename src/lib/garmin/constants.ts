@@ -1,5 +1,11 @@
 // Garmin API Constants
-export const GARMIN_BASE_URL = 'https://connect.garmin.com';
+
+// Detect if we're in development mode (browser) or production (native app)
+const isDev = typeof window !== 'undefined' && import.meta.env.DEV;
+
+// Use proxy in development to avoid CORS, direct URLs in production (native)
+export const GARMIN_BASE_URL = isDev ? '/api/garmin' : 'https://connect.garmin.com';
+export const GARMIN_SSO_URL = isDev ? '/api/garmin-sso' : 'https://sso.garmin.com';
 export const GARMIN_MODERN_PROXY = `${GARMIN_BASE_URL}/modern/proxy`;
 
 export const WELLNESS_ENDPOINTS = {
