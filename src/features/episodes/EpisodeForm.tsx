@@ -203,10 +203,20 @@ export default function EpisodeForm() {
   const onSubmit = async (data: EpisodeFormData) => {
     setLoading(true);
     try {
+      // Initiales IntensityHistory erstellen (PAKET 9)
+      const initialIntensityHistory = [
+        {
+          timestamp: data.startTime.toISOString(),
+          intensity: data.intensity,
+          note: 'Initial',
+        },
+      ];
+
       const episodeData = {
         startTime: data.startTime.toISOString(),
         endTime: data.endTime ? data.endTime.toISOString() : undefined,
         intensity: data.intensity,
+        intensityHistory: initialIntensityHistory, // PAKET 9
         triggers: data.triggers,
         medicines: data.medicines,
         symptoms: data.symptoms,
@@ -224,7 +234,9 @@ export default function EpisodeForm() {
       }
 
       if (isEditMode && id) {
-        await updateEpisode(parseInt(id), episodeData);
+        // Bei Edit: IntensityHistory nicht überschreiben, nur andere Felder updaten
+        const { intensityHistory, ...updateData } = episodeData;
+        await updateEpisode(parseInt(id), updateData);
         toast.success('Episode aktualisiert');
       } else {
         await createEpisode(episodeData);

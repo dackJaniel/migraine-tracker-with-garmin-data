@@ -157,7 +157,8 @@ export default function Dashboard() {
               {episodes.slice(0, 10).map(episode => (
                 <div
                   key={episode.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-slate-50 transition-colors"
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
+                  onClick={() => navigate(`/episodes/${episode.id}`)}
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
@@ -169,6 +170,11 @@ export default function Dashboard() {
                           locale: de,
                         })}
                       </div>
+                      {episode.intensityHistory && episode.intensityHistory.length > 1 && (
+                        <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">
+                          {episode.intensityHistory.length} Updates
+                        </span>
+                      )}
                     </div>
                     {episode.triggers.length > 0 && (
                       <div className="flex gap-2 mt-2">
@@ -188,7 +194,7 @@ export default function Dashboard() {
                       </p>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                     <Button
                       variant="ghost"
                       size="icon"

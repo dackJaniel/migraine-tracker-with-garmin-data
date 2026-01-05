@@ -90,6 +90,11 @@ export interface Episode {
     medicines: string[]; // ["ibuprofen 400mg", "sumatriptan"]
     symptoms: Symptoms;
     notes?: string;
+    // Night-Onset Tracking (PAKET 10)
+    nightOnset?: boolean;
+    nightEnd?: boolean;
+    wokeUpWithMigraine?: boolean;
+    sleepQualityBefore?: number; // 1-5
     createdAt: string; // ISO 8601 Date String
     updatedAt: string; // ISO 8601 Date String
 }

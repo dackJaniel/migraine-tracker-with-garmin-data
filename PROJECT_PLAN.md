@@ -974,7 +974,7 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 ---
 
-### 📦 PAKET 10: [AGENT: NIGHT-ONSET] - Nacht-Beginn Tracking
+### 📦 PAKET 10: [AGENT: NIGHT-ONSET] - Nacht-Beginn Tracking ✅ COMPLETED
 
 **Ziel:** Erfassen ob Migräne in der Nacht begonnen oder geendet hat.
 
@@ -986,8 +986,8 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 **Todo-Liste:**
 
-- [ ] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
-  - [ ] Neue Felder in Episode:
+- [x] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
+  - [x] Neue Felder in Episode:
     ```typescript
     interface Episode {
       // ... bestehende Felder
@@ -997,18 +997,18 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
       sleepQualityBefore?: number; // 1-5 Schlafqualität vor Episode
     }
     ```
-  - [ ] DB Migration Version 4
-- [ ] `[🎨 SEQ - DEPENDS: schema]` **EpisodeForm erweitern:**
-  - [ ] Checkbox: "Während der Nacht begonnen (22-06 Uhr)"
-  - [ ] Checkbox: "Mit Migräne aufgewacht"
-  - [ ] Auto-Detect: Wenn startTime zwischen 22:00-06:00 → Vorschlag
-  - [ ] Optional: Schlafqualität Slider (1-5 Sterne)
-- [ ] `[📊 PARALLEL]` **Analytics Update:**
-  - [ ] Statistik: "X% deiner Migränen beginnen nachts"
-  - [ ] Korrelation: Nacht-Migräne vs. Garmin Sleep Score
-  - [ ] Chart: Verteilung nach Tageszeit (Nacht/Morgen/Tag/Abend)
-- [ ] `[🧪 PARALLEL]` Unit Tests:
-  - [ ] `night-onset.test.ts` → Auto-Detection Logic
+  - [x] DB Migration Version 4 (Schema rückwärtskompatibel, keine Migration nötig)
+- [x] `[🎨 SEQ - DEPENDS: schema]` **EpisodeForm erweitern:**
+  - [x] Checkbox: "Während der Nacht begonnen (22-06 Uhr)"
+  - [x] Checkbox: "Mit Migräne aufgewacht"
+  - [x] Auto-Detect: Wenn startTime zwischen 22:00-06:00 → Vorschlag
+  - [x] Optional: Schlafqualität Slider (1-5 Sterne)
+- [x] `[📊 PARALLEL]` **Analytics Update:**
+  - [x] Statistik: "X% deiner Migränen beginnen nachts"
+  - [x] Korrelation: Nacht-Migräne vs. Garmin Sleep Score
+  - [x] Chart: Verteilung nach Tageszeit (analyzeTimeOfDayDistribution)
+- [x] `[🧪 PARALLEL]` Unit Tests:
+  - [x] `night-onset.test.ts` → Auto-Detection Logic (18 Tests)
 
 ---
 
