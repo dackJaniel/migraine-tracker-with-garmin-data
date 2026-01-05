@@ -70,7 +70,7 @@ proxy: {
         proxyReq.setHeader('Referer', 'https://sso.garmin.com/');
         proxyReq.setHeader('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36');
       });
-      
+
       // Response Hook: Forward Set-Cookie to Client
       proxy.on('proxyRes', (proxyRes, req, res) => {
         const setCookie = proxyRes.headers['set-cookie'];
@@ -115,9 +115,9 @@ proxy: {
 ```typescript
 // Use proxy in dev mode
 const isDev = typeof window !== 'undefined' && import.meta.env.DEV;
-const OAUTH_CONSUMER_URL = isDev 
-    ? '/api/oauth-consumer' 
-    : 'https://thegarth.s3.amazonaws.com/oauth_consumer.json';
+const OAUTH_CONSUMER_URL = isDev
+  ? '/api/oauth-consumer'
+  : 'https://thegarth.s3.amazonaws.com/oauth_consumer.json';
 ```
 
 ### 3. UI Update - Warnung anpassen
@@ -125,14 +125,15 @@ const OAUTH_CONSUMER_URL = isDev
 **File:** `src/pages/GarminSettings.tsx`
 
 ```tsx
-{isWebDev && (
-  <div className="text-sm text-blue-700 bg-blue-50 p-3 rounded-lg border border-blue-200">
-    <strong>ℹ️ Entwicklungsmodus:</strong> Du bist im Browser-Dev-Modus. 
-    Die Garmin-Anmeldung nutzt einen Vite-Proxy für CORS-Umgehung. 
-    Falls Probleme auftreten, kannst du Demo-Daten laden, um die
-    Funktionen zu testen.
-  </div>
-)}
+{
+  isWebDev && (
+    <div className="text-sm text-blue-700 bg-blue-50 p-3 rounded-lg border border-blue-200">
+      <strong>ℹ️ Entwicklungsmodus:</strong> Du bist im Browser-Dev-Modus. Die
+      Garmin-Anmeldung nutzt einen Vite-Proxy für CORS-Umgehung. Falls Probleme
+      auftreten, kannst du Demo-Daten laden, um die Funktionen zu testen.
+    </div>
+  );
+}
 ```
 
 **Änderungen:**
@@ -176,6 +177,7 @@ Der Enhanced Proxy unterstützt jetzt den kompletten OAuth-Flow:
 ### Manuelle Tests
 
 1. **Dev-Server starten:**
+
    ```bash
    npm run dev
    # Server läuft auf http://localhost:5174
@@ -200,6 +202,7 @@ Der Enhanced Proxy unterstützt jetzt den kompletten OAuth-Flow:
 ### Browser Console Checks
 
 **Erwartete Logs:**
+
 ```
 [Garmin Auth] Starting login process
 [Garmin Auth] SSO Login - Fetching CSRF token...
@@ -212,8 +215,9 @@ Der Enhanced Proxy unterstützt jetzt den kompletten OAuth-Flow:
 ```
 
 **Keine CORS-Fehler:**
+
 ```
-❌ Access to fetch at 'https://sso.garmin.com/...' from origin 'http://localhost:5174' 
+❌ Access to fetch at 'https://sso.garmin.com/...' from origin 'http://localhost:5174'
     has been blocked by CORS policy
 ```
 
