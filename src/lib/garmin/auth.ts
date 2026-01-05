@@ -131,7 +131,7 @@ async function getOAuthConsumer(): Promise<{ consumer_key: string; consumer_secr
 /**
  * Generate OAuth1 signature base string
  */
-function generateOAuth1BaseString(
+export function generateOAuth1BaseString(
     method: string,
     url: string,
     params: Record<string, string>
@@ -148,7 +148,7 @@ function generateOAuth1BaseString(
 /**
  * Generate OAuth1 signature using HMAC-SHA1
  */
-async function generateOAuth1Signature(
+export async function generateOAuth1Signature(
     baseString: string,
     consumerSecret: string,
     tokenSecret: string = ''
@@ -178,7 +178,7 @@ async function generateOAuth1Signature(
 /**
  * Generate OAuth1 nonce
  */
-function generateNonce(): string {
+export function generateNonce(): string {
     const array = new Uint8Array(16);
     crypto.getRandomValues(array);
     return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
@@ -187,7 +187,7 @@ function generateNonce(): string {
 /**
  * Build OAuth1 Authorization header
  */
-async function buildOAuth1Header(
+export async function buildOAuth1Header(
     method: string,
     url: string,
     consumerKey: string,
@@ -1050,6 +1050,38 @@ export class GarminAuthService {
      */
     isMFARequired(): boolean {
         return this.mfaState?.requiresMFA || false;
+    }
+
+    /**
+     * Get display name for API calls that require it in the URL
+     * Falls back to 'user' if not available
+     */
+    getDisplayName(): string {
+        return this.profile?.displayName || 'user';
+    }
+
+    /**
+     * Get display name async - loads from preferences if not in memory
+     */
+    async getDisplayNameAsync(): Promise<string> {
+        if (this.profile?.displayName) {
+            return this.profile.displayName;
+        }
+
+        // Try to load from preferences
+        try {
+            const result = await Preferences.get({ key: SESSION_CONFIG.PREFERENCES_KEY_PROFILE });
+            if (result.value) {
+                const profile = JSON.parse(result.value) as GarminProfile;
+                if (profile.displayName) {
+                    return profile.displayName;
+                }
+            }
+        } catch (error) {
+            console.error('Failed to get displayName from preferences:', error);
+        }
+
+        return 'user';
     }
 }
 

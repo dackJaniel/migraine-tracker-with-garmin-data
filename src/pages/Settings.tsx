@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
 import { changePin, resetPin } from '@/features/auth/pin-service';
 import { db } from '@/lib/db';
 import { seedAllData, clearAllData } from '@/lib/seed';
@@ -50,6 +51,7 @@ export default function Settings() {
   const [confirmPin, setConfirmPin] = useState('');
   const [changePinOpen, setChangePinOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [debugData, setDebugData] = useState<any>(null);
 
   // Logs aus DB laden
   const logs = useLiveQuery<Log[]>(
@@ -153,6 +155,82 @@ export default function Settings() {
     } catch (error) {
       toast.error('Fehler beim Zurücksetzen der PIN');
       console.error(error);
+    }
+  };
+
+  const handleDebugGarminData = async () => {
+    try {
+      const allData = await db.garminData.toArray();
+
+      // Count which fields have data
+      const stats = {
+        total: allData.length,
+        sleepScore: 0,
+        sleepStages: 0,
+        stressLevel: 0,
+        restingHR: 0,
+        hrv: 0,
+        bodyBattery: 0,
+        steps: 0,
+        hydration: 0,
+        respirationRate: 0,
+        spo2: 0,
+      };
+
+      allData.forEach(entry => {
+        if (entry.sleepScore !== undefined && entry.sleepScore !== null)
+          stats.sleepScore++;
+        if (entry.sleepStages !== undefined && entry.sleepStages !== null)
+          stats.sleepStages++;
+        if (entry.stressLevel !== undefined && entry.stressLevel !== null)
+          stats.stressLevel++;
+        if (entry.restingHR !== undefined && entry.restingHR !== null)
+          stats.restingHR++;
+        if (entry.hrv !== undefined && entry.hrv !== null) stats.hrv++;
+        if (entry.bodyBattery !== undefined && entry.bodyBattery !== null)
+          stats.bodyBattery++;
+        if (entry.steps !== undefined && entry.steps !== null) stats.steps++;
+        if (entry.hydration !== undefined && entry.hydration !== null)
+          stats.hydration++;
+        if (
+          entry.respirationRate !== undefined &&
+          entry.respirationRate !== null
+        )
+          stats.respirationRate++;
+        if (entry.spo2 !== undefined && entry.spo2 !== null) stats.spo2++;
+      });
+
+      setDebugData({
+        stats,
+        latestEntry: allData[0] || null,
+        sampleEntries: allData.slice(0, 3),
+      });
+
+      toast.success('Debug-Daten geladen');
+    } catch (error) {
+      console.error('Debug error:', error);
+      toast.error('Fehler beim Laden der Debug-Daten');
+    }
+  };
+
+  const handleDebugSync = async () => {
+    try {
+      const { syncSingleDate } = await import('@/lib/garmin/sync-service');
+      const today = format(new Date(), 'yyyy-MM-dd');
+
+      toast.info('Starte Debug-Sync... Schaue in die Logs');
+
+      // Sync today's data with verbose logging
+      const result = await syncSingleDate(today);
+
+      if (result) {
+        toast.success(`Sync erfolgreich! Daten: ${JSON.stringify(result)}`);
+      } else {
+        toast.warning('Sync ergab keine Daten (result = null)');
+      }
+    } catch (error) {
+      console.error('Debug sync error:', error);
+      toast.error(`Fehler: ${error}`);
     }
   };
 
@@ -380,6 +458,147 @@ export default function Settings() {
 
         {/* Debug Tab */}
         <TabsContent value="debug" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Database className="h-5 w-5" />
+                Garmin Datenbank Debug
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-slate-600">
+                Zeige Garmin-Daten und prüfe welche Felder befüllt sind
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <Button onClick={handleDebugGarminData} className="w-full">
+                  Debug DB Daten
+                </Button>
+                <Button
+                  onClick={handleDebugSync}
+                  variant="secondary"
+                  className="w-full"
+                >
+                  Test-Sync Heute
+                </Button>
+              </div>
+
+              {debugData && (
+                <div className="space-y-4 mt-4">
+                  {/* Statistics */}
+                  <div className="border rounded-lg p-4 bg-slate-50">
+                    <h3 className="font-semibold mb-2">Statistiken</h3>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>Gesamt Einträge:</div>
+                      <div className="font-mono font-bold">
+                        {debugData.stats.total}
+                      </div>
+                      <div>Sleep Score:</div>
+                      <div className="font-mono">
+                        {debugData.stats.sleepScore} / {debugData.stats.total}
+                      </div>
+                      <div>Sleep Stages:</div>
+                      <div className="font-mono">
+                        {debugData.stats.sleepStages} / {debugData.stats.total}
+                      </div>
+                      <div>Stress Level:</div>
+                      <div className="font-mono">
+                        {debugData.stats.stressLevel} / {debugData.stats.total}
+                      </div>
+                      <div>Resting HR:</div>
+                      <div className="font-mono">
+                        {debugData.stats.restingHR} / {debugData.stats.total}
+                      </div>
+                      <div>HRV:</div>
+                      <div className="font-mono">
+                        {debugData.stats.hrv} / {debugData.stats.total}
+                      </div>
+                      <div>Body Battery:</div>
+                      <div className="font-mono">
+                        {debugData.stats.bodyBattery} / {debugData.stats.total}
+                      </div>
+                      <div>Steps:</div>
+                      <div className="font-mono">
+                        {debugData.stats.steps} / {debugData.stats.total}
+                      </div>
+                      <div>Hydration:</div>
+                      <div className="font-mono">
+                        {debugData.stats.hydration} / {debugData.stats.total}
+                      </div>
+                      <div>Respiration:</div>
+                      <div className="font-mono">
+                        {debugData.stats.respirationRate} /{' '}
+                        {debugData.stats.total}
+                      </div>
+                      <div>SpO2:</div>
+                      <div className="font-mono">
+                        {debugData.stats.spo2} / {debugData.stats.total}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Latest Entry */}
+                  {debugData.latestEntry && (
+                    <div className="border rounded-lg p-4 bg-blue-50">
+                      <h3 className="font-semibold mb-2">
+                        Neuester Eintrag ({debugData.latestEntry.date})
+                      </h3>
+                      <div className="space-y-1 text-sm font-mono">
+                        <div>
+                          sleepScore:{' '}
+                          {JSON.stringify(debugData.latestEntry.sleepScore)}
+                        </div>
+                        <div>
+                          sleepStages:{' '}
+                          {JSON.stringify(debugData.latestEntry.sleepStages)}
+                        </div>
+                        <div>
+                          stressLevel:{' '}
+                          {JSON.stringify(debugData.latestEntry.stressLevel)}
+                        </div>
+                        <div>
+                          restingHR:{' '}
+                          {JSON.stringify(debugData.latestEntry.restingHR)}
+                        </div>
+                        <div>
+                          hrv: {JSON.stringify(debugData.latestEntry.hrv)}
+                        </div>
+                        <div>
+                          bodyBattery:{' '}
+                          {JSON.stringify(debugData.latestEntry.bodyBattery)}
+                        </div>
+                        <div>
+                          steps: {JSON.stringify(debugData.latestEntry.steps)}
+                        </div>
+                        <div>
+                          hydration:{' '}
+                          {JSON.stringify(debugData.latestEntry.hydration)}
+                        </div>
+                        <div>
+                          respirationRate:{' '}
+                          {JSON.stringify(
+                            debugData.latestEntry.respirationRate
+                          )}
+                        </div>
+                        <div>
+                          spo2: {JSON.stringify(debugData.latestEntry.spo2)}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Clear Debug Button */}
+                  <Button
+                    variant="outline"
+                    onClick={() => setDebugData(null)}
+                    className="w-full"
+                  >
+                    Debug-Daten ausblenden
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

@@ -9,6 +9,7 @@ import { Analytics } from './pages/Analytics';
 import GarminPage from './pages/GarminPage';
 import EpisodeForm from './features/episodes/EpisodeForm';
 import EpisodeDetail from './features/episodes/EpisodeDetail';
+import DebugDB from './pages/DebugDB';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             element={<Navigate to="/garmin" replace />}
           />
           <Route path="settings" element={<Settings />} />
+          <Route path="debug-db" element={<DebugDB />} />
         </Route>
 
         {/* Fallback für unbekannte Routen */}

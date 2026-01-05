@@ -1137,6 +1137,284 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 ---
 
+### 📦 PAKET 13: [AGENT: SMART-CORRELATIONS] - Erweiterte Korrelationen & Warnsystem
+
+**Ziel:** Implementierung von 10 intelligenten Multi-Faktor-Korrelationen, einem vorausschauenden Warnsystem mit 3 Stufen und kontextbezogenen Präventions-Empfehlungen mit vollständiger UI.
+
+**🏷️ Execution Mode:** `[🔮 SEQUENTIAL - DEPENDS: PAKET 5, 12]` (Benötigt Analytics + Weather)
+
+**🤖 Sub-Agent Strategy:**
+
+- `subagent-data-model` → Optionale Felder + Risk Assessment Model
+- `subagent-correlations` → 10 Multi-Faktor Korrelationen
+- `subagent-prediction` → Warnsystem + Scoring Algorithmus
+- `subagent-recommendations` → Präventions-Engine
+- `subagent-ui` → Vollständige Prediction Page
+- **Sync Point:** Data Model → Correlations → Prediction → Recommendations → UI
+
+**Entscheidungen (festgelegt):**
+
+- **Zusätzliche Daten:** Moderat (3 optionale Felder: Zyklus, Koffein, Bildschirmzeit)
+- **Korrelations-Komplexität:** Multi-Faktor (kombinierte Faktoren, Time-Lag Analyse)
+- **Warnsystem-Aggressivität:** Ausgewogen (3 Stufen: Erhöht >50%, Hoch >70%, Sehr Hoch >85%)
+- **UI:** Vollständige Prediction-Page mit Timeline, Charts, historische Genauigkeit
+
+#### Teil 1: Datenmodell-Erweiterung
+
+**Neue DB Interfaces:**
+
+```typescript
+// Tägliches Tracking (optional) - Neue Tabelle
+interface DailyLog {
+  date: string; // YYYY-MM-DD (Primary Key)
+
+  // Menstruationszyklus (optional)
+  cycleDay?: number; // 1-35, null wenn nicht getrackt
+  cyclePhase?: 'menstruation' | 'follicular' | 'ovulation' | 'luteal';
+
+  // Koffein (optional)
+  caffeineIntake?: number; // Anzahl Tassen/Portionen
+
+  // Bildschirmzeit (optional)
+  screenTime?: number; // Stunden
+
+  syncedAt: string;
+}
+
+// Risk Assessment (für Vorhersagen)
+interface RiskAssessment {
+  date: string; // YYYY-MM-DD
+  assessedAt: string; // Wann berechnet
+
+  riskLevel: 'low' | 'moderate' | 'high' | 'very-high';
+  riskScore: number; // 0-100
+  confidenceLevel: number; // 0-100, basierend auf Datenmenge
+
+  contributingFactors: {
+    factor: string;
+    contribution: number; // % zum Score
+    value: string; // "4.5h Schlaf"
+    threshold: string; // "< 6h"
+  }[];
+
+  recommendations: {
+    priority: 'high' | 'medium' | 'low';
+    title: string;
+    description: string;
+    actionType:
+      | 'sleep'
+      | 'hydration'
+      | 'stress'
+      | 'medication'
+      | 'activity'
+      | 'avoid';
+  }[];
+
+  // Validation (Feedback-Loop)
+  actualOutcome?: boolean; // Hatte User tatsächlich Migräne?
+  feedbackAt?: string;
+}
+```
+
+#### Teil 2: Die 10 Multi-Faktor Korrelationen
+
+| #   | Korrelation                 | Beschreibung                                  | Faktoren                |
+| --- | --------------------------- | --------------------------------------------- | ----------------------- |
+| 1   | **Sleep Debt**              | Kumulativer Schlafmangel über 3-5 Tage        | Garmin Sleep + History  |
+| 2   | **Stress-Recovery-Balance** | Verhältnis Stress zu Erholungs-Tagen (7 Tage) | Garmin Stress           |
+| 3   | **Hormoneller Zyklus**      | Perimenstruelle Migräne (Tag -2 bis +3)       | DailyLog (optional)     |
+| 4   | **Luftdruck-Dynamik**       | Schnelle Schwankungen, Rate-of-Change         | Weather + History       |
+| 5   | **Weather Combo Index**     | Schwüle: Temp + Humidity + Pressure           | Weather kombiniert      |
+| 6   | **HRV-Trend-Abweichung**    | 7-Tage Trend vs. aktueller Wert               | Garmin HRV              |
+| 7   | **Body-Battery-Deficit**    | Kumulative Erschöpfung (Drained > Charged)    | Garmin Body Battery     |
+| 8   | **Let-Down-Migräne**        | Wochenend-/Urlaubs-Pattern                    | Episode-Timing + Stress |
+| 9   | **Trigger-Kombinationen**   | Gefährliche 2-3er Trigger-Kombis              | Episode Triggers        |
+| 10  | **Medikamenten-Effizienz**  | Timing + Trigger → Wirksamkeit                | Episode + Meds          |
+
+#### Teil 3: Risiko-Scoring
+
+**Gewichtetes Scoring System:**
+
+| Faktor                   | Gewicht | Schwellenwert    |
+| ------------------------ | ------- | ---------------- |
+| Kumulativer Schlafmangel | 20%     | > 5h Defizit     |
+| Stress-Erholungs-Ratio   | 15%     | > 3:1            |
+| Luftdruck-Änderung       | 15%     | > 10 hPa         |
+| HRV unter Durchschnitt   | 12%     | > 20% Abweichung |
+| Body Battery niedrig     | 10%     | < 30             |
+| Schwüle-Index            | 10%     | > 70             |
+| Zyklus-Phase             | 8%      | Perimensturell   |
+| Let-Down-Tag             | 5%      | Erster Ruhetag   |
+| Bekannte Trigger         | 5%      | Aktiv            |
+
+**Risiko-Stufen:**
+
+| Stufe     | Score  | Farbe     | Aktion            |
+| --------- | ------ | --------- | ----------------- |
+| Niedrig   | 0-30   | 🟢 Grün   | Keine Warnung     |
+| Erhöht    | 31-50  | 🟡 Gelb   | Passive Anzeige   |
+| Hoch      | 51-70  | 🟠 Orange | Push-Warnung      |
+| Sehr Hoch | 71-100 | 🔴 Rot    | Dringende Warnung |
+
+#### Teil 4: Präventions-Empfehlungen
+
+| Risikofaktor         | Empfehlung                                                | Action Type |
+| -------------------- | --------------------------------------------------------- | ----------- |
+| Schlafmangel         | "Heute Abend früh schlafen (vor 22 Uhr)"                  | sleep       |
+| Hoher Stress         | "20 Min Entspannung: Spaziergang oder Meditation"         | stress      |
+| Druckabfall erwartet | "Prophylaktisch Medikament erwägen"                       | medication  |
+| Dehydration          | "Mindestens 2L Wasser heute trinken"                      | hydration   |
+| Let-Down-Risiko      | "Sanft entspannen, nicht komplett abschalten"             | activity    |
+| Zyklus-Phase         | "Du bist in migräneanfälliger Phase - Trigger vermeiden!" | avoid       |
+| Kombiniertes Risiko  | "Mehrere Faktoren aktiv - besondere Vorsicht!"            | medication  |
+
+**Todo-Liste:**
+
+#### 📦 PAKET 13.1: Datenmodell-Erweiterung
+
+- [ ] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
+  - [ ] `DailyLog` Interface + Tabelle hinzufügen
+  - [ ] `RiskAssessment` Interface + Tabelle hinzufügen
+  - [ ] DB Migration Version 5
+  - [ ] Indizes: `dailyLogs.date`, `riskAssessments.date`
+- [ ] `[💾 SEQ]` **DailyLog Service** `src/features/tracking/daily-log-service.ts`
+  - [ ] `saveDailyLog(date, data)` → Speichert optionale Tages-Daten
+  - [ ] `getDailyLog(date)` → Holt Tages-Log
+  - [ ] `getDailyLogsRange(start, end)` → Date Range Query
+- [ ] `[🎨 PARALLEL]` **Daily Check-In UI** `src/features/tracking/DailyCheckIn.tsx`
+  - [ ] Minimalistisches Modal (kann übersprungen werden)
+  - [ ] Zyklus-Tag Picker (1-35 oder "Nicht tracken")
+  - [ ] Koffein-Counter (+/- Buttons)
+  - [ ] Bildschirmzeit Slider (0-16h)
+  - [ ] "Überspringen" Button prominent
+
+#### 📦 PAKET 13.2: Multi-Faktor Korrelationen
+
+- [ ] `[📊 SEQ]` **Erweiterte Correlation Types** `src/features/analytics/types.ts`
+  - [ ] `MultiFactorCorrelation` Interface
+  - [ ] `TriggerComboResult` Interface
+  - [ ] `MedicationEfficiencyResult` Interface
+  - [ ] `SleepDebtAnalysis` Interface
+- [ ] `[📊 PARALLEL]` **Korrelation 1-3:** `src/features/analytics/correlation-service.ts`
+  - [ ] `analyzeSleepDebtCorrelation()` → 3-5 Tage Schlafdefizit
+  - [ ] `analyzeStressRecoveryBalance()` → 7-Tage Stress/Recovery Ratio
+  - [ ] `analyzeCycleCorrelation()` → Zyklus-Phasen (optional, null wenn keine Daten)
+- [ ] `[📊 PARALLEL]` **Korrelation 4-6:**
+  - [ ] `analyzePressureDynamics()` → Erweiterte Luftdruck-Analyse (Rate-of-Change)
+  - [ ] `analyzeWeatherComboIndex()` → Schwüle-Index (kombiniert)
+  - [ ] `analyzeHRVTrendDeviation()` → 7-Tage HRV Trend vs. aktuell
+- [ ] `[📊 PARALLEL]` **Korrelation 7-10:**
+  - [ ] `analyzeBodyBatteryDeficit()` → Kumulative Erschöpfung
+  - [ ] `analyzeLetDownPattern()` → Wochenend-/Urlaubs-Migräne
+  - [ ] `analyzeTriggerCombinations()` → 2-3er Trigger-Kombis mit Risiko
+  - [ ] `analyzeMedicationEfficiency()` → Medikamenten-Timing-Analyse
+- [ ] `[📊 SEQ]` **analyzeAllCorrelations() erweitern** → Alle 10 Korrelationen integrieren
+- [ ] `[🧪 PARALLEL]` Unit Tests:
+  - [ ] `sleep-debt.test.ts` → Kumulativer Schlafmangel
+  - [ ] `multi-factor.test.ts` → Kombinierte Faktoren
+  - [ ] `trigger-combos.test.ts` → Trigger-Kombinationen
+
+#### 📦 PAKET 13.3: Vorausschauendes Warnsystem
+
+- [ ] `[🔮 SEQ]` **Risk Engine** `src/features/prediction/risk-engine.ts`
+  - [ ] `calculateCurrentRisk()` → Aktuelles Risiko berechnen
+  - [ ] `calculateTomorrowRisk()` → Morgen-Vorhersage (mit Wetter-Forecast)
+  - [ ] `getRiskHistory(days)` → Historische Assessments
+  - [ ] `getModelAccuracy()` → Vorhersage-Genauigkeit berechnen
+- [ ] `[🔮 SEQ]` **Scoring Algorithm** `src/features/prediction/scoring.ts`
+  - [ ] Gewichtete Faktor-Berechnung (siehe Tabelle oben)
+  - [ ] Konfidenz-Level basierend auf Datenmenge
+  - [ ] Personalisierte Gewichte (lernt aus Feedback)
+  - [ ] Threshold-Kalibrierung
+- [ ] `[🔮 PARALLEL]` **Risk Assessment Persistence**
+  - [ ] Speichert tägliche Assessments in DB
+  - [ ] Feedback-Loop: User markiert ob Migräne kam
+  - [ ] Model-Kalibrierung basierend auf Accuracy
+- [ ] `[🧪 PARALLEL]` Unit Tests:
+  - [ ] `risk-engine.test.ts` → Scoring Logic
+  - [ ] `scoring.test.ts` → Gewichtungs-Algorithmus
+  - [ ] `prediction-accuracy.test.ts` → Model Validation
+
+#### 📦 PAKET 13.4: Präventions-Empfehlungen
+
+- [ ] `[💡 SEQ]` **Recommendation Engine** `src/features/prediction/recommendation-engine.ts`
+  - [ ] `getRecommendations(riskAssessment)` → Passende Empfehlungen
+  - [ ] Priorisierung nach Risiko-Beitrag
+  - [ ] Kontextuelle Anpassung (Zeit, Wochentag)
+  - [ ] Deduplizierung ähnlicher Empfehlungen
+- [ ] `[💡 PARALLEL]` **Recommendation Catalog** `src/features/prediction/recommendations.ts`
+  - [ ] Alle Empfehlungs-Texte (Deutsch)
+  - [ ] Action-Types mit Icons
+  - [ ] Severity-basierte Sortierung
+- [ ] `[🧪 PARALLEL]` Unit Tests:
+  - [ ] `recommendation-engine.test.ts` → Empfehlungs-Logik
+
+#### 📦 PAKET 13.5: Vollständige Prediction UI
+
+- [ ] `[🎨 SEQ]` **Prediction Page** `src/pages/Prediction.tsx`
+  - [ ] Header mit aktuellem Risiko-Level (große Anzeige)
+  - [ ] Risiko-Score Gauge (0-100)
+  - [ ] Konfidenz-Anzeige
+  - [ ] Tab-Navigation: "Heute", "Morgen", "Verlauf", "Genauigkeit"
+- [ ] `[🎨 PARALLEL]` **Risk Factor Cards** `src/features/prediction/RiskFactorCard.tsx`
+  - [ ] Einzelne Karte pro Faktor
+  - [ ] Beitrag zum Gesamtrisiko (%)
+  - [ ] Aktueller Wert vs. Schwellenwert
+  - [ ] Farbcodierung (Grün/Gelb/Orange/Rot)
+- [ ] `[🎨 PARALLEL]` **Recommendation Cards** `src/features/prediction/RecommendationCard.tsx`
+  - [ ] Priorisierte Liste
+  - [ ] Icon basierend auf Action-Type
+  - [ ] "Erledigt" Checkbox (optional)
+  - [ ] Expandierbare Details
+- [ ] `[🎨 PARALLEL]` **Risk Timeline Chart** `src/features/prediction/RiskTimeline.tsx`
+  - [ ] 30-Tage Verlauf des Risiko-Scores
+  - [ ] Episode-Marker (tatsächliche Migränen)
+  - [ ] Vorhersage-Marker (was wurde vorhergesagt)
+  - [ ] Recharts LineChart mit Bereichen
+- [ ] `[🎨 PARALLEL]` **Accuracy Dashboard** `src/features/prediction/AccuracyDashboard.tsx`
+  - [ ] Gesamt-Genauigkeit (%)
+  - [ ] True Positives / False Positives / False Negatives
+  - [ ] Confusion Matrix Visualisierung
+  - [ ] "Feedback geben" Button für heute
+- [ ] `[🎨 SEQ]` **Dashboard Widget** `src/features/prediction/RiskWidget.tsx`
+  - [ ] Kompakte Risiko-Anzeige für Dashboard
+  - [ ] Farb-Badge mit Score
+  - [ ] Klick → Prediction Page
+- [ ] `[🎨 SEQ]` **Navigation Update:**
+  - [ ] Neuer Menüpunkt "Vorhersage" in Layout
+  - [ ] Icon: `<TrendingUp />` oder `<AlertTriangle />`
+- [ ] `[🧪 PARALLEL]` E2E Tests:
+  - [ ] `prediction-page.e2e.test.ts` → UI Flow Tests
+
+#### Abhängigkeiten-Graph
+
+```
+PAKET 13.1 (Data Model) [SEQUENTIAL]
+         ↓
+    ┌────┴────┐
+PAKET 13.2    PAKET 13.3
+(Correlations) (Prediction)
+[PARALLEL]    [PARALLEL]
+    └────┬────┘
+         ↓
+PAKET 13.4 (Recommendations) [DEPENDS: 13.2, 13.3]
+         ↓
+PAKET 13.5 (UI) [DEPENDS: 13.4]
+```
+
+#### Geschätzte Duration
+
+| Teil                 | Solo       | Mit Sub-Agents |
+| -------------------- | ---------- | -------------- |
+| 13.1 Data Model      | 2-3h       | 2-3h           |
+| 13.2 Correlations    | 6-8h       | 3-4h           |
+| 13.3 Prediction      | 4-5h       | 3-4h           |
+| 13.4 Recommendations | 2-3h       | 2h             |
+| 13.5 UI              | 8-10h      | 5-6h           |
+| **Total**            | **22-29h** | **15-19h**     |
+
+---
+
 ## 4. Ausführungs-Reihenfolge
 
 **Phase 1: Foundation (Sequenziell)**
@@ -1147,6 +1425,8 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 **Phase 2: Core Features (Parallel)** 3. **PAKET 3 (UI-Core)** & **PAKET 4 (Garmin)** → Parallel möglich 4. **PAKET 5 (Analytics)** → Nach 2, 3, 4 5. **PAKET 6 (MCP-Server)** → Parallel zu allem, aber Tests erst nach Core-Features
 
 **Phase 3: Enhanced Features (Nach Phase 2)** 6. **PAKET 7 (Garmin-Real)** → Echte Garmin API (nach PAKET 4) 7. **PAKET 8 (Symptoms)** & **PAKET 9 (Intensity-History)** & **PAKET 10 (Night-Onset)** → Parallel möglich 8. **PAKET 11 (Backup-Consolidation)** → UI Cleanup (nach PAKET 5) 9. **PAKET 12 (Weather)** → Neue Feature-Schicht (nach PAKET 5)
+
+**Phase 4: Smart Features (Nach Phase 3)** 10. **PAKET 13 (Smart-Correlations)** → Erweiterte Korrelationen, Warnsystem & Prediction UI (nach PAKET 5, 12)
 
 ---
 
@@ -1505,7 +1785,8 @@ PAKET 5 (ANALYTICS) [SEQUENTIAL - Requires 2,3,4]
 | 10        | Night Onset          | 0                                 | 0          | 1-2h            | 1-2h                |
 | 11        | Backup Consolidation | 0                                 | 0          | 1-2h            | 1-2h                |
 | 12        | Weather              | 3 (API, Sync, Analytics)          | 3          | 5-6h            | 3-4h                |
-| **Total** | -                    | **24**                            | **24**     | **38-53h**      | **24-34h**          |
+| 13        | Smart Correlations   | 5 (Data, Corr, Pred, Reco, UI)    | 5          | 22-29h          | 15-19h              |
+| **Total** | -                    | **29**                            | **29**     | **60-82h**      | **39-53h**          |
 
 **Speedup:** ~35-40% durch Parallelisierung
 

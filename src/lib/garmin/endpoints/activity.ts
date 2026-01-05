@@ -1,6 +1,8 @@
 // Activity Endpoints - Real Garmin API Implementation
 import { garminHttp } from '../http-client';
+import { garminAuth } from '../auth';
 import { WELLNESS_ENDPOINTS, USER_SUMMARY_ENDPOINTS } from '../constants';
+import { db } from '../../db';
 import type {
     BodyBatteryDataResponse,
     StepsDataResponse,
@@ -74,6 +76,11 @@ export async function getBodyBattery(
  */
 export async function getBodyBatterySingleDay(date: string): Promise<BodyBatteryData | null> {
     const data = await getBodyBattery(date, date);
+    await db.logs.add({
+        timestamp: new Date().toISOString(),
+        level: 'info',
+        message: `[Body Battery API] Response for ${date}: ${JSON.stringify(data, null, 2)}`,
+    });
     return data?.[0] || null;
 }
 
@@ -83,8 +90,10 @@ export async function getBodyBatterySingleDay(date: string): Promise<BodyBattery
  */
 export async function getStepsData(date: string): Promise<StepsData | null> {
     try {
+        // Daily Summary endpoint requires displayName in URL path
+        const displayName = await garminAuth.getDisplayNameAsync();
         const response = await garminHttp.get<StepsDataResponse>(
-            WELLNESS_ENDPOINTS.DAILY_SUMMARY(date)
+            WELLNESS_ENDPOINTS.DAILY_SUMMARY(displayName, date)
         );
 
         const data = response.data;
@@ -136,8 +145,10 @@ export async function getHydrationData(date: string): Promise<HydrationData | nu
  */
 export async function getUserSummary(date: string): Promise<DailySummary | null> {
     try {
+        // User Summary endpoint requires displayName in URL path
+        const displayName = await garminAuth.getDisplayNameAsync();
         const response = await garminHttp.get<DailySummaryResponse>(
-            USER_SUMMARY_ENDPOINTS.USER_SUMMARY(date)
+            USER_SUMMARY_ENDPOINTS.USER_SUMMARY(displayName, date)
         );
 
         const data = response.data;

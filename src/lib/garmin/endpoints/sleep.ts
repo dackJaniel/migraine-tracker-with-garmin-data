@@ -1,6 +1,8 @@
 // Sleep Endpoints - Real Garmin API Implementation
 import { garminHttp } from '../http-client';
+import { garminAuth } from '../auth';
 import { WELLNESS_ENDPOINTS } from '../constants';
+import { db } from '../../db';
 import type { SleepDataResponse } from '../types';
 
 export interface SleepData {
@@ -18,13 +20,27 @@ export interface SleepData {
  */
 export async function getSleepData(date: string): Promise<SleepData | null> {
     try {
+        // Sleep endpoint requires displayName in URL path
+        const displayName = await garminAuth.getDisplayNameAsync();
         const response = await garminHttp.get<SleepDataResponse>(
-            WELLNESS_ENDPOINTS.SLEEP_DATA(date)
+            WELLNESS_ENDPOINTS.SLEEP_DATA(displayName, date)
         );
 
         const data = response.data;
 
+        // DEBUG: Log raw response to DB
+        await db.logs.add({
+            timestamp: new Date().toISOString(),
+            level: 'info',
+            message: `[Sleep API] Response for ${date}: ${JSON.stringify(data, null, 2)}`,
+        });
+
         if (!data?.dailySleepDTO) {
+            await db.logs.add({
+                timestamp: new Date().toISOString(),
+                level: 'warn',
+                message: `[Sleep API] No dailySleepDTO in response for ${date}`,
+            });
             return null;
         }
 

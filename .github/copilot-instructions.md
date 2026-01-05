@@ -55,6 +55,9 @@
 ```typescript
 episodes: '++id, startTime, endTime, intensity, *triggers, *medicines';
 garminData: 'date, sleepScore, stressLevel, restingHR, hrv, bodyBattery, steps';
+weatherData: 'date, pressure, syncedAt'; // PAKET 12
+dailyLogs: 'date, cycleDay, caffeineIntake, screenTime'; // PAKET 13 (optional)
+riskAssessments: 'date, riskLevel, riskScore'; // PAKET 13
 logs: '++id, timestamp, level, message';
 settings: 'key';
 archivedEpisodes: '++id, startTime, endTime'; // 2-Jahre Retention
@@ -69,6 +72,19 @@ archivedEpisodes: '++id, startTime, endTime'; // 2-Jahre Retention
 - Body Battery (Charged, Drained, Current)
 - Steps, Hydration, Respiration, SpO2
 
+### Wetter Metriken (PAKET 12)
+
+- Temperature (Min, Max, Avg)
+- Pressure (hPa, Change zum Vortag)
+- Humidity, Precipitation, Cloud Cover
+- Wind Speed, UV Index, Weather Code
+
+### Prediction & Risk (PAKET 13)
+
+- Risk Assessment (Score 0-100, Level, Contributing Factors)
+- Daily Log (Zyklus, Koffein, Bildschirmzeit - alle optional)
+- Recommendations (Präventions-Empfehlungen)
+
 ---
 
 ## 🏗 Projektstruktur
@@ -81,11 +97,15 @@ src/
 │   ├── garmin/            # API Client + Sync Service
 │   ├── analytics/         # Charts + Korrelationen
 │   ├── auth/              # PIN Management
-│   └── backup/            # Export/Import
+│   ├── backup/            # Export/Import
+│   ├── weather/           # Wetter-Integration
+│   ├── tracking/          # Daily Logs (optional)
+│   └── prediction/        # Risk Engine + Empfehlungen
 ├── lib/                   # Core Libraries
 │   ├── db.ts             # Dexie Schema
 │   ├── encryption.ts     # Crypto Utils
-│   └── garmin/           # Garmin API Client
+│   ├── garmin/           # Garmin API Client
+│   └── weather/          # Weather API Client
 ├── hooks/                 # Custom React Hooks
 ├── pages/                 # Route Components
 ├── store/                 # Zustand Stores
@@ -212,12 +232,19 @@ mcp-server/                # MCP Testing Tools
 
 ## 🚀 Arbeitspakete (Siehe PROJECT_PLAN.md)
 
-1. **PAKET 1:** Setup & Infrastruktur
-2. **PAKET 2:** Datenbank & Encryption
-3. **PAKET 3:** UI Core & PIN Setup
-4. **PAKET 4:** Garmin API Client & Sync
-5. **PAKET 5:** Analytics & Backup
-6. **PAKET 6:** MCP Server & Testing Tools
+1. **PAKET 1:** Setup & Infrastruktur ✅
+2. **PAKET 2:** Datenbank & Encryption ✅
+3. **PAKET 3:** UI Core & PIN Setup ✅
+4. **PAKET 4:** Garmin API Client & Sync ✅
+5. **PAKET 5:** Analytics & Backup ✅
+6. **PAKET 6:** MCP Server & Testing Tools ✅
+7. **PAKET 7:** Garmin Real API ✅
+8. **PAKET 8:** Erweiterte Symptome ✅
+9. **PAKET 9:** Intensitätsverlauf ✅
+10. **PAKET 10:** Nacht-Onset Tracking ✅
+11. **PAKET 11:** Backup Konsolidierung ✅
+12. **PAKET 12:** Wetter-Integration ✅
+13. **PAKET 13:** Smart Correlations & Warnsystem 🔜
 
 **Aktueller Status:** Prüfe PROJECT_PLAN.md für abgeschlossene Todos
 

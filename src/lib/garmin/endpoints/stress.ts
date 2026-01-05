@@ -1,6 +1,8 @@
 // Stress & Heart Rate Endpoints - Real Garmin API Implementation
 import { garminHttp } from '../http-client';
+import { garminAuth } from '../auth';
 import { WELLNESS_ENDPOINTS, HRV_ENDPOINTS } from '../constants';
+import { db } from '../../db';
 import type {
     StressDataResponse,
     HeartRateDataResponse,
@@ -62,13 +64,27 @@ export async function getStressData(date: string): Promise<StressData | null> {
  */
 export async function getHeartRates(date: string): Promise<HeartRateData | null> {
     try {
+        // Heart Rate endpoint requires displayName in URL path
+        const displayName = await garminAuth.getDisplayNameAsync();
         const response = await garminHttp.get<HeartRateDataResponse>(
-            WELLNESS_ENDPOINTS.HEART_RATE(date)
+            WELLNESS_ENDPOINTS.HEART_RATE(displayName, date)
         );
 
         const data = response.data;
 
+        // DEBUG: Log raw response to DB
+        await db.logs.add({
+            timestamp: new Date().toISOString(),
+            level: 'info',
+            message: `[Heart Rate API] Response for ${date}: ${JSON.stringify(data, null, 2)}`,
+        });
+
         if (!data) {
+            await db.logs.add({
+                timestamp: new Date().toISOString(),
+                level: 'warn',
+                message: `[Heart Rate API] No data in response for ${date}`,
+            });
             return null;
         }
 
@@ -115,7 +131,19 @@ export async function getHRVData(date: string): Promise<HRVData | null> {
 
         const data = response.data;
 
+        // DEBUG: Log raw response to DB
+        await db.logs.add({
+            timestamp: new Date().toISOString(),
+            level: 'info',
+            message: `[HRV API] Response for ${date}: ${JSON.stringify(data, null, 2)}`,
+        });
+
         if (!data) {
+            await db.logs.add({
+                timestamp: new Date().toISOString(),
+                level: 'warn',
+                message: `[HRV API] No data in response for ${date}`,
+            });
             return null;
         }
 

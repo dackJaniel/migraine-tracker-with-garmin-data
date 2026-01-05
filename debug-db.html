@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DB Debug</title>
+  </head>
+  <body>
+    <h1>Garmin DB Inspector</h1>
+    <button onclick="inspectDB()">Inspect DB</button>
+    <button onclick="clearDB()">Clear All Data</button>
+    <pre id="output"></pre>
+
+    <script type="module">
+      import Dexie from 'https://unpkg.com/dexie@latest/dist/modern/dexie.mjs';
+
+      const db = new Dexie('MigraineTrackerDB');
+      db.version(1).stores({
+        episodes: '++id, startTime, endTime, intensity, *triggers, *medicines',
+        garminData:
+          'date, sleepScore, stressLevel, restingHR, hrv, bodyBattery, steps',
+        logs: '++id, timestamp, level, message',
+        settings: 'key',
+        archivedEpisodes: '++id, startTime, endTime',
+      });
+
+      window.inspectDB = async function () {
+        const output = document.getElementById('output');
+        try {
+          const allData = await db.garminData.toArray();
+          output.textContent = JSON.stringify(allData, null, 2);
+          console.log('Garmin Data:', allData);
+        } catch (error) {
+          output.textContent = 'Error: ' + error.message;
+          console.error(error);
+        }
+      };
+
+      window.clearDB = async function () {
+        if (confirm('Delete all data?')) {
+          await db.garminData.clear();
+          alert('Data cleared!');
+        }
+      };
+    </script>
+  </body>
+</html>

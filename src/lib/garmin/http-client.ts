@@ -6,7 +6,8 @@ import { CapacitorHttp } from '@capacitor/core';
 import type { HttpOptions, HttpResponse } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
 import { Capacitor } from '@capacitor/core';
-import { DEFAULT_HEADERS, RATE_LIMIT, SESSION_CONFIG } from './constants';
+import { DEFAULT_HEADERS, RATE_LIMIT, SESSION_CONFIG, OAUTH_CONSUMER } from './constants';
+import { buildOAuth1Header } from './auth';
 import { db } from '../db';
 
 export interface GarminHttpResponse<T = unknown> {
@@ -76,15 +77,20 @@ async function waitForRateLimit(): Promise<void> {
 }
 
 /**
- * Get stored OAuth tokens
+ * Get stored OAuth tokens (including token secrets)
  */
-async function getStoredTokens(): Promise<{ oauth1?: string; oauth2?: string } | null> {
+async function getStoredTokens(): Promise<{
+    oauth1?: string;
+    oauth1Secret?: string;
+    oauth2?: string;
+} | null> {
     try {
         const result = await Preferences.get({ key: SESSION_CONFIG.PREFERENCES_KEY_TOKENS });
         if (result.value) {
             const tokens = JSON.parse(result.value);
             return {
                 oauth1: tokens.oauth1Token,
+                oauth1Secret: tokens.oauth1TokenSecret,
                 oauth2: tokens.oauth2Token,
             };
         }
@@ -95,17 +101,62 @@ async function getStoredTokens(): Promise<{ oauth1?: string; oauth2?: string } |
 }
 
 /**
- * Build authorization headers from stored tokens
+ * Build authorization headers with OAuth1 signature
  */
-async function buildAuthHeaders(): Promise<Record<string, string>> {
+async function buildAuthHeaders(
+    method: string,
+    url: string,
+    queryParams?: Record<string, string>
+): Promise<Record<string, string>> {
     const tokens = await getStoredTokens();
     const headers: Record<string, string> = { ...DEFAULT_HEADERS };
 
-    if (tokens?.oauth2) {
+    // Generate OAuth1 Authorization header
+    if (tokens?.oauth1) {
+        try {
+            const oauth1Header = await buildOAuth1Header(
+                method,
+                url,
+                OAUTH_CONSUMER.KEY,
+                OAUTH_CONSUMER.SECRET,
+                tokens.oauth1,
+                tokens.oauth1Secret || '',
+                queryParams || {}
+            );
+            headers['Authorization'] = oauth1Header;
+        } catch (error) {
+            console.error('Failed to build OAuth1 header:', error);
+            // Fallback to OAuth2 if available
+            if (tokens?.oauth2) {
+                headers['Authorization'] = `Bearer ${tokens.oauth2}`;
+            }
+        }
+    } else if (tokens?.oauth2) {
+        // Fallback to OAuth2 Bearer token
         headers['Authorization'] = `Bearer ${tokens.oauth2}`;
     }
 
     return headers;
+}
+
+/**
+ * Extract query parameters from URL
+ */
+function extractQueryParams(url: string): Record<string, string> {
+    const queryParams: Record<string, string> = {};
+    const urlObj = new URL(url, 'https://dummy.com'); // Need base URL for parsing
+    urlObj.searchParams.forEach((value, key) => {
+        queryParams[key] = value;
+    });
+    return queryParams;
+}
+
+/**
+ * Get clean URL without query parameters (for OAuth1 signature)
+ */
+function getCleanUrl(url: string): string {
+    const questionMarkIndex = url.indexOf('?');
+    return questionMarkIndex === -1 ? url : url.substring(0, questionMarkIndex);
 }
 
 /**
@@ -125,8 +176,13 @@ async function executeRequest<T>(
     customHeaders?: Record<string, string>
 ): Promise<GarminHttpResponse<T>> {
     const startTime = Date.now();
+
+    // Extract query parameters for OAuth1 signature
+    const queryParams = extractQueryParams(url);
+    const cleanUrl = getCleanUrl(url);
+
     const headers = {
-        ...(await buildAuthHeaders()),
+        ...(await buildAuthHeaders(method, cleanUrl, queryParams)),
         ...customHeaders,
     };
 
