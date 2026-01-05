@@ -26,6 +26,7 @@ import {
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { WeatherCard } from '@/features/weather';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -132,6 +133,11 @@ export default function Dashboard() {
             </p>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Weather Card (PAKET 12) */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <WeatherCard />
       </div>
 
       {/* Episode Liste */}

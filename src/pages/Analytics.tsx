@@ -13,6 +13,7 @@ import { TriggerAnalysis } from '@/features/analytics/TriggerAnalysis';
 import { CorrelationInsights } from '@/features/analytics/CorrelationInsights';
 import { IntensityAnalytics } from '@/features/analytics/IntensityAnalytics';
 import { BackupManager } from '@/features/backup/BackupManager';
+import { WeatherCharts } from '@/features/weather';
 
 export function Analytics() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,9 +24,14 @@ export function Analytics() {
   useEffect(() => {
     if (
       tabFromUrl &&
-      ['overview', 'triggers', 'correlations', 'intensity', 'export'].includes(
-        tabFromUrl
-      )
+      [
+        'overview',
+        'triggers',
+        'correlations',
+        'intensity',
+        'weather',
+        'export',
+      ].includes(tabFromUrl)
     ) {
       setActiveTab(tabFromUrl);
     }
@@ -56,10 +62,11 @@ export function Analytics() {
         onValueChange={handleTabChange}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Übersicht</TabsTrigger>
           <TabsTrigger value="triggers">Trigger</TabsTrigger>
           <TabsTrigger value="intensity">Verlauf</TabsTrigger>
+          <TabsTrigger value="weather">Wetter</TabsTrigger>
           <TabsTrigger value="correlations">Korrelationen</TabsTrigger>
           <TabsTrigger value="export">Export</TabsTrigger>
         </TabsList>
@@ -74,6 +81,10 @@ export function Analytics() {
 
         <TabsContent value="intensity" className="space-y-4">
           <IntensityAnalytics />
+        </TabsContent>
+
+        <TabsContent value="weather" className="space-y-4">
+          <WeatherCharts />
         </TabsContent>
 
         <TabsContent value="correlations" className="space-y-4">

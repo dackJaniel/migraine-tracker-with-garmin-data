@@ -3,7 +3,6 @@
  * Verwaltet Standort-Einstellungen für Wetter-Abfragen
  */
 
-import { Geolocation } from '@capacitor/geolocation';
 import { addLog, getSetting, setSetting } from '@/lib/db';
 import type { Location, WeatherSettings } from './types';
 import { reverseGeocode } from './client';
@@ -50,29 +49,26 @@ export async function getSavedLocation(): Promise<Location | undefined> {
  */
 export async function saveLocation(location: Location): Promise<void> {
     await saveWeatherSettings({ location });
-    await addLog('info', 'Location saved', location);
+    await addLog('info', 'Location saved', { name: location.name, lat: location.lat, lon: location.lon });
 }
 
 /**
- * Ermittelt den aktuellen Standort via GPS
+ * Ermittelt den aktuellen Standort via Browser Geolocation API
  */
 export async function getCurrentLocation(): Promise<Location | null> {
     try {
-        // Prüfe ob Berechtigung vorhanden ist
-        const permission = await Geolocation.checkPermissions();
-
-        if (permission.location === 'denied') {
-            const request = await Geolocation.requestPermissions();
-            if (request.location !== 'granted') {
-                await addLog('warn', 'Location permission denied');
-                return null;
-            }
+        // Verwende Browser Geolocation API (funktioniert auf Web und in Capacitor)
+        if (!navigator.geolocation) {
+            await addLog('warn', 'Geolocation not supported');
+            return null;
         }
 
-        // Hole aktuelle Position
-        const position = await Geolocation.getCurrentPosition({
-            enableHighAccuracy: false, // Für Wetter reicht grobe Position
-            timeout: 10000,
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: false,
+                timeout: 10000,
+                maximumAge: 300000, // 5 Minuten Cache
+            });
         });
 
         const { latitude, longitude } = position.coords;
@@ -86,7 +82,7 @@ export async function getCurrentLocation(): Promise<Location | null> {
             name: cityName || `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`,
         };
 
-        await addLog('info', 'Current location detected', location);
+        await addLog('info', 'Current location detected', { name: location.name, lat: location.lat, lon: location.lon });
         return location;
     } catch (error) {
         await addLog('error', 'Failed to get current location', {

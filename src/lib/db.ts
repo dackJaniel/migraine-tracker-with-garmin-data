@@ -140,6 +140,34 @@ export interface Setting {
     value: string; // JSON stringified value
 }
 
+/**
+ * Wetterdaten (PAKET 12)
+ * Gespeicherte Wetterdaten für Korrelationsanalysen
+ */
+export interface WeatherData {
+    date: string; // YYYY-MM-DD (Primary Key)
+    location?: {
+        lat: number;
+        lon: number;
+        name: string;
+    };
+    temperature: {
+        min: number; // °C
+        max: number; // °C
+        avg: number; // °C
+    };
+    humidity: number; // %
+    pressure: number; // hPa (Luftdruck - wichtig für Migräne!)
+    pressureChange?: number; // hPa Änderung zum Vortag
+    precipitation: number; // mm
+    cloudCover: number; // %
+    windSpeed: number; // km/h
+    uvIndex?: number;
+    weatherCode: number; // WMO Weather Code
+    weatherDescription: string; // "Sonnig", "Bewölkt", etc.
+    syncedAt: string; // ISO 8601 Date String
+}
+
 export interface ArchivedEpisode {
     id?: number;
     startTime: string;
@@ -162,6 +190,7 @@ export interface ArchivedEpisode {
 export class MigraineDB extends Dexie {
     episodes!: EntityTable<Episode, 'id'>;
     garminData!: EntityTable<GarminData, 'date'>;
+    weatherData!: EntityTable<WeatherData, 'date'>; // PAKET 12
     logs!: EntityTable<Log, 'id'>;
     settings!: EntityTable<Setting, 'key'>;
     archivedEpisodes!: EntityTable<ArchivedEpisode, 'id'>;
@@ -219,6 +248,18 @@ export class MigraineDB extends Dexie {
                     }];
                 }
             });
+        });
+
+        // Version 4: WeatherData Tabelle hinzufügen (PAKET 12)
+        // Speichert tägliche Wetterdaten für Korrelationsanalysen
+        this.version(4).stores({
+            episodes:
+                '++id, startTime, endTime, intensity, *triggers, *medicines, createdAt',
+            garminData: 'date, syncedAt',
+            weatherData: 'date, pressure, syncedAt', // Index auf date und pressure
+            logs: '++id, timestamp, level',
+            settings: 'key',
+            archivedEpisodes: '++id, startTime, archivedAt',
         });
     }
 }

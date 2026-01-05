@@ -8,7 +8,7 @@ export interface CorrelationResult {
     sampleSize: number;
     isSignificant: boolean;
     pValue?: number;
-    type: 'sleep' | 'stress' | 'hrv' | 'trigger' | 'bodyBattery' | 'nightOnset';
+    type: 'sleep' | 'stress' | 'hrv' | 'trigger' | 'bodyBattery' | 'nightOnset' | 'weather' | 'pressure' | 'temperature' | 'humidity';
 }
 
 /**
@@ -378,9 +378,227 @@ export async function analyzeAllCorrelations(): Promise<CorrelationResult[]> {
         analyzeBodyBatteryCorrelation(),
         analyzeNightOnsetCorrelation(),
         analyzeTriggerPatterns(),
+        // Weather correlations (PAKET 12)
+        analyzePressureCorrelation(),
+        analyzeTemperatureCorrelation(),
+        analyzeHumidityCorrelation(),
+        analyzeWeatherCodeCorrelation(),
     ]);
 
     return results.flat().filter((r): r is CorrelationResult => r !== null);
+}
+
+/**
+ * Analysiert die Korrelation zwischen Luftdruck-Änderungen und Migräne (PAKET 12)
+ */
+export async function analyzePressureCorrelation(): Promise<CorrelationResult | null> {
+    const episodes = await db.episodes.toArray();
+    if (episodes.length < 5) return null;
+
+    let episodesWithPressureDrop = 0;
+    let episodesWithPressureData = 0;
+    let totalPressureDropEpisodes = 0;
+
+    for (const episode of episodes) {
+        const episodeDate = format(new Date(episode.startTime), 'yyyy-MM-dd');
+        const weatherData = await db.weatherData.get(episodeDate);
+
+        if (weatherData?.pressureChange !== undefined) {
+            episodesWithPressureData++;
+
+            // Druckabfall > 5 hPa gilt als signifikant
+            if (weatherData.pressureChange < -5) {
+                episodesWithPressureDrop++;
+            }
+
+            // Starker Druckabfall > 10 hPa
+            if (weatherData.pressureChange < -10) {
+                totalPressureDropEpisodes++;
+            }
+        }
+    }
+
+    if (episodesWithPressureData < 5) return null;
+
+    const percentage = Math.round((episodesWithPressureDrop / episodesWithPressureData) * 100);
+
+    return {
+        title: 'Luftdruck-Abfall & Migräne',
+        description: `Bei ${percentage}% deiner Migränen (${episodesWithPressureDrop} von ${episodesWithPressureData}) fiel der Luftdruck um mehr als 5 hPa.${totalPressureDropEpisodes > 0 ? ` ${totalPressureDropEpisodes} Episoden hatten einen starken Druckabfall (>10 hPa).` : ''}`,
+        percentage,
+        sampleSize: episodesWithPressureData,
+        isSignificant: percentage > 40,
+        type: 'pressure',
+    };
+}
+
+/**
+ * Analysiert die Korrelation zwischen Temperatur und Migräne (PAKET 12)
+ */
+export async function analyzeTemperatureCorrelation(): Promise<CorrelationResult | null> {
+    const episodes = await db.episodes.toArray();
+    if (episodes.length < 5) return null;
+
+    let hotDayEpisodes = 0;
+    let coldDayEpisodes = 0;
+    let episodesWithTempData = 0;
+
+    for (const episode of episodes) {
+        const episodeDate = format(new Date(episode.startTime), 'yyyy-MM-dd');
+        const weatherData = await db.weatherData.get(episodeDate);
+
+        if (weatherData?.temperature) {
+            episodesWithTempData++;
+
+            // Hitze: > 30°C
+            if (weatherData.temperature.max > 30) {
+                hotDayEpisodes++;
+            }
+
+            // Kälte: < 0°C
+            if (weatherData.temperature.min < 0) {
+                coldDayEpisodes++;
+            }
+        }
+    }
+
+    if (episodesWithTempData < 5) return null;
+
+    const hotPercentage = Math.round((hotDayEpisodes / episodesWithTempData) * 100);
+    const coldPercentage = Math.round((coldDayEpisodes / episodesWithTempData) * 100);
+
+    // Wähle die signifikantere Korrelation
+    if (hotPercentage > coldPercentage && hotPercentage > 20) {
+        return {
+            title: 'Hitze & Migräne',
+            description: `${hotPercentage}% deiner Migränen (${hotDayEpisodes} von ${episodesWithTempData}) traten an heißen Tagen (>30°C) auf.`,
+            percentage: hotPercentage,
+            sampleSize: episodesWithTempData,
+            isSignificant: hotPercentage > 30,
+            type: 'temperature',
+        };
+    }
+
+    if (coldPercentage > 20) {
+        return {
+            title: 'Kälte & Migräne',
+            description: `${coldPercentage}% deiner Migränen (${coldDayEpisodes} von ${episodesWithTempData}) traten an kalten Tagen (<0°C) auf.`,
+            percentage: coldPercentage,
+            sampleSize: episodesWithTempData,
+            isSignificant: coldPercentage > 30,
+            type: 'temperature',
+        };
+    }
+
+    return null;
+}
+
+/**
+ * Analysiert die Korrelation zwischen Luftfeuchtigkeit und Migräne (PAKET 12)
+ */
+export async function analyzeHumidityCorrelation(): Promise<CorrelationResult | null> {
+    const episodes = await db.episodes.toArray();
+    if (episodes.length < 5) return null;
+
+    let highHumidityEpisodes = 0;
+    let episodesWithHumidityData = 0;
+
+    for (const episode of episodes) {
+        const episodeDate = format(new Date(episode.startTime), 'yyyy-MM-dd');
+        const weatherData = await db.weatherData.get(episodeDate);
+
+        if (weatherData?.humidity) {
+            episodesWithHumidityData++;
+
+            // Hohe Luftfeuchtigkeit: > 80%
+            if (weatherData.humidity > 80) {
+                highHumidityEpisodes++;
+            }
+        }
+    }
+
+    if (episodesWithHumidityData < 5) return null;
+
+    const percentage = Math.round((highHumidityEpisodes / episodesWithHumidityData) * 100);
+
+    if (percentage < 25) return null;
+
+    return {
+        title: 'Hohe Luftfeuchtigkeit & Migräne',
+        description: `${percentage}% deiner Migränen (${highHumidityEpisodes} von ${episodesWithHumidityData}) traten bei hoher Luftfeuchtigkeit (>80%) auf.`,
+        percentage,
+        sampleSize: episodesWithHumidityData,
+        isSignificant: percentage > 40,
+        type: 'humidity',
+    };
+}
+
+/**
+ * Analysiert die Korrelation zwischen Wetter-Bedingungen und Migräne (PAKET 12)
+ */
+export async function analyzeWeatherCodeCorrelation(): Promise<CorrelationResult | null> {
+    const episodes = await db.episodes.toArray();
+    if (episodes.length < 5) return null;
+
+    const weatherTypeCount: Record<string, number> = {
+        clear: 0,      // 0-3
+        rain: 0,       // 51-67, 80-82
+        snow: 0,       // 71-86
+        storm: 0,      // 95-99
+        fog: 0,        // 45, 48
+    };
+    let episodesWithWeatherData = 0;
+
+    for (const episode of episodes) {
+        const episodeDate = format(new Date(episode.startTime), 'yyyy-MM-dd');
+        const weatherData = await db.weatherData.get(episodeDate);
+
+        if (weatherData?.weatherCode !== undefined) {
+            episodesWithWeatherData++;
+            const code = weatherData.weatherCode;
+
+            if (code >= 0 && code <= 3) weatherTypeCount.clear++;
+            else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) weatherTypeCount.rain++;
+            else if (code >= 71 && code <= 86) weatherTypeCount.snow++;
+            else if (code >= 95) weatherTypeCount.storm++;
+            else if (code === 45 || code === 48) weatherTypeCount.fog++;
+        }
+    }
+
+    if (episodesWithWeatherData < 5) return null;
+
+    // Finde den häufigsten Wetter-Typ bei Migränen
+    const entries = Object.entries(weatherTypeCount);
+    const sorted = entries.sort((a, b) => b[1] - a[1]);
+    const [topType, topCount] = sorted[0];
+
+    // Nur wenn Gewitter signifikant oft vorkommt
+    if (topType === 'storm' && topCount >= 3) {
+        const percentage = Math.round((topCount / episodesWithWeatherData) * 100);
+        return {
+            title: 'Gewitter & Migräne',
+            description: `${percentage}% deiner Migränen (${topCount} von ${episodesWithWeatherData}) traten bei Gewitter auf. Atmosphärische Druckänderungen bei Gewittern könnten ein Trigger sein.`,
+            percentage,
+            sampleSize: episodesWithWeatherData,
+            isSignificant: percentage > 15,
+            type: 'weather',
+        };
+    }
+
+    // Regen-Korrelation
+    if (weatherTypeCount.rain > episodesWithWeatherData * 0.4) {
+        const percentage = Math.round((weatherTypeCount.rain / episodesWithWeatherData) * 100);
+        return {
+            title: 'Regentage & Migräne',
+            description: `${percentage}% deiner Migränen (${weatherTypeCount.rain} von ${episodesWithWeatherData}) traten an Regentagen auf.`,
+            percentage,
+            sampleSize: episodesWithWeatherData,
+            isSignificant: percentage > 50,
+            type: 'weather',
+        };
+    }
+
+    return null;
 }
 
 /**

@@ -2,7 +2,8 @@
 // Nutzt @capacitor-community/http für CORS Bypass auf Android
 // Fallback auf fetch() für Web-Development
 
-import { CapacitorHttp, HttpOptions, HttpResponse } from '@capacitor/core';
+import { CapacitorHttp } from '@capacitor/core';
+import type { HttpOptions, HttpResponse } from '@capacitor/core';
 import { Preferences } from '@capacitor/preferences';
 import { Capacitor } from '@capacitor/core';
 import { DEFAULT_HEADERS, RATE_LIMIT, SESSION_CONFIG } from './constants';
@@ -24,8 +25,7 @@ export interface GarminHttpError {
 // Rate Limiting State
 let requestCount = 0;
 let lastResetTime = Date.now();
-const requestQueue: Array<() => Promise<void>> = [];
-let isProcessingQueue = false;
+// Note: requestQueue and isProcessingQueue reserved for future queueing implementation
 
 /**
  * Logs API request to database for debugging

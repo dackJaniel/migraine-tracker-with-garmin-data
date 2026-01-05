@@ -3,9 +3,9 @@
  * Synchronisiert Wetterdaten mit der lokalen Datenbank
  */
 
-import { format, subDays, parseISO, differenceInDays, addDays } from 'date-fns';
+import { format, subDays, parseISO, addDays } from 'date-fns';
 import { db, addLog, getSetting, setSetting } from '@/lib/db';
-import type { WeatherData, Location, WeatherSyncStatus } from './types';
+import type { WeatherData, WeatherSyncStatus } from './types';
 import { getHistoricalWeather, getWeatherForDate } from './client';
 import { getSavedLocation, isWeatherSyncEnabled } from './location-service';
 

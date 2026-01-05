@@ -39,6 +39,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { WeatherSettings } from '@/features/weather';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -165,6 +166,7 @@ export default function Settings() {
       <Tabs defaultValue="security" className="space-y-4">
         <TabsList>
           <TabsTrigger value="security">Sicherheit</TabsTrigger>
+          <TabsTrigger value="weather">Wetter</TabsTrigger>
           <TabsTrigger value="data">Daten</TabsTrigger>
           <TabsTrigger value="debug">Debug</TabsTrigger>
         </TabsList>
@@ -271,6 +273,11 @@ export default function Settings() {
               </AlertDialog>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Wetter Tab (PAKET 12) */}
+        <TabsContent value="weather" className="space-y-4">
+          <WeatherSettings />
         </TabsContent>
 
         {/* Daten Tab */}
