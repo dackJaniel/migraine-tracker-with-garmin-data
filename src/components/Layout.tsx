@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Home, BarChart3, Settings } from 'lucide-react';
+import { Home, BarChart3, Settings, Watch } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function Layout() {
@@ -7,6 +7,7 @@ export default function Layout() {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
+    { name: 'Garmin', href: '/garmin', icon: Watch },
     { name: 'Analyse', href: '/analytics', icon: BarChart3 },
     { name: 'Einstellungen', href: '/settings', icon: Settings },
   ];

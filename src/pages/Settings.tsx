@@ -36,6 +36,7 @@ import {
   Copy,
   Trash2,
   ExternalLink,
+  Watch,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -166,6 +167,7 @@ export default function Settings() {
       <Tabs defaultValue="security" className="space-y-4">
         <TabsList>
           <TabsTrigger value="security">Sicherheit</TabsTrigger>
+          <TabsTrigger value="garmin">Garmin</TabsTrigger>
           <TabsTrigger value="weather">Wetter</TabsTrigger>
           <TabsTrigger value="data">Daten</TabsTrigger>
           <TabsTrigger value="debug">Debug</TabsTrigger>
@@ -271,6 +273,29 @@ export default function Settings() {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Garmin Tab - Link zur vollständigen Garmin-Seite */}
+        <TabsContent value="garmin" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Watch className="h-5 w-5" />
+                Garmin Connect
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-slate-600">
+                Verbinde dich mit Garmin Connect, um deine Gesundheitsdaten zu
+                synchronisieren und Korrelationen mit deinen Migräne-Episoden zu
+                analysieren.
+              </p>
+              <Button onClick={() => navigate('/garmin')} className="w-full">
+                <Watch className="h-4 w-4 mr-2" />
+                Garmin Einstellungen öffnen
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>

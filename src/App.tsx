@@ -6,6 +6,8 @@ import Settings from './pages/Settings';
 import PinSetup from './pages/PinSetup';
 import PinUnlock from './pages/PinUnlock';
 import { Analytics } from './pages/Analytics';
+import GarminSettings from './pages/GarminSettings';
+import GarminDataView from './pages/GarminDataView';
 import EpisodeForm from './features/episodes/EpisodeForm';
 import EpisodeDetail from './features/episodes/EpisodeDetail';
 
@@ -32,6 +34,8 @@ function App() {
           <Route path="episodes/:id" element={<EpisodeDetail />} />
           <Route path="episodes/:id/edit" element={<EpisodeForm />} />
           <Route path="analytics" element={<Analytics />} />
+          <Route path="garmin" element={<GarminSettings />} />
+          <Route path="garmin/data" element={<GarminDataView />} />
           <Route path="settings" element={<Settings />} />
         </Route>
 

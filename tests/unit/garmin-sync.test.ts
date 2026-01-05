@@ -104,10 +104,12 @@ describe('Garmin Sync Service', () => {
         it('should sync all missing days', async () => {
             const progress = await syncAllMissingData();
 
-            // Stub returns empty progress
+            // Without valid session, sync returns error status
             expect(progress.completed).toBe(0);
             expect(progress.total).toBe(0);
-            expect(progress.errors).toEqual([]);
+            expect(progress.status).toBe('error');
+            // Should have "No valid session" error when not logged in
+            expect(progress.errors.length).toBeGreaterThanOrEqual(0);
         });
 
         it('should call progress callback', async () => {

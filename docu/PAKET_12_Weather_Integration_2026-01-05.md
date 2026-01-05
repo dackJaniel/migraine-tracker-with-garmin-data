@@ -19,6 +19,7 @@ PAKET 12 implementiert die Wetterdaten-Integration für die Migräne Tracker App
 **Datei:** `src/lib/db.ts`
 
 Neue `WeatherData` Tabelle mit folgenden Feldern:
+
 - `date` (Primary Key, YYYY-MM-DD)
 - `location` (lat, lon, name)
 - `temperature` (min, max, avg in °C)
@@ -38,23 +39,27 @@ Indizes: `date`, `pressure`, `syncedAt`
 ### 2. Weather Module (`src/lib/weather/`)
 
 #### `types.ts`
+
 - TypeScript Interfaces für alle Wetter-Daten
 - WMO_WEATHER_CODES: 50+ deutsche Übersetzungen (0-99)
 - `getWeatherDescription()` Helper-Funktion
 
 #### `client.ts` - Open-Meteo API Client
+
 - `getHistoricalWeather(lat, lon, startDate, endDate)` - Historische Daten
 - `getWeatherForecast(lat, lon)` - 7-Tage Vorhersage
 - `searchCities(query)` - Stadt-Suche (Open-Meteo Geocoding)
 - `reverseGeocode(lat, lon)` - Koordinaten → Stadtname
 
 **API Besonderheiten:**
+
 - Kostenlos, kein API-Key erforderlich
 - Rate Limit: 10.000 requests/day
 - Archive API für historische Daten (bis 1940!)
 - Forecast API für aktuelle + 7 Tage
 
 #### `location-service.ts`
+
 - `getSavedLocation()` - Gespeicherten Standort abrufen
 - `saveLocation(location)` - Standort speichern
 - `getCurrentLocation()` - Browser Geolocation API
@@ -63,6 +68,7 @@ Indizes: `date`, `pressure`, `syncedAt`
 **Hinweis:** Nutzt Browser Geolocation API statt Capacitor Plugin (Dependency-Konflikt mit dexie-encrypted).
 
 #### `sync-service.ts`
+
 - `syncTodayWeather()` - Heutige Daten abrufen
 - `syncMissingWeather(dateRange)` - Historische Daten nachholen
 - `syncAllMissingWeather()` - Alle fehlenden Tage synchronisieren
@@ -72,6 +78,7 @@ Indizes: `date`, `pressure`, `syncedAt`
 ### 3. Weather UI Components (`src/features/weather/`)
 
 #### `WeatherCard.tsx` - Dashboard Widget
+
 - Aktuelle Wetterdaten anzeigen
 - Temperatur, Luftfeuchtigkeit, Luftdruck
 - Wetter-Icon basierend auf WMO Code
@@ -81,6 +88,7 @@ Indizes: `date`, `pressure`, `syncedAt`
 - Luftdruck-Trend Anzeige (↑/↓)
 
 #### `WeatherSettings.tsx` - Einstellungen
+
 - Standort-Konfiguration
   - GPS-Erkennung (Browser API)
   - Stadt-Suche mit Autocomplete
@@ -92,6 +100,7 @@ Indizes: `date`, `pressure`, `syncedAt`
 - "Wetterdaten löschen" Option
 
 #### `WeatherCharts.tsx` - Analytics Charts
+
 3 Tabs mit interaktiven Recharts:
 
 1. **Luftdruck Tab:**
@@ -116,19 +125,23 @@ Indizes: `date`, `pressure`, `syncedAt`
 4 neue Korrelations-Funktionen:
 
 #### `analyzePressureCorrelation()`
+
 - Analysiert Luftdruck-Abfälle >10 hPa
 - Vergleicht Migräne-Rate bei Druckabfall vs. normal
 - Chi-Square Test für Signifikanz
 
 #### `analyzeTemperatureCorrelation()`
+
 - Erkennt "Heiße Tage" (>30°C) Korrelation
 - Erkennt "Kalte Tage" (<5°C) Korrelation
 
 #### `analyzeHumidityCorrelation()`
+
 - Hohe Luftfeuchtigkeit (>80%) Analyse
 - Niedrige Luftfeuchtigkeit (<30%) Analyse
 
 #### `analyzeWeatherCodeCorrelation()`
+
 - Kategorisiert nach Wetter-Typ:
   - Clear (0-3)
   - Rain (51-67, 80-82)
@@ -140,12 +153,15 @@ Indizes: `date`, `pressure`, `syncedAt`
 ### 5. UI Integration
 
 #### Dashboard (`src/pages/Dashboard.tsx`)
+
 - WeatherCard hinzugefügt (rechte Seite)
 
 #### Settings (`src/pages/Settings.tsx`)
+
 - Neuer "Wetter" Tab mit WeatherSettings
 
 #### Analytics (`src/pages/Analytics.tsx`)
+
 - Neuer "Wetter" Tab (6. Tab) mit WeatherCharts
 - Korrelations-Insights für Wetter-Faktoren
 
@@ -154,6 +170,7 @@ Indizes: `date`, `pressure`, `syncedAt`
 ## Erstellte Dateien
 
 ### Neue Dateien:
+
 ```
 src/lib/weather/
 ├── types.ts           # TypeScript Interfaces + WMO Codes
@@ -174,6 +191,7 @@ tests/unit/
 ```
 
 ### Modifizierte Dateien:
+
 ```
 src/lib/db.ts                              # WeatherData Interface + Table
 src/features/analytics/correlation-service.ts # 4 neue Korrelations-Funktionen
@@ -189,6 +207,7 @@ src/pages/Analytics.tsx                    # Wetter Tab
 ### Unit Tests: 21 Tests
 
 **weather-client.test.ts (11 Tests):**
+
 - API URL Construction
 - Parameter Handling
 - Response Parsing
@@ -197,6 +216,7 @@ src/pages/Analytics.tsx                    # Wetter Tab
 - Reverse Geocoding
 
 **weather-correlation.test.ts (10 Tests):**
+
 - Pressure Correlation Detection
 - Temperature Correlation (Hot/Moderate)
 - Humidity Correlation (High/Normal)
@@ -205,6 +225,7 @@ src/pages/Analytics.tsx                    # Wetter Tab
 - Critical Weather Condition Logic
 
 ### Testergebnis:
+
 ```
 ✓ tests/unit/weather-client.test.ts (11 tests)
 ✓ tests/unit/weather-correlation.test.ts (10 tests)
@@ -215,20 +236,25 @@ src/pages/Analytics.tsx                    # Wetter Tab
 ## Technische Entscheidungen
 
 ### 1. Open-Meteo API
+
 **Gewählt weil:**
+
 - Kostenlos (kein API-Key)
 - Umfangreiche historische Daten
 - Zuverlässig und schnell
 - WMO Standard Weather Codes
 
 ### 2. Browser Geolocation API statt Capacitor
+
 **Grund:** Dependency-Konflikt zwischen `@capacitor/geolocation` und `dexie-encrypted`
 **Lösung:** Native Browser API funktioniert sowohl im Web als auch in Capacitor
 
 ### 3. Recharts für Visualisierung
+
 **Konsistent mit bestehendem Analytics Code**
 
 ### 4. Chi-Square Test für Korrelationen
+
 **Statistisch fundierte Signifikanz-Berechnung**
 
 ---
