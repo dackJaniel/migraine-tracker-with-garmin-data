@@ -159,7 +159,20 @@ export default function GarminSettings() {
       const message =
         error instanceof Error ? error.message : 'Login fehlgeschlagen';
 
-      // MFA_REQUIRED wird als Error geworfen - hier abfangen und MFA-Dialog öffnen
+      // MFA_SETUP_REQUIRED - User needs to enable 2FA on Garmin website first
+      if (message === 'MFA_SETUP_REQUIRED') {
+        const setupMessage =
+          'Du musst zuerst 2FA in deinem Garmin-Konto aktivieren:\n\n1. Gehe zu connect.garmin.com\n2. Melde dich an\n3. Gehe zu Einstellungen → Sicherheit\n4. Aktiviere "Zweistufige Überprüfung"\n5. Komme hierher zurück und melde dich erneut an';
+        setLoginError(setupMessage);
+        toast.error('2FA-Einrichtung erforderlich', {
+          description: 'Bitte aktiviere 2FA auf der Garmin-Website',
+          duration: 10000,
+        });
+        setIsLoggingIn(false);
+        return;
+      }
+
+      // MFA_REQUIRED - Show MFA code entry dialog
       if (message === 'MFA_REQUIRED') {
         setMfaRequired(true);
         setLoginError(null);

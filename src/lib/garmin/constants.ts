@@ -59,5 +59,6 @@ export const ERROR_MESSAGES = {
   NETWORK_ERROR: 'Netzwerkfehler. Bitte Verbindung prüfen.',
   FEATURE_UNAVAILABLE: 'Feature nicht verfügbar oder nicht aktiviert',
   MFA_REQUIRED: 'Zwei-Faktor-Authentifizierung erforderlich',
+  MFA_SETUP_REQUIRED: 'Du musst zuerst die Zwei-Faktor-Authentifizierung (2FA) in deinem Garmin-Konto aktivieren. Gehe zu connect.garmin.com → Kontoeinstellungen → Sicherheit → Zweistufige Überprüfung und richte diese ein. Danach kannst du dich hier anmelden.',
   UNAUTHORIZED: 'Nicht autorisiert. Bitte erneut anmelden.',
 };
