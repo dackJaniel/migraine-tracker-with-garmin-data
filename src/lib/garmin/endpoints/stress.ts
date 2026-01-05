@@ -66,17 +66,36 @@ export async function getHeartRates(date: string): Promise<HeartRateData | null>
     try {
         // Heart Rate endpoint requires displayName in URL path
         const displayName = await garminAuth.getDisplayNameAsync();
+
+        // DEBUG: Log displayName
+        await db.logs.add({
+            timestamp: new Date().toISOString(),
+            level: 'info',
+            message: `[Heart Rate API] Using displayName: ${displayName} for date ${date}`,
+        });
+
         const response = await garminHttp.get<HeartRateDataResponse>(
             WELLNESS_ENDPOINTS.HEART_RATE(displayName, date)
         );
 
         const data = response.data;
 
-        // DEBUG: Log raw response to DB
+        // CHECK: Detect HTML response (Auth failure)
+        if (typeof data === 'string' && data.trim().startsWith('<!DOCTYPE html>')) {
+            await db.logs.add({
+                timestamp: new Date().toISOString(),
+                level: 'error',
+                message: `[Heart Rate API] Got HTML instead of JSON for ${date} - Authentication failed`,
+            });
+            return null;
+        }
+
+        // DEBUG: Log raw response to DB (truncated)
+        const responseStr = JSON.stringify(data, null, 2);
         await db.logs.add({
             timestamp: new Date().toISOString(),
             level: 'info',
-            message: `[Heart Rate API] Response for ${date}: ${JSON.stringify(data, null, 2)}`,
+            message: `[Heart Rate API] Response for ${date}: ${responseStr.length > 500 ? responseStr.substring(0, 500) + '...[truncated]' : responseStr}`,
         });
 
         if (!data) {
@@ -131,11 +150,22 @@ export async function getHRVData(date: string): Promise<HRVData | null> {
 
         const data = response.data;
 
-        // DEBUG: Log raw response to DB
+        // CHECK: Detect HTML response (Auth failure)
+        if (typeof data === 'string' && data.trim().startsWith('<!DOCTYPE html>')) {
+            await db.logs.add({
+                timestamp: new Date().toISOString(),
+                level: 'error',
+                message: `[Stress API] Got HTML instead of JSON for ${date} - Authentication failed`,
+            });
+            return null;
+        }
+
+        // DEBUG: Log raw response to DB (truncated)
+        const responseStr = JSON.stringify(data, null, 2);
         await db.logs.add({
             timestamp: new Date().toISOString(),
             level: 'info',
-            message: `[HRV API] Response for ${date}: ${JSON.stringify(data, null, 2)}`,
+            message: `[Stress API] Response for ${date}: ${responseStr.length > 500 ? responseStr.substring(0, 500) + '...[truncated]' : responseStr}`,
         });
 
         if (!data) {

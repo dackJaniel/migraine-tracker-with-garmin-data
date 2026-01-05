@@ -126,7 +126,7 @@ async function buildAuthHeaders(
                 level: 'info',
                 message: `[HTTP Client] Building OAuth1 header for ${method} ${url.substring(0, 100)}`
             });
-            
+
             const oauth1Header = await buildOAuth1Header(
                 method,
                 url,
@@ -137,7 +137,7 @@ async function buildAuthHeaders(
                 queryParams || {}
             );
             headers['Authorization'] = oauth1Header;
-            
+
             await db.logs.add({
                 timestamp: new Date().toISOString(),
                 level: 'info',
@@ -249,10 +249,20 @@ async function executeRequest<T>(
             let responseData: T;
 
             const contentType = fetchResponse.headers.get('content-type');
-            if (contentType?.includes('application/json')) {
-                responseData = await fetchResponse.json();
+            const responseText = await fetchResponse.text();
+
+            // Try to parse as JSON if content-type indicates JSON or if it looks like JSON
+            if (contentType?.includes('application/json') ||
+                (responseText.trim().startsWith('{') || responseText.trim().startsWith('['))) {
+                try {
+                    responseData = JSON.parse(responseText) as T;
+                } catch (e) {
+                    // If parsing fails, return as text
+                    responseData = responseText as unknown as T;
+                }
             } else {
-                responseData = (await fetchResponse.text()) as unknown as T;
+                // Non-JSON response (likely HTML error page)
+                responseData = responseText as unknown as T;
             }
 
             response = {

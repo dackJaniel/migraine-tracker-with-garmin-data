@@ -10,7 +10,10 @@ export const GARMIN_MODERN_PROXY = `${GARMIN_BASE_URL}/modern/proxy`;
 
 export const WELLNESS_ENDPOINTS = {
   // Sleep endpoint requires displayName in path and date as query param
+  // Alternative: Some Garmin implementations use different path format
   SLEEP_DATA: (displayName: string, date: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/dailySleepData/${displayName}?date=${date}&nonSleepBufferMinutes=60`,
+  // Backup endpoint (if primary fails)
+  SLEEP_DATA_ALT: (date: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/dailySleepData?calendarDate=${date}`,
   STRESS_DATA: (date: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/dailyStress/${date}`,
   ALL_DAY_STRESS: (date: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/daily/stress/${date}`,
   // Heart Rate endpoint requires displayName in path and date as query param
