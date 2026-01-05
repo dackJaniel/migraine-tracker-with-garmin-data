@@ -158,6 +158,16 @@ export default function GarminSettings() {
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Login fehlgeschlagen';
+
+      // MFA_REQUIRED wird als Error geworfen - hier abfangen und MFA-Dialog öffnen
+      if (message === 'MFA_REQUIRED') {
+        setMfaRequired(true);
+        setLoginError(null);
+        toast.info('Zwei-Faktor-Authentifizierung erforderlich');
+        setIsLoggingIn(false);
+        return;
+      }
+
       setLoginError(message);
       toast.error(message);
     } finally {
