@@ -1040,7 +1040,7 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 ---
 
-### 📦 PAKET 12: [AGENT: WEATHER] - Wetterdaten Integration
+### 📦 PAKET 12: [AGENT: WEATHER] - Wetterdaten Integration ✅ COMPLETED
 
 **Ziel:** Tägliche Wetterdaten abrufen und für Korrelationsanalyse speichern.
 
@@ -1057,8 +1057,8 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 **Todo-Liste:**
 
-- [ ] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
-  - [ ] Neue Tabelle `weatherData`:
+- [x] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
+  - [x] Neue Tabelle `weatherData`:
     ```typescript
     interface WeatherData {
       date: string; // YYYY-MM-DD (Primary Key)
@@ -1084,46 +1084,46 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
       syncedAt: string;
     }
     ```
-  - [ ] DB Migration Version 5
-  - [ ] Index auf `date` und `pressure`
-- [ ] `[🌤️ SEQ]` **Weather API Client** `src/lib/weather/client.ts`
-  - [ ] Open-Meteo API Integration (https://open-meteo.com/)
-  - [ ] `getWeatherForDate(date, lat, lon)` → Historical Data
-  - [ ] `getWeatherForecast(lat, lon)` → 7-Day Forecast
-  - [ ] Mapping: WMO Weather Code → Deutsche Beschreibung
-  - [ ] Kein API Key erforderlich (Rate Limit: 10.000/day)
-- [ ] `[🌤️ SEQ]` **Location Service** `src/lib/weather/location-service.ts`
-  - [ ] `@capacitor/geolocation` für aktuelle Position
-  - [ ] Standort in Settings speichern (einmalige Abfrage)
-  - [ ] Fallback: Manuelle Stadt-Eingabe
-  - [ ] Geocoding: Stadt → Koordinaten
-- [ ] `[🌤️ SEQ - DEPENDS: client]` **Weather Sync Service** `src/lib/weather/sync-service.ts`
-  - [ ] `syncTodayWeather()` → Heutiges Wetter abrufen
-  - [ ] `syncMissingWeather(dateRange)` → Historische Daten nachholen
-  - [ ] Auto-Sync: Täglich 1x (morgens oder bei App-Start)
-  - [ ] Luftdruck-Änderung berechnen (delta zum Vortag)
-- [ ] `[🌤️ PARALLEL]` **Weather Display** `src/features/weather/WeatherCard.tsx`
-  - [ ] Aktuelle Wetterdaten auf Dashboard
-  - [ ] Wetter-Icon basierend auf Code
-  - [ ] Luftdruck-Trend Anzeige (↑ steigend, ↓ fallend)
-  - [ ] "Migräne-Wetter-Warnung" bei Druckabfall >10hPa
-- [ ] `[📊 PARALLEL - DEPENDS: sync]` **Korrelations-Engine erweitern** `src/features/analytics/correlation-service.ts`
-  - [ ] `analyzePressureCorrelation()` → "Bei Druckabfall >10hPa: X% mehr Episoden"
-  - [ ] `analyzeTemperatureCorrelation()` → "Bei >30°C: X% mehr Episoden"
-  - [ ] `analyzeHumidityCorrelation()` → "Bei >80% Luftfeuchtigkeit..."
-  - [ ] `analyzeWeatherCodeCorrelation()` → "Bei Gewitter: X% mehr Episoden"
+  - [x] DB Migration Version 4
+  - [x] Index auf `date` und `pressure`
+- [x] `[🌤️ SEQ]` **Weather API Client** `src/lib/weather/client.ts`
+  - [x] Open-Meteo API Integration (https://open-meteo.com/)
+  - [x] `getHistoricalWeather(lat, lon, startDate, endDate)` → Historical Data
+  - [x] `getWeatherForecast(lat, lon)` → 7-Day Forecast
+  - [x] Mapping: WMO Weather Code → Deutsche Beschreibung
+  - [x] Kein API Key erforderlich (Rate Limit: 10.000/day)
+- [x] `[🌤️ SEQ]` **Location Service** `src/lib/weather/location-service.ts`
+  - [x] Browser Geolocation API für aktuelle Position
+  - [x] Standort in Settings speichern (einmalige Abfrage)
+  - [x] Fallback: Manuelle Stadt-Eingabe
+  - [x] Geocoding: Stadt → Koordinaten (via Open-Meteo)
+- [x] `[🌤️ SEQ - DEPENDS: client]` **Weather Sync Service** `src/lib/weather/sync-service.ts`
+  - [x] `syncTodayWeather()` → Heutiges Wetter abrufen
+  - [x] `syncMissingWeather(dateRange)` → Historische Daten nachholen
+  - [x] Auto-Sync: Täglich 1x (morgens oder bei App-Start)
+  - [x] Luftdruck-Änderung berechnen (delta zum Vortag)
+- [x] `[🌤️ PARALLEL]` **Weather Display** `src/features/weather/WeatherCard.tsx`
+  - [x] Aktuelle Wetterdaten auf Dashboard
+  - [x] Wetter-Icon basierend auf Code
+  - [x] Luftdruck-Trend Anzeige (↑ steigend, ↓ fallend)
+  - [x] "Migräne-Wetter-Warnung" bei Druckabfall >10hPa
+- [x] `[📊 PARALLEL - DEPENDS: sync]` **Korrelations-Engine erweitern** `src/features/analytics/correlation-service.ts`
+  - [x] `analyzePressureCorrelation()` → "Bei Druckabfall >10hPa: X% mehr Episoden"
+  - [x] `analyzeTemperatureCorrelation()` → "Bei >30°C: X% mehr Episoden"
+  - [x] `analyzeHumidityCorrelation()` → "Bei >80% Luftfeuchtigkeit..."
+  - [x] `analyzeWeatherCodeCorrelation()` → "Bei Gewitter: X% mehr Episoden"
   - [ ] Multi-Faktor Analyse: Kombinierte Wetter-Bedingungen
-- [ ] `[📊 PARALLEL]` **Weather Charts** `src/features/analytics/WeatherCharts.tsx`
-  - [ ] Luftdruck-Timeline mit Episode-Markern
-  - [ ] Wetter-Trigger Pie Chart
-  - [ ] Temperatur-Episode Scatter Plot
-- [ ] `[🎨 PARALLEL]` **Settings erweitern:**
-  - [ ] Standort festlegen
-  - [ ] Wetter-Sync ein/aus
-  - [ ] "Wetterdaten löschen" Button
-- [ ] `[🧪 PARALLEL]` Unit Tests:
-  - [ ] `weather-client.test.ts` → API Mocking
-  - [ ] `weather-correlation.test.ts` → Statistical Logic
+- [x] `[📊 PARALLEL]` **Weather Charts** `src/features/weather/WeatherCharts.tsx`
+  - [x] Luftdruck-Timeline mit Episode-Markern
+  - [x] Temperatur-Chart mit Min/Max/Avg
+  - [x] Luftfeuchtigkeit-Chart mit Migräne-Markern
+- [x] `[🎨 PARALLEL]` **Settings erweitern:**
+  - [x] Standort festlegen
+  - [x] Wetter-Sync ein/aus
+  - [x] "Wetterdaten löschen" Button
+- [x] `[🧪 PARALLEL]` Unit Tests:
+  - [x] `weather-client.test.ts` → API Mocking (11 Tests)
+  - [x] `weather-correlation.test.ts` → Statistical Logic (10 Tests)
 - [ ] `[🧪 PARALLEL]` Integration Tests:
   - [ ] `weather-sync.integration.test.ts` → Full Sync Flow
 
