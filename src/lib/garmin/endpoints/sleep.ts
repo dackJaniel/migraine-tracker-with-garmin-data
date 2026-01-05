@@ -34,7 +34,7 @@ export async function getSleepData(date: string): Promise<SleepData | null> {
             WELLNESS_ENDPOINTS.SLEEP_DATA(displayName, date)
         );
 
-        const data = response.data;
+        const data = response.data as unknown;
 
         // CHECK: Detect HTML response (Auth failure or wrong endpoint)
         if (typeof data === 'string' && data.trim().startsWith('<!DOCTYPE html>')) {
@@ -78,15 +78,18 @@ export async function getSleepData(date: string): Promise<SleepData | null> {
             return null;
         }
 
+        // Cast back to expected type after HTML check
+        const sleepData = data as SleepDataResponse;
+
         // DEBUG: Log raw response to DB (truncate if too large)
-        const responseStr = JSON.stringify(data, null, 2);
+        const responseStr = JSON.stringify(sleepData, null, 2);
         await db.logs.add({
             timestamp: new Date().toISOString(),
             level: 'info',
             message: `[Sleep API] Response for ${date}: ${responseStr.length > 500 ? responseStr.substring(0, 500) + '...[truncated]' : responseStr}`,
         });
 
-        if (!data?.dailySleepDTO) {
+        if (!sleepData?.dailySleepDTO) {
             await db.logs.add({
                 timestamp: new Date().toISOString(),
                 level: 'warn',
@@ -95,7 +98,7 @@ export async function getSleepData(date: string): Promise<SleepData | null> {
             return null;
         }
 
-        const sleep = data.dailySleepDTO;
+        const sleep = sleepData.dailySleepDTO;
 
         // Convert seconds to minutes
         return {

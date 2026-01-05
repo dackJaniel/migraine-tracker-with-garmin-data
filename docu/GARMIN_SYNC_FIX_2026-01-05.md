@@ -18,6 +18,7 @@ Aus den Logs:
 ```
 
 **Analyse:**
+
 1. Sleep API gibt HTML statt JSON zurück
 2. HTML deutet auf:
    - Auth-Fehler (Login-Seite)
@@ -36,9 +37,9 @@ Die API-Responses wurden blind als JSON geparst, ohne Content-Type zu prüfen:
 ```typescript
 // ❌ VORHER: http-client.ts
 if (contentType?.includes('application/json')) {
-    responseData = await fetchResponse.json();
+  responseData = await fetchResponse.json();
 } else {
-    responseData = (await fetchResponse.text()) as unknown as T;
+  responseData = (await fetchResponse.text()) as unknown as T;
 }
 ```
 
@@ -75,12 +76,12 @@ Aber möglicherweise unterstützen manche Garmin-Accounts ein alternatives Forma
 ```typescript
 // CHECK: Detect HTML response (Auth failure)
 if (typeof data === 'string' && data.trim().startsWith('<!DOCTYPE html>')) {
-    await db.logs.add({
-        timestamp: new Date().toISOString(),
-        level: 'error',
-        message: `[Sleep API] Got HTML instead of JSON for ${date} - Authentication failed`,
-    });
-    return null;
+  await db.logs.add({
+    timestamp: new Date().toISOString(),
+    level: 'error',
+    message: `[Sleep API] Got HTML instead of JSON for ${date} - Authentication failed`,
+  });
+  return null;
 }
 ```
 
@@ -97,21 +98,25 @@ const contentType = fetchResponse.headers.get('content-type');
 const responseText = await fetchResponse.text();
 
 // Try to parse as JSON if content-type indicates JSON or if it looks like JSON
-if (contentType?.includes('application/json') || 
-    (responseText.trim().startsWith('{') || responseText.trim().startsWith('['))) {
-    try {
-        responseData = JSON.parse(responseText) as T;
-    } catch (e) {
-        // If parsing fails, return as text
-        responseData = responseText as unknown as T;
-    }
-} else {
-    // Non-JSON response (likely HTML error page)
+if (
+  contentType?.includes('application/json') ||
+  responseText.trim().startsWith('{') ||
+  responseText.trim().startsWith('[')
+) {
+  try {
+    responseData = JSON.parse(responseText) as T;
+  } catch (e) {
+    // If parsing fails, return as text
     responseData = responseText as unknown as T;
+  }
+} else {
+  // Non-JSON response (likely HTML error page)
+  responseData = responseText as unknown as T;
 }
 ```
 
 **Verbesserung:**
+
 - Heuristisches JSON-Parsing (auch wenn Content-Type fehlt)
 - Try-Catch um JSON.parse() → Graceful Degradation
 - HTML wird als String zurückgegeben (nicht als Objekt)
@@ -124,11 +129,11 @@ if (contentType?.includes('application/json') ||
 
 ```typescript
 export const WELLNESS_ENDPOINTS = {
-  SLEEP_DATA: (displayName: string, date: string) => 
+  SLEEP_DATA: (displayName: string, date: string) =>
     `${GARMIN_MODERN_PROXY}/wellness-service/wellness/dailySleepData/${displayName}?date=${date}&nonSleepBufferMinutes=60`,
-  
+
   // Backup endpoint (if primary fails)
-  SLEEP_DATA_ALT: (date: string) => 
+  SLEEP_DATA_ALT: (date: string) =>
     `${GARMIN_MODERN_PROXY}/wellness-service/wellness/dailySleepData?calendarDate=${date}`,
 };
 ```
@@ -138,23 +143,23 @@ export const WELLNESS_ENDPOINTS = {
 ```typescript
 // If primary endpoint returns HTML, try alternative
 if (typeof data === 'string' && data.trim().startsWith('<!DOCTYPE html>')) {
-    await db.logs.add({
-        timestamp: new Date().toISOString(),
-        level: 'warn',
-        message: `[Sleep API] Primary endpoint returned HTML. Trying alternative...`,
-    });
-    
-    try {
-        const altResponse = await garminHttp.get<SleepDataResponse>(
-            WELLNESS_ENDPOINTS.SLEEP_DATA_ALT(date)
-        );
-        
-        if (altResponse.data?.dailySleepDTO) {
-            // ... return sleep data
-        }
-    } catch (altError) {
-        // Both endpoints failed
+  await db.logs.add({
+    timestamp: new Date().toISOString(),
+    level: 'warn',
+    message: `[Sleep API] Primary endpoint returned HTML. Trying alternative...`,
+  });
+
+  try {
+    const altResponse = await garminHttp.get<SleepDataResponse>(
+      WELLNESS_ENDPOINTS.SLEEP_DATA_ALT(date)
+    );
+
+    if (altResponse.data?.dailySleepDTO) {
+      // ... return sleep data
     }
+  } catch (altError) {
+    // Both endpoints failed
+  }
 }
 ```
 
@@ -170,9 +175,9 @@ if (typeof data === 'string' && data.trim().startsWith('<!DOCTYPE html>')) {
 const displayName = await garminAuth.getDisplayNameAsync();
 
 await db.logs.add({
-    timestamp: new Date().toISOString(),
-    level: 'info',
-    message: `[Sleep API] Using displayName: ${displayName} for date ${date}`,
+  timestamp: new Date().toISOString(),
+  level: 'info',
+  message: `[Sleep API] Using displayName: ${displayName} for date ${date}`,
 });
 ```
 
@@ -181,17 +186,18 @@ await db.logs.add({
 ```typescript
 const responseStr = JSON.stringify(data, null, 2);
 await db.logs.add({
-    timestamp: new Date().toISOString(),
-    level: 'info',
-    message: `[Sleep API] Response for ${date}: ${
-        responseStr.length > 500 
-            ? responseStr.substring(0, 500) + '...[truncated]' 
-            : responseStr
-    }`,
+  timestamp: new Date().toISOString(),
+  level: 'info',
+  message: `[Sleep API] Response for ${date}: ${
+    responseStr.length > 500
+      ? responseStr.substring(0, 500) + '...[truncated]'
+      : responseStr
+  }`,
 });
 ```
 
-**Impact:** 
+**Impact:**
+
 - Besseres Debugging (displayName sichtbar)
 - Log-DB bleibt klein (max 500 Zeichen pro Response)
 
@@ -199,12 +205,12 @@ await db.logs.add({
 
 ## 📊 Geänderte Dateien
 
-| Datei | Änderung |
-|-------|----------|
-| `src/lib/garmin/endpoints/sleep.ts` | HTML-Detection, Fallback-Endpoint, displayName-Logging, Response-Truncation |
-| `src/lib/garmin/endpoints/stress.ts` | HTML-Detection, displayName-Logging (Heart Rate + Stress) |
-| `src/lib/garmin/http-client.ts` | Verbessertes Content-Type Handling, heuristisches JSON-Parsing |
-| `src/lib/garmin/constants.ts` | Alternativer Sleep-Endpoint hinzugefügt |
+| Datei                                | Änderung                                                                    |
+| ------------------------------------ | --------------------------------------------------------------------------- |
+| `src/lib/garmin/endpoints/sleep.ts`  | HTML-Detection, Fallback-Endpoint, displayName-Logging, Response-Truncation |
+| `src/lib/garmin/endpoints/stress.ts` | HTML-Detection, displayName-Logging (Heart Rate + Stress)                   |
+| `src/lib/garmin/http-client.ts`      | Verbessertes Content-Type Handling, heuristisches JSON-Parsing              |
+| `src/lib/garmin/constants.ts`        | Alternativer Sleep-Endpoint hinzugefügt                                     |
 
 ---
 
@@ -257,9 +263,12 @@ describe('getSleepData', () => {
 ### Mittelfristig (Robustheit)
 
 1. **Generic Error Handler:**
+
    ```typescript
    function isHTMLResponse(data: unknown): boolean {
-       return typeof data === 'string' && data.trim().startsWith('<!DOCTYPE html>');
+     return (
+       typeof data === 'string' && data.trim().startsWith('<!DOCTYPE html>')
+     );
    }
    ```
 

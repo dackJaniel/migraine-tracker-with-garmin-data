@@ -38,16 +38,29 @@ export async function getStressData(date: string): Promise<StressData | null> {
             WELLNESS_ENDPOINTS.STRESS_DATA(date)
         );
 
-        const data = response.data;
+        const data = response.data as unknown;
 
-        if (!data) {
+        // CHECK: Detect HTML response (Auth failure)
+        if (typeof data === 'string' && data.trim().startsWith('<!DOCTYPE html>')) {
+            await db.logs.add({
+                timestamp: new Date().toISOString(),
+                level: 'error',
+                message: `[Stress API] Got HTML instead of JSON for ${date} - Authentication failed`,
+            });
+            return null;
+        }
+
+        // Cast back to expected type after HTML check
+        const stressData = data as StressDataResponse;
+
+        if (!stressData) {
             return null;
         }
 
         return {
-            avgStressLevel: data.avgStressLevel || 0,
-            maxStressLevel: data.maxStressLevel || 0,
-            stressValues: data.stressValuesArray?.map(([timestamp, value]) => ({
+            avgStressLevel: stressData.avgStressLevel || 0,
+            maxStressLevel: stressData.maxStressLevel || 0,
+            stressValues: stressData.stressValuesArray?.map(([timestamp, value]) => ({
                 timestamp,
                 value,
             })),
@@ -78,7 +91,7 @@ export async function getHeartRates(date: string): Promise<HeartRateData | null>
             WELLNESS_ENDPOINTS.HEART_RATE(displayName, date)
         );
 
-        const data = response.data;
+        const data = response.data as unknown;
 
         // CHECK: Detect HTML response (Auth failure)
         if (typeof data === 'string' && data.trim().startsWith('<!DOCTYPE html>')) {
@@ -90,15 +103,18 @@ export async function getHeartRates(date: string): Promise<HeartRateData | null>
             return null;
         }
 
+        // Cast back to expected type after HTML check
+        const hrData = data as HeartRateDataResponse;
+
         // DEBUG: Log raw response to DB (truncated)
-        const responseStr = JSON.stringify(data, null, 2);
+        const responseStr = JSON.stringify(hrData, null, 2);
         await db.logs.add({
             timestamp: new Date().toISOString(),
             level: 'info',
             message: `[Heart Rate API] Response for ${date}: ${responseStr.length > 500 ? responseStr.substring(0, 500) + '...[truncated]' : responseStr}`,
         });
 
-        if (!data) {
+        if (!hrData) {
             await db.logs.add({
                 timestamp: new Date().toISOString(),
                 level: 'warn',
@@ -108,9 +124,9 @@ export async function getHeartRates(date: string): Promise<HeartRateData | null>
         }
 
         return {
-            restingHeartRate: data.restingHeartRate,
-            maxHeartRate: data.maxHeartRate,
-            heartRateValues: data.heartRateValues?.map(([timestamp, value]) => ({
+            restingHeartRate: hrData.restingHeartRate,
+            maxHeartRate: hrData.maxHeartRate,
+            heartRateValues: hrData.heartRateValues?.map(([timestamp, value]) => ({
                 timestamp,
                 value,
             })),
@@ -148,7 +164,7 @@ export async function getHRVData(date: string): Promise<HRVData | null> {
             HRV_ENDPOINTS.HRV_DATA(date)
         );
 
-        const data = response.data;
+        const data = response.data as unknown;
 
         // CHECK: Detect HTML response (Auth failure)
         if (typeof data === 'string' && data.trim().startsWith('<!DOCTYPE html>')) {
@@ -165,10 +181,13 @@ export async function getHRVData(date: string): Promise<HRVData | null> {
         await db.logs.add({
             timestamp: new Date().toISOString(),
             level: 'info',
-            message: `[Stress API] Response for ${date}: ${responseStr.length > 500 ? responseStr.substring(0, 500) + '...[truncated]' : responseStr}`,
+            message: `[HRV API] Response for ${date}: ${responseStr.length > 500 ? responseStr.substring(0, 500) + '...[truncated]' : responseStr}`,
         });
 
-        if (!data) {
+        // Cast back to expected type after HTML check
+        const hrvData = data as HRVDataResponse;
+
+        if (!hrvData) {
             await db.logs.add({
                 timestamp: new Date().toISOString(),
                 level: 'warn',
@@ -178,10 +197,10 @@ export async function getHRVData(date: string): Promise<HRVData | null> {
         }
 
         return {
-            hrvValue: data.hrvValue,
-            lastNightAverage: data.lastNightAverage,
-            weeklyAverage: data.weeklyAverage,
-            status: data.status,
+            hrvValue: hrvData.hrvValue,
+            lastNightAverage: hrvData.lastNightAverage,
+            weeklyAverage: hrvData.weeklyAverage,
+            status: hrvData.status,
         };
     } catch (error) {
         console.error(`Failed to get HRV data for ${date}:`, error);
