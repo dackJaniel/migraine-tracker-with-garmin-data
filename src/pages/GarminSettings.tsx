@@ -489,11 +489,11 @@ export default function GarminSettings() {
             <div className="space-y-4">
               {/* Browser Dev Mode Warning */}
               {isWebDev && (
-                <div className="text-sm text-amber-700 bg-amber-50 p-3 rounded-lg border border-amber-200">
-                  <strong>⚠️ Entwicklungsmodus:</strong> Die Garmin-Anmeldung
-                  funktioniert nur in der Android-App (wegen
-                  CORS-Beschränkungen). Du kannst Demo-Daten laden, um die
-                  Funktionen zu testen.
+                <div className="text-sm text-blue-700 bg-blue-50 p-3 rounded-lg border border-blue-200">
+                  <strong>ℹ️ Entwicklungsmodus:</strong> Du bist im
+                  Browser-Dev-Modus. Die Garmin-Anmeldung nutzt einen Vite-Proxy
+                  für CORS-Umgehung. Falls Probleme auftreten, kannst du
+                  Demo-Daten laden, um die Funktionen zu testen.
                 </div>
               )}
 

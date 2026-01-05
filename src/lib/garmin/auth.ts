@@ -19,7 +19,11 @@ const SSO_EMBED_URL = `${SSO_URL}/embed`;
 const OAUTH_BASE_URL = 'https://connectapi.garmin.com/oauth-service/oauth';
 
 // OAuth Consumer Credentials - fetched from Garmin's public endpoint (same as garth)
-const OAUTH_CONSUMER_URL = 'https://thegarth.s3.amazonaws.com/oauth_consumer.json';
+// Use proxy in dev mode to avoid CORS
+const isDev = typeof window !== 'undefined' && import.meta.env.DEV;
+const OAUTH_CONSUMER_URL = isDev
+    ? '/api/oauth-consumer'
+    : 'https://thegarth.s3.amazonaws.com/oauth_consumer.json';
 let OAUTH_CONSUMER: { consumer_key: string; consumer_secret: string } | null = null;
 
 interface OAuth1TokenResponse {
