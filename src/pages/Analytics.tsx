@@ -62,7 +62,7 @@ export function Analytics() {
         onValueChange={handleTabChange}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="tabs-scrollable w-full justify-start">
           <TabsTrigger value="overview">Übersicht</TabsTrigger>
           <TabsTrigger value="triggers">Trigger</TabsTrigger>
           <TabsTrigger value="intensity">Verlauf</TabsTrigger>

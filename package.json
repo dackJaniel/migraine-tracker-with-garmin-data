@@ -17,7 +17,6 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@capacitor-community/http": "^1.4.1",
     "@capacitor/android": "^8.0.0",
     "@capacitor/app": "^8.0.0",
     "@capacitor/cli": "^8.0.0",

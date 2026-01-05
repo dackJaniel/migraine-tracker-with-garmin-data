@@ -94,9 +94,9 @@ export function EpisodeCharts() {
   }, []);
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
       {/* Episoden pro Monat */}
-      <Card className="col-span-2">
+      <Card className="lg:col-span-2">
         <CardHeader>
           <CardTitle>Episoden pro Monat</CardTitle>
           <CardDescription>

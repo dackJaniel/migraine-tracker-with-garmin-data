@@ -35,12 +35,13 @@ import {
   AlertCircle,
   Copy,
   Trash2,
-  ExternalLink,
   Watch,
+  Save,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { WeatherSettings } from '@/features/weather';
+import { BackupManager } from '@/features/backup/BackupManager';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -165,7 +166,7 @@ export default function Settings() {
       </div>
 
       <Tabs defaultValue="security" className="space-y-4">
-        <TabsList>
+        <TabsList className="tabs-scrollable w-full justify-start">
           <TabsTrigger value="security">Sicherheit</TabsTrigger>
           <TabsTrigger value="garmin">Garmin</TabsTrigger>
           <TabsTrigger value="weather">Wetter</TabsTrigger>
@@ -307,6 +308,20 @@ export default function Settings() {
 
         {/* Daten Tab */}
         <TabsContent value="data" className="space-y-4">
+          {/* Datensicherung */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Save className="h-5 w-5" />
+                Datensicherung
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <BackupManager />
+            </CardContent>
+          </Card>
+
+          {/* Daten-Verwaltung */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -326,21 +341,6 @@ export default function Settings() {
                   className="w-full"
                 >
                   {loading ? 'Lädt...' : 'Dummy-Daten laden'}
-                </Button>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="font-semibold">Datensicherung</h3>
-                <p className="text-sm text-slate-600">
-                  Backups findest du unter Analyse & Statistiken
-                </p>
-                <Button
-                  onClick={() => navigate('/analytics?tab=export')}
-                  className="w-full"
-                  variant="outline"
-                >
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Zur Datensicherung
                 </Button>
               </div>
 

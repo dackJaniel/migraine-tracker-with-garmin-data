@@ -14,40 +14,44 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
-          <div className="mr-4 flex">
-            <Link to="/dashboard" className="mr-6 flex items-center space-x-2">
-              <span className="font-bold">Migräne Tracker</span>
-            </Link>
-          </div>
-          <nav className="flex items-center space-x-6 text-sm font-medium">
+      {/* Main Content - mit padding-bottom für Bottom Navigation */}
+      <main className="flex-1 pb-20 overflow-y-auto safe-area-top">
+        <div className="container mx-auto p-4 pt-6 max-w-3xl">
+          <Outlet />
+        </div>
+      </main>
+
+      {/* Bottom Navigation - Fixed */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t safe-area-bottom">
+        <div className="mx-auto max-w-[600px]">
+          <div className="flex items-center justify-around h-16">
             {navigation.map(item => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.href;
+              const isActive = location.pathname === item.href || 
+                (item.href !== '/dashboard' && location.pathname.startsWith(item.href));
               return (
                 <Link
                   key={item.href}
                   to={item.href}
                   className={cn(
-                    'transition-colors hover:text-foreground/80 flex items-center gap-2',
-                    isActive ? 'text-foreground' : 'text-foreground/60'
+                    'flex flex-col items-center justify-center w-full h-full transition-colors',
+                    'active:bg-muted/50 rounded-lg mx-1',
+                    isActive 
+                      ? 'text-primary' 
+                      : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span className="hidden sm:inline">{item.name}</span>
+                  <Icon className={cn(
+                    'h-6 w-6 transition-transform',
+                    isActive && 'scale-110'
+                  )} />
+                  <span className="text-xs mt-1 font-medium">{item.name}</span>
                 </Link>
               );
             })}
-          </nav>
+          </div>
         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-1 container mx-auto p-4">
-        <Outlet />
-      </main>
+      </nav>
     </div>
   );
 }
