@@ -857,7 +857,7 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 ---
 
-### 📦 PAKET 8: [AGENT: SYMPTOMS] - Erweiterte Symptom-Erfassung
+### 📦 PAKET 8: [AGENT: SYMPTOMS] - Erweiterte Symptom-Erfassung ✅ COMPLETED
 
 **Ziel:** Mehr vordefinierte Symptome + benutzerdefinierte Symptome hinzufügen.
 
@@ -871,8 +871,8 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 **Todo-Liste:**
 
-- [ ] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
-  - [ ] Neues `symptoms` Interface:
+- [x] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
+  - [x] Neues `symptoms` Interface:
     ```typescript
     symptoms: {
       // Vordefiniert
@@ -892,27 +892,27 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
       custom: string[];          // ["Augenflimmern", "Ohrensausen"]
     }
     ```
-  - [ ] DB Migration Version 2 mit Upgrade-Logik
-- [ ] `[🎨 PARALLEL - DEPENDS: schema]` **EpisodeForm erweitern** `src/features/episodes/EpisodeForm.tsx`
-  - [ ] Gruppierte Symptom-Checkboxen (kategorisiert)
-  - [ ] "Weitere Symptome hinzufügen" Button
-  - [ ] Custom Symptom Input mit Autocomplete (aus vorherigen)
-  - [ ] Custom Symptom Tags mit Remove-Button
-- [ ] `[💾 SEQ]` **Custom Symptoms Service** `src/features/episodes/symptom-service.ts`
-  - [ ] `getAllCustomSymptoms()` → Alle jemals verwendeten
-  - [ ] `getCommonCustomSymptoms()` → Top 5 häufigste
-  - [ ] Persistierung in Settings Tabelle
-- [ ] `[🎨 PARALLEL]` **Symptom-Kategorien UI:**
-  - [ ] Kategorie "Schmerz": Nackenschmerzen
-  - [ ] Kategorie "Sensorisch": Licht, Lärm, Aura, Sehstörungen
-  - [ ] Kategorie "Neurologisch": Kribbeln, Sprache, Konzentration
-  - [ ] Kategorie "Allgemein": Übelkeit, Erbrechen, Müdigkeit, Schwindel
-  - [ ] Kategorie "Eigene": Custom Symptoms
+  - [x] DB Migration Version 2 mit Upgrade-Logik
+- [x] `[🎨 PARALLEL - DEPENDS: schema]` **EpisodeForm erweitern** `src/features/episodes/EpisodeForm.tsx`
+  - [x] Gruppierte Symptom-Checkboxen (kategorisiert)
+  - [x] "Weitere Symptome hinzufügen" Button
+  - [x] Custom Symptom Input mit Autocomplete (aus vorherigen)
+  - [x] Custom Symptom Tags mit Remove-Button
+- [x] `[💾 SEQ]` **Custom Symptoms Service** `src/features/episodes/symptom-service.ts`
+  - [x] `getAllCustomSymptoms()` → Alle jemals verwendeten
+  - [x] `getCommonCustomSymptoms()` → Top 5 häufigste
+  - [x] Persistierung in Settings Tabelle
+- [x] `[🎨 PARALLEL]` **Symptom-Kategorien UI:**
+  - [x] Kategorie "Schmerz": Nackenschmerzen
+  - [x] Kategorie "Sensorisch": Licht, Lärm, Aura, Sehstörungen
+  - [x] Kategorie "Neurologisch": Kribbeln, Sprache, Konzentration
+  - [x] Kategorie "Allgemein": Übelkeit, Erbrechen, Müdigkeit, Schwindel
+  - [x] Kategorie "Eigene": Custom Symptoms
 - [ ] `[📊 PARALLEL]` **Analytics Update:**
   - [ ] Symptom-Häufigkeit Chart erweitern
   - [ ] Korrelationen für neue Symptome
-- [ ] `[🧪 PARALLEL]` Unit Tests:
-  - [ ] `symptom-service.test.ts` → Custom Symptom Logic
+- [x] `[🧪 PARALLEL]` Unit Tests:
+  - [x] `symptom-service.test.ts` → Custom Symptom Logic (14 Tests)
   - [ ] `episode-form.test.ts` → Form Validation mit neuen Symptomen
 
 ---
