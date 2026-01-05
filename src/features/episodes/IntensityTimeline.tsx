@@ -119,8 +119,8 @@ function CustomTooltip({
  */
 export function IntensityTimeline({
   history,
-  startTime,
-  endTime,
+  startTime: _startTime,
+  endTime: _endTime,
   showChart = true,
 }: IntensityTimelineProps) {
   const stats = useMemo(() => calculateStats(history), [history]);

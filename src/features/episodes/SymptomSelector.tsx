@@ -8,9 +8,9 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Control,
+  type Control,
   Controller,
-  UseFormSetValue,
+  type UseFormSetValue,
   useWatch,
 } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -41,13 +41,11 @@ interface SymptomSelectorProps {
  * Einzelne Symptom-Kategorie mit Switches
  */
 function SymptomCategory({
-  categoryKey,
   category,
   control,
   isExpanded,
   onToggle,
 }: {
-  categoryKey: string;
   category: { label: string; symptoms: readonly string[] };
   control: Control<EpisodeFormData>;
   isExpanded: boolean;
@@ -276,7 +274,6 @@ export default function SymptomSelector({
         {Object.entries(SYMPTOM_CATEGORIES).map(([key, category]) => (
           <div key={key} className="relative">
             <SymptomCategory
-              categoryKey={key}
               category={category}
               control={control}
               isExpanded={expandedCategories.has(key)}

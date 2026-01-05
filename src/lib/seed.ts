@@ -95,6 +95,10 @@ export async function seedEpisodes(days = 90): Promise<number> {
             startTime: startDate.toISOString(),
             endTime: endDate.toISOString(),
             intensity,
+            intensityHistory: [{
+                timestamp: startDate.toISOString(),
+                intensity,
+            }],
             triggers: selectedTriggers,
             medicines: selectedMedicines,
             symptoms,

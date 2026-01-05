@@ -170,11 +170,12 @@ export default function Dashboard() {
                           locale: de,
                         })}
                       </div>
-                      {episode.intensityHistory && episode.intensityHistory.length > 1 && (
-                        <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">
-                          {episode.intensityHistory.length} Updates
-                        </span>
-                      )}
+                      {episode.intensityHistory &&
+                        episode.intensityHistory.length > 1 && (
+                          <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">
+                            {episode.intensityHistory.length} Updates
+                          </span>
+                        )}
                     </div>
                     {episode.triggers.length > 0 && (
                       <div className="flex gap-2 mt-2">
@@ -194,7 +195,10 @@ export default function Dashboard() {
                       </p>
                     )}
                   </div>
-                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                  <div
+                    className="flex gap-2"
+                    onClick={e => e.stopPropagation()}
+                  >
                     <Button
                       variant="ghost"
                       size="icon"

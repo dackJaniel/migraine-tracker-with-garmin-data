@@ -11,6 +11,7 @@ import {
 import { EpisodeCharts } from '@/features/analytics/EpisodeCharts';
 import { TriggerAnalysis } from '@/features/analytics/TriggerAnalysis';
 import { CorrelationInsights } from '@/features/analytics/CorrelationInsights';
+import { IntensityAnalytics } from '@/features/analytics/IntensityAnalytics';
 import { BackupManager } from '@/features/backup/BackupManager';
 
 export function Analytics() {
@@ -22,7 +23,7 @@ export function Analytics() {
   useEffect(() => {
     if (
       tabFromUrl &&
-      ['overview', 'triggers', 'correlations', 'export'].includes(tabFromUrl)
+      ['overview', 'triggers', 'correlations', 'intensity', 'export'].includes(tabFromUrl)
     ) {
       setActiveTab(tabFromUrl);
     }
@@ -53,9 +54,10 @@ export function Analytics() {
         onValueChange={handleTabChange}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Übersicht</TabsTrigger>
           <TabsTrigger value="triggers">Trigger</TabsTrigger>
+          <TabsTrigger value="intensity">Verlauf</TabsTrigger>
           <TabsTrigger value="correlations">Korrelationen</TabsTrigger>
           <TabsTrigger value="export">Export</TabsTrigger>
         </TabsList>
@@ -66,6 +68,10 @@ export function Analytics() {
 
         <TabsContent value="triggers" className="space-y-4">
           <TriggerAnalysis />
+        </TabsContent>
+
+        <TabsContent value="intensity" className="space-y-4">
+          <IntensityAnalytics />
         </TabsContent>
 
         <TabsContent value="correlations" className="space-y-4">
