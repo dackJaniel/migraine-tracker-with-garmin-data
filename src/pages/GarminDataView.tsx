@@ -3,7 +3,7 @@
  * Ansicht der synchronisierten Garmin-Gesundheitsdaten
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { format, subDays, parseISO } from 'date-fns';
@@ -35,7 +35,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { db, type GarminData } from '@/lib/db';
+import { db } from '@/lib/db';
 import { garminClient } from '@/lib/garmin/client';
 import { syncSingleDate } from '@/lib/garmin/sync-service';
 import { toast } from 'sonner';
@@ -150,21 +150,31 @@ export default function GarminDataView() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isResyncing, setIsResyncing] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [isFirstRender, setIsFirstRender] = useState(true);
 
   // Format date for query
   const dateStr = format(selectedDate, 'yyyy-MM-dd');
 
   // Query Garmin data for selected date
-  const garminData = useLiveQuery<GarminData | undefined>(
-    () => db.garminData.get(dateStr),
-    [dateStr]
-  );
+  const garminData = useLiveQuery(() => db.garminData.get(dateStr), [dateStr]);
+
+  // Track loading state
+  useEffect(() => {
+    if (garminData !== undefined || !isFirstRender) {
+      setIsFirstRender(false);
+    }
+    const timer = setTimeout(() => setIsFirstRender(false), 100);
+    return () => clearTimeout(timer);
+  }, [dateStr, garminData, isFirstRender]);
+
+  const isLoading = isFirstRender && garminData === undefined;
 
   // Get all dates with data for calendar highlighting
-  const datesWithData = useLiveQuery<string[]>(
-    () => db.garminData.toCollection().primaryKeys() as Promise<string[]>,
-    []
-  );
+  const datesWithData =
+    useLiveQuery(
+      () => db.garminData.toCollection().primaryKeys() as Promise<string[]>,
+      []
+    ) ?? [];
 
   // Navigation handlers
   const goToPreviousDay = () => {
@@ -310,7 +320,17 @@ export default function GarminDataView() {
       </Card>
 
       {/* Data Display */}
-      {garminData ? (
+      {isLoading ? (
+        /* Loading State */
+        <Card>
+          <CardContent className="py-12">
+            <div className="text-center space-y-4">
+              <Loader2 className="h-12 w-12 text-slate-300 mx-auto animate-spin" />
+              <p className="text-slate-600">Lade Daten...</p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : garminData ? (
         <div className="space-y-6">
           {/* Synced Info */}
           <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -464,11 +484,19 @@ export default function GarminDataView() {
                   keine Garmin-Daten vorhanden.
                 </p>
               </div>
-              <div className="flex justify-center gap-2">
-                <Button variant="outline" onClick={() => navigate('/garmin')}>
+              <div className="flex flex-col sm:flex-row justify-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/garmin')}
+                  className="w-full sm:w-auto"
+                >
                   Zu Garmin Einstellungen
                 </Button>
-                <Button onClick={handleResync} disabled={isResyncing}>
+                <Button
+                  onClick={handleResync}
+                  disabled={isResyncing}
+                  className="w-full sm:w-auto"
+                >
                   {isResyncing ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   ) : (

@@ -268,6 +268,7 @@ Nach Analyse wurden folgende technische Aspekte definiert:
 **Primäre Referenz:** https://github.com/cyberjunky/python-garminconnect
 
 **Alternative Referenzen:**
+
 - **garth:** https://github.com/matin/garth (OAuth-Implementation, verwendet von python-garminconnect)
 - **GarminDB:** https://github.com/tcgoetz/GarminDB (Alternative Datenimport-Lösung, nutzt garth)
 
@@ -281,8 +282,8 @@ Nach Analyse wurden folgende technische Aspekte definiert:
   - Auto-Relogin bei 401/403 Errors
   - Token Storage: `@capacitor/preferences` (OAuth1 + OAuth2)
   - Legacy Cookie: JSESSIONID (nicht mehr primär verwendet)
-  
-**Wichtiger Implementierungshinweis:** 
+
+**Wichtiger Implementierungshinweis:**
 Bei der OAuth1-Signatur-Berechnung müssen ALLE Parameter (Query + Body) in die Signatur einbezogen werden (RFC 5849). Die `garth` Library verwendet `requests_oauthlib.OAuth1Session`, die dies automatisch handhabt.
 
 #### API Endpoints (105+ Methoden)

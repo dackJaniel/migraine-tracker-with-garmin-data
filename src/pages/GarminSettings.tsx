@@ -436,8 +436,12 @@ export default function GarminSettings() {
               )}
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={handleSync} disabled={isSyncing}>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button
+                  onClick={handleSync}
+                  disabled={isSyncing}
+                  className="w-full sm:w-auto"
+                >
                   {isSyncing ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   ) : (
@@ -449,13 +453,14 @@ export default function GarminSettings() {
                   variant="outline"
                   onClick={handleQuickSync}
                   disabled={isSyncing}
+                  className="w-full sm:w-auto"
                 >
                   <Calendar className="h-4 w-4 mr-2" />
                   Letzte 7 Tage
                 </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="destructive">
+                    <Button variant="destructive" className="w-full sm:w-auto">
                       <LogOut className="h-4 w-4 mr-2" />
                       Verbindung trennen
                     </Button>
@@ -492,7 +497,7 @@ export default function GarminSettings() {
                 </div>
               )}
 
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Dialog
                   open={loginDialogOpen}
                   onOpenChange={setLoginDialogOpen}
