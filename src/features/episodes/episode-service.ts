@@ -127,9 +127,9 @@ export async function updateEpisodeIntensity(
             updatedAt: now,
         });
 
-        await addLog('info', 'Episode intensity updated', { 
-            id, 
-            oldIntensity: episode.intensity, 
+        await addLog('info', 'Episode intensity updated', {
+            id,
+            oldIntensity: episode.intensity,
             newIntensity,
             historyLength: intensityHistory.length,
         });
@@ -171,8 +171,8 @@ export function calculateIntensityStats(history: IntensityEntry[]) {
     }
 
     // Verbesserungsrate (in Prozent von Initial zu Current)
-    const improvementRate = initial > 0 
-        ? Math.round(((initial - current) / initial) * 100) 
+    const improvementRate = initial > 0
+        ? Math.round(((initial - current) / initial) * 100)
         : 0;
 
     return {
@@ -229,7 +229,7 @@ export async function analyzeTypicalIntensityPattern(): Promise<{
         totalInitial += initial;
         totalPeak += peak;
         totalFinal += final;
-        
+
         if (peakEntry) {
             const peakTime = new Date(peakEntry.timestamp).getTime();
             const startTime = new Date(history[0].timestamp).getTime();

@@ -273,7 +273,7 @@ export async function analyzeNightOnsetCorrelation(): Promise<CorrelationResult 
 
     for (const episode of episodes) {
         const startHour = getHours(new Date(episode.startTime));
-        
+
         // Kategorisiere nach Tageszeit
         if (startHour >= 6 && startHour < 12) {
             morningCount++;
@@ -309,7 +309,7 @@ export async function analyzeNightOnsetCorrelation(): Promise<CorrelationResult 
                 'yyyy-MM-dd'
             );
             const garminData = await db.garminData.get(previousDay);
-            
+
             if (garminData?.sleepScore) {
                 nightMigraineWithSleepData++;
                 if (garminData.sleepScore < 70) {
@@ -344,7 +344,7 @@ export async function analyzeTimeOfDayDistribution(): Promise<{
     total: number;
 }> {
     const episodes = await db.episodes.toArray();
-    
+
     let morning = 0;
     let afternoon = 0;
     let evening = 0;
@@ -352,7 +352,7 @@ export async function analyzeTimeOfDayDistribution(): Promise<{
 
     for (const episode of episodes) {
         const startHour = getHours(new Date(episode.startTime));
-        
+
         if (startHour >= 6 && startHour < 12) {
             morning++;
         } else if (startHour >= 12 && startHour < 18) {

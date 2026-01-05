@@ -871,7 +871,6 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 **Todo-Liste:**
 
-
 - [ ] `[💾 SEQ]` **DB Schema erweitern** `src/lib/db.ts`
   - [ ] Neues `symptoms` Interface:
     ```typescript
@@ -951,6 +950,7 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
   - [ ] DB Migration Version 3
   - [ ] Default: `intensityHistory = [{ timestamp: startTime, intensity: initialIntensity }]`
+
 - [ ] `[🎨 PARALLEL - DEPENDS: schema]` **Intensity Timeline Component** `src/features/episodes/IntensityTimeline.tsx`
   - [ ] Zeitleiste mit Punkten für jeden Eintrag
   - [ ] Line Chart (x: Zeit, y: Intensität 1-10)
@@ -1012,7 +1012,7 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 ---
 
-### 📦 PAKET 11: [AGENT: BACKUP-CONSOLIDATION] - Export/Import Konsolidierung
+### 📦 PAKET 11: [AGENT: BACKUP-CONSOLIDATION] - Export/Import Konsolidierung ✅ COMPLETED
 
 **Ziel:** Export/Import nur an einer Stelle (Settings entfernen, nur in Analytics).
 
@@ -1024,18 +1024,18 @@ Custom MCP Server Tools müssen während der Chat-Session aktiviert werden (nich
 
 **Todo-Liste:**
 
-- [ ] `[🎨 SEQ]` **Settings Page bereinigen** `src/pages/Settings.tsx`
-  - [ ] Export-Button entfernen (falls vorhanden)
-  - [ ] Stattdessen: Link zu "Analyse & Statistiken > Export"
-  - [ ] Hinweis: "Datensicherung findest du unter Analyse"
-- [ ] `[🎨 SEQ]` **Navigation Update:**
-  - [ ] Breadcrumb in BackupManager: "Einstellungen > Datensicherung" → nur "Analyse > Export"
-  - [ ] Deep Link Support: `/analytics?tab=export`
-- [ ] `[🎨 SEQ]` **BackupManager verbessern** `src/features/backup/BackupManager.tsx`
-  - [ ] Klarere UI mit Schritt-für-Schritt Anleitung
-  - [ ] Export: Vorschau was exportiert wird (X Episoden, Y Tage Garmin)
-  - [ ] Import: Merge-Strategie auswählen (Ersetzen/Zusammenführen)
-  - [ ] Import: Konflikt-Anzeige bei Duplikaten
+- [x] `[🎨 SEQ]` **Settings Page bereinigen** `src/pages/Settings.tsx`
+  - [x] Export-Button entfernen (falls vorhanden)
+  - [x] Stattdessen: Link zu "Analyse & Statistiken > Export"
+  - [x] Hinweis: "Datensicherung findest du unter Analyse"
+- [x] `[🎨 SEQ]` **Navigation Update:**
+  - [x] Breadcrumb in BackupManager: "Einstellungen > Datensicherung" → nur "Analyse > Export"
+  - [x] Deep Link Support: `/analytics?tab=export`
+- [x] `[🎨 SEQ]` **BackupManager verbessern** `src/features/backup/BackupManager.tsx`
+  - [x] Klarere UI mit Schritt-für-Schritt Anleitung
+  - [x] Export: Vorschau was exportiert wird (X Episoden, Y Tage Garmin)
+  - [x] Import: Merge-Strategie auswählen (Ersetzen/Zusammenführen)
+  - [x] Import: Schritt-für-Schritt Fortschrittsanzeige
 - [ ] `[🧪 PARALLEL]` E2E Tests:
   - [ ] `backup-flow.e2e.test.ts` → Vollständiger Export/Import Zyklus
 

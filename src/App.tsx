@@ -7,6 +7,7 @@ import PinSetup from './pages/PinSetup';
 import PinUnlock from './pages/PinUnlock';
 import { Analytics } from './pages/Analytics';
 import EpisodeForm from './features/episodes/EpisodeForm';
+import EpisodeDetail from './features/episodes/EpisodeDetail';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="episodes/new" element={<EpisodeForm />} />
+          <Route path="episodes/:id" element={<EpisodeDetail />} />
           <Route path="episodes/:id/edit" element={<EpisodeForm />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="settings" element={<Settings />} />

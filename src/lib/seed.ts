@@ -82,7 +82,7 @@ export async function seedEpisodes(days = 90): Promise<number> {
         symptoms.tinglingNumbness = Math.random() > 0.85;
         symptoms.speechDifficulty = Math.random() > 0.9;
         symptoms.neckPain = Math.random() > 0.6;
-        
+
         // Zufällige Custom-Symptome (0-2)
         if (Math.random() > 0.7) {
             const customCount = Math.floor(Math.random() * 2) + 1;

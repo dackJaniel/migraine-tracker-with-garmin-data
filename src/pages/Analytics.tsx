@@ -20,7 +20,10 @@ export function Analytics() {
 
   // Deep Link Support: Tab aus URL-Parameter lesen
   useEffect(() => {
-    if (tabFromUrl && ['overview', 'triggers', 'correlations', 'export'].includes(tabFromUrl)) {
+    if (
+      tabFromUrl &&
+      ['overview', 'triggers', 'correlations', 'export'].includes(tabFromUrl)
+    ) {
       setActiveTab(tabFromUrl);
     }
   }, [tabFromUrl]);
@@ -45,7 +48,11 @@ export function Analytics() {
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={handleTabChange}
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Übersicht</TabsTrigger>
           <TabsTrigger value="triggers">Trigger</TabsTrigger>

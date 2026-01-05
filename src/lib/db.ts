@@ -12,21 +12,21 @@ export interface Symptoms {
     vomiting: boolean;         // Erbrechen
     fatigue: boolean;          // Müdigkeit
     vertigo: boolean;          // Schwindel
-    
+
     // Kategorie: Sensorisch
     photophobia: boolean;      // Lichtempfindlichkeit
     phonophobia: boolean;      // Lärmempfindlichkeit
     aura: boolean;             // Aura
     visualDisturbance: boolean; // Sehstörungen (z.B. Flimmern, Blitze)
-    
+
     // Kategorie: Neurologisch
     concentration: boolean;    // Konzentrationsprobleme
     tinglingNumbness: boolean; // Kribbeln/Taubheit
     speechDifficulty: boolean; // Sprachschwierigkeiten
-    
+
     // Kategorie: Schmerz
     neckPain: boolean;         // Nackenschmerzen
-    
+
     // Benutzerdefinierte Symptome
     custom: string[];          // ["Augenflimmern", "Ohrensausen"]
 }

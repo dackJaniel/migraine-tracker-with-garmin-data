@@ -173,11 +173,18 @@ export function BackupManager() {
           <div className="flex items-start gap-3">
             <Info className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
             <div className="text-sm text-slate-600">
-              <p className="font-medium text-slate-800 mb-1">So funktioniert die Datensicherung:</p>
+              <p className="font-medium text-slate-800 mb-1">
+                So funktioniert die Datensicherung:
+              </p>
               <ol className="list-decimal list-inside space-y-1">
                 <li>Wähle ein sicheres Passwort (mindestens 8 Zeichen)</li>
-                <li>Das Backup wird als verschlüsselte .enc Datei gespeichert</li>
-                <li>Bewahre das Passwort sicher auf - ohne es kannst du das Backup nicht wiederherstellen</li>
+                <li>
+                  Das Backup wird als verschlüsselte .enc Datei gespeichert
+                </li>
+                <li>
+                  Bewahre das Passwort sicher auf - ohne es kannst du das Backup
+                  nicht wiederherstellen
+                </li>
               </ol>
             </div>
           </div>
@@ -203,7 +210,9 @@ export function BackupManager() {
           <CardContent className="pt-4">
             <div className="flex items-center gap-2 mb-3">
               <FileArchive className="h-4 w-4 text-green-600" />
-              <span className="text-sm font-medium text-green-800">Was wird exportiert:</span>
+              <span className="text-sm font-medium text-green-800">
+                Was wird exportiert:
+              </span>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-center gap-2">
@@ -220,7 +229,10 @@ export function BackupManager() {
 
         <div className="space-y-3">
           <div className="space-y-2">
-            <Label htmlFor="export-password" className="flex items-center gap-2">
+            <Label
+              htmlFor="export-password"
+              className="flex items-center gap-2"
+            >
               <Shield className="h-4 w-4" />
               Backup-Passwort
             </Label>
@@ -269,7 +281,11 @@ export function BackupManager() {
 
           <Button
             onClick={handleExport}
-            disabled={isExporting || !passwordStrength.isValid || (episodeCount === 0 && garminCount === 0)}
+            disabled={
+              isExporting ||
+              !passwordStrength.isValid ||
+              (episodeCount === 0 && garminCount === 0)
+            }
             className="w-full"
           >
             {isExporting ? 'Erstelle Backup...' : 'Backup jetzt erstellen'}
@@ -307,13 +323,25 @@ export function BackupManager() {
 
         {/* Import Schritte Anzeige */}
         <div className="flex items-center gap-2 text-sm">
-          <div className={`flex items-center gap-1 ${importFile ? 'text-green-600' : 'text-muted-foreground'}`}>
-            {importFile ? <CheckCircle2 className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
+          <div
+            className={`flex items-center gap-1 ${importFile ? 'text-green-600' : 'text-muted-foreground'}`}
+          >
+            {importFile ? (
+              <CheckCircle2 className="h-4 w-4" />
+            ) : (
+              <Circle className="h-4 w-4" />
+            )}
             <span>1. Datei</span>
           </div>
           <span className="text-muted-foreground">→</span>
-          <div className={`flex items-center gap-1 ${importPassword ? 'text-green-600' : 'text-muted-foreground'}`}>
-            {importPassword ? <CheckCircle2 className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
+          <div
+            className={`flex items-center gap-1 ${importPassword ? 'text-green-600' : 'text-muted-foreground'}`}
+          >
+            {importPassword ? (
+              <CheckCircle2 className="h-4 w-4" />
+            ) : (
+              <Circle className="h-4 w-4" />
+            )}
             <span>2. Passwort</span>
           </div>
           <span className="text-muted-foreground">→</span>

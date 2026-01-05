@@ -12,7 +12,11 @@ import {
   getAllMedicines,
 } from '@/features/episodes/episode-service';
 import { useEpisode } from '@/hooks/use-episodes';
-import { episodeSchema, DEFAULT_SYMPTOMS, type EpisodeFormData } from './episode-schema';
+import {
+  episodeSchema,
+  DEFAULT_SYMPTOMS,
+  type EpisodeFormData,
+} from './episode-schema';
 import { saveCustomSymptoms } from './symptom-service';
 import SymptomSelector from './SymptomSelector';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,7 +40,15 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon, Plus, X, Save, ArrowLeft, Moon, Star } from 'lucide-react';
+import {
+  CalendarIcon,
+  Plus,
+  X,
+  Save,
+  ArrowLeft,
+  Moon,
+  Star,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Intensität Emojis
@@ -159,8 +171,14 @@ export default function EpisodeForm() {
       setValue('isOngoing', !existingEpisode.endTime);
       // Night-Onset Tracking (PAKET 10)
       setValue('nightOnset', existingEpisode.nightOnset || false);
-      setValue('wokeUpWithMigraine', existingEpisode.wokeUpWithMigraine || false);
-      setValue('sleepQualityBefore', existingEpisode.sleepQualityBefore || null);
+      setValue(
+        'wokeUpWithMigraine',
+        existingEpisode.wokeUpWithMigraine || false
+      );
+      setValue(
+        'sleepQualityBefore',
+        existingEpisode.sleepQualityBefore || null
+      );
     }
   }, [isEditMode, existingEpisode, setValue]);
 
@@ -459,7 +477,9 @@ export default function EpisodeForm() {
               render={({ field }) => (
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label htmlFor="nightOnset">Während der Nacht begonnen</Label>
+                    <Label htmlFor="nightOnset">
+                      Während der Nacht begonnen
+                    </Label>
                     <p className="text-xs text-slate-500">22:00 - 06:00 Uhr</p>
                   </div>
                   <Switch
@@ -478,8 +498,12 @@ export default function EpisodeForm() {
               render={({ field }) => (
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label htmlFor="wokeUpWithMigraine">Mit Migräne aufgewacht</Label>
-                    <p className="text-xs text-slate-500">Migräne war beim Aufwachen bereits da</p>
+                    <Label htmlFor="wokeUpWithMigraine">
+                      Mit Migräne aufgewacht
+                    </Label>
+                    <p className="text-xs text-slate-500">
+                      Migräne war beim Aufwachen bereits da
+                    </p>
                   </div>
                   <Switch
                     id="wokeUpWithMigraine"
@@ -504,10 +528,16 @@ export default function EpisodeForm() {
                           <Button
                             key={rating}
                             type="button"
-                            variant={field.value === rating ? 'default' : 'outline'}
+                            variant={
+                              field.value === rating ? 'default' : 'outline'
+                            }
                             size="sm"
                             className="flex-1 flex-col h-auto py-2"
-                            onClick={() => field.onChange(field.value === rating ? null : rating)}
+                            onClick={() =>
+                              field.onChange(
+                                field.value === rating ? null : rating
+                              )
+                            }
                           >
                             <div className="flex">
                               {Array.from({ length: rating }).map((_, i) => (

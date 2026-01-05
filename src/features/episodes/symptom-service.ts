@@ -26,7 +26,7 @@ export async function getAllCustomSymptoms(): Promise<string[]> {
         symptoms: {},
         updatedAt: new Date().toISOString(),
     });
-    
+
     // Sortiere nach Häufigkeit (absteigend)
     return Object.entries(stats.symptoms)
         .sort(([, a], [, b]) => b - a)
@@ -49,12 +49,12 @@ export async function getCommonCustomSymptoms(count = 5): Promise<string[]> {
  */
 export async function saveCustomSymptoms(symptoms: string[]): Promise<void> {
     if (symptoms.length === 0) return;
-    
+
     const stats = await getSetting<CustomSymptomStats>(CUSTOM_SYMPTOMS_KEY, {
         symptoms: {},
         updatedAt: new Date().toISOString(),
     });
-    
+
     // Aktualisiere Häufigkeit für jedes Symptom
     for (const symptom of symptoms) {
         const normalized = symptom.trim();
@@ -62,7 +62,7 @@ export async function saveCustomSymptoms(symptoms: string[]): Promise<void> {
             stats.symptoms[normalized] = (stats.symptoms[normalized] || 0) + 1;
         }
     }
-    
+
     stats.updatedAt = new Date().toISOString();
     await setSetting(CUSTOM_SYMPTOMS_KEY, stats);
 }
@@ -74,7 +74,7 @@ export async function saveCustomSymptoms(symptoms: string[]): Promise<void> {
 export async function analyzeCustomSymptomFrequency(): Promise<Record<string, number>> {
     const episodes = await db.episodes.toArray();
     const frequency: Record<string, number> = {};
-    
+
     for (const episode of episodes) {
         if (episode.symptoms.custom) {
             for (const symptom of episode.symptoms.custom) {
@@ -82,7 +82,7 @@ export async function analyzeCustomSymptomFrequency(): Promise<Record<string, nu
             }
         }
     }
-    
+
     return frequency;
 }
 
@@ -92,7 +92,7 @@ export async function analyzeCustomSymptomFrequency(): Promise<Record<string, nu
  */
 export async function syncCustomSymptoms(): Promise<void> {
     const frequency = await analyzeCustomSymptomFrequency();
-    
+
     await setSetting<CustomSymptomStats>(CUSTOM_SYMPTOMS_KEY, {
         symptoms: frequency,
         updatedAt: new Date().toISOString(),
@@ -109,10 +109,10 @@ export async function removeCustomSymptom(symptom: string): Promise<void> {
         symptoms: {},
         updatedAt: new Date().toISOString(),
     });
-    
+
     delete stats.symptoms[symptom];
     stats.updatedAt = new Date().toISOString();
-    
+
     await setSetting(CUSTOM_SYMPTOMS_KEY, stats);
 }
 
@@ -123,16 +123,16 @@ export async function removeCustomSymptom(symptom: string): Promise<void> {
  * @returns Gefilterte und sortierte Vorschläge
  */
 export async function getSymptomSuggestions(
-    input: string, 
+    input: string,
     maxResults = 5
 ): Promise<string[]> {
     if (!input.trim()) {
         return getCommonCustomSymptoms(maxResults);
     }
-    
+
     const allSymptoms = await getAllCustomSymptoms();
     const searchLower = input.toLowerCase();
-    
+
     return allSymptoms
         .filter(symptom => symptom.toLowerCase().includes(searchLower))
         .slice(0, maxResults);

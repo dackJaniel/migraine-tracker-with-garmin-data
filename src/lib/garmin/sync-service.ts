@@ -206,7 +206,7 @@ export async function syncAllMissingData(
     // Determine date range
     const endDate = new Date();
     const lastSync = await getLastSyncDate();
-    const startDate = lastSync 
+    const startDate = lastSync
       ? new Date(lastSync.getTime() + 24 * 60 * 60 * 1000) // Day after last sync
       : subDays(endDate, daysBack);
 
@@ -281,7 +281,7 @@ export async function isSyncNeeded(): Promise<boolean> {
   if (!lastSync) {
     return true;
   }
-  
+
   const hoursSinceSync = (Date.now() - lastSync.getTime()) / (1000 * 60 * 60);
   return hoursSinceSync >= 24;
 }
@@ -320,7 +320,7 @@ export async function syncRecentDays(
   onProgress?.(progress);
 
   const today = new Date();
-  
+
   for (let i = 0; i < days; i++) {
     const date = format(subDays(today, i), 'yyyy-MM-dd');
     progress.currentDate = date;

@@ -52,7 +52,8 @@ function calculateStats(history: IntensityEntry[]) {
   }
 
   const intensities = history.map(h => h.intensity);
-  const average = intensities.reduce((sum, i) => sum + i, 0) / intensities.length;
+  const average =
+    intensities.reduce((sum, i) => sum + i, 0) / intensities.length;
   const peak = Math.max(...intensities);
   const peakEntry = history.find(h => h.intensity === peak);
   const current = history[history.length - 1].intensity;
@@ -88,7 +89,13 @@ function calculateStats(history: IntensityEntry[]) {
 /**
  * Custom Tooltip für den Chart
  */
-function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<{ payload: IntensityEntry & { timeLabel: string } }> }) {
+function CustomTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: IntensityEntry & { timeLabel: string } }>;
+}) {
   if (!active || !payload || payload.length === 0) return null;
 
   const data = payload[0].payload;
@@ -124,28 +131,33 @@ export function IntensityTimeline({
       ...entry,
       index,
       timeLabel: format(new Date(entry.timestamp), 'HH:mm', { locale: de }),
-      dateLabel: format(new Date(entry.timestamp), 'dd.MM. HH:mm', { locale: de }),
+      dateLabel: format(new Date(entry.timestamp), 'dd.MM. HH:mm', {
+        locale: de,
+      }),
     }));
   }, [history]);
 
   // Trend Icon
-  const TrendIcon = stats.trend === 'improving' 
-    ? TrendingDown 
-    : stats.trend === 'worsening' 
-      ? TrendingUp 
-      : Minus;
+  const TrendIcon =
+    stats.trend === 'improving'
+      ? TrendingDown
+      : stats.trend === 'worsening'
+        ? TrendingUp
+        : Minus;
 
-  const trendColor = stats.trend === 'improving'
-    ? 'text-green-600'
-    : stats.trend === 'worsening'
-      ? 'text-red-600'
-      : 'text-slate-600';
+  const trendColor =
+    stats.trend === 'improving'
+      ? 'text-green-600'
+      : stats.trend === 'worsening'
+        ? 'text-red-600'
+        : 'text-slate-600';
 
-  const trendText = stats.trend === 'improving'
-    ? 'Besserung'
-    : stats.trend === 'worsening'
-      ? 'Verschlechterung'
-      : 'Stabil';
+  const trendText =
+    stats.trend === 'improving'
+      ? 'Besserung'
+      : stats.trend === 'worsening'
+        ? 'Verschlechterung'
+        : 'Stabil';
 
   return (
     <Card>
@@ -191,15 +203,18 @@ export function IntensityTimeline({
         {showChart && history.length > 1 && (
           <div className="h-48 mt-4">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-                <XAxis 
-                  dataKey="timeLabel" 
+              <LineChart
+                data={chartData}
+                margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+              >
+                <XAxis
+                  dataKey="timeLabel"
                   tick={{ fontSize: 12 }}
                   axisLine={false}
                   tickLine={false}
                 />
-                <YAxis 
-                  domain={[0, 10]} 
+                <YAxis
+                  domain={[0, 10]}
                   ticks={[0, 2, 4, 6, 8, 10]}
                   tick={{ fontSize: 12 }}
                   axisLine={false}
@@ -232,7 +247,9 @@ export function IntensityTimeline({
               <div
                 key={entry.timestamp}
                 className={`flex items-start gap-3 p-2 rounded-lg ${
-                  index === history.length - 1 ? 'bg-indigo-50 border border-indigo-200' : 'bg-slate-50'
+                  index === history.length - 1
+                    ? 'bg-indigo-50 border border-indigo-200'
+                    : 'bg-slate-50'
                 }`}
               >
                 <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-lg">
@@ -242,17 +259,28 @@ export function IntensityTimeline({
                   <div className="flex items-center justify-between">
                     <span className="font-semibold">{entry.intensity}/10</span>
                     <span className="text-xs text-slate-500">
-                      {format(new Date(entry.timestamp), 'dd.MM.yyyy HH:mm', { locale: de })}
+                      {format(new Date(entry.timestamp), 'dd.MM.yyyy HH:mm', {
+                        locale: de,
+                      })}
                     </span>
                   </div>
                   {entry.note && (
-                    <p className="text-sm text-slate-600 mt-1 truncate">{entry.note}</p>
+                    <p className="text-sm text-slate-600 mt-1 truncate">
+                      {entry.note}
+                    </p>
                   )}
                   {index === 0 && (
-                    <Badge variant="outline" className="mt-1 text-xs">Start</Badge>
+                    <Badge variant="outline" className="mt-1 text-xs">
+                      Start
+                    </Badge>
                   )}
                   {index === history.length - 1 && index !== 0 && (
-                    <Badge variant="outline" className="mt-1 text-xs bg-indigo-100">Aktuell</Badge>
+                    <Badge
+                      variant="outline"
+                      className="mt-1 text-xs bg-indigo-100"
+                    >
+                      Aktuell
+                    </Badge>
                   )}
                 </div>
               </div>
@@ -265,8 +293,8 @@ export function IntensityTimeline({
           <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm">
             <span className="font-medium text-red-700">Peak erreicht:</span>
             <span className="text-red-600 ml-2">
-              {stats.durationToPeak} Minuten nach Beginn
-              ({format(new Date(stats.peakTime), 'HH:mm', { locale: de })} Uhr)
+              {stats.durationToPeak} Minuten nach Beginn (
+              {format(new Date(stats.peakTime), 'HH:mm', { locale: de })} Uhr)
             </span>
           </div>
         )}
