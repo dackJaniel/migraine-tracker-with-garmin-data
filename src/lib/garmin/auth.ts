@@ -124,40 +124,60 @@ function extractCSRFToken(html: string): string | null {
  */
 function parseSSORespsonse(html: string): { ticket?: string; error?: string; csrf?: string } {
     // Look for service ticket in response (success case)
-    const ticketMatch = html.match(/ticket=([A-Za-z0-9\-]+)/);
-    if (ticketMatch) {
-        return { ticket: ticketMatch[1] };
+    // Check multiple possible formats for the ticket
+    const ticketPatterns = [
+        /ticket=([A-Za-z0-9\-_]+)/,
+        /"serviceTicket"\s*:\s*"([^"]+)"/,
+        /service_ticket['"]\s*:\s*['"]([^'"]+)['"]/i,
+    ];
+
+    for (const pattern of ticketPatterns) {
+        const ticketMatch = html.match(pattern);
+        if (ticketMatch) {
+            return { ticket: ticketMatch[1] };
+        }
     }
 
     // Extract CSRF token from HTML form using helper
     const csrf = extractCSRFToken(html) || undefined;
 
-    // Look for error messages in multiple formats
+    // Look for specific error messages - be very specific to avoid false positives
     const errorPatterns = [
-        /<span[^>]*class="[^"]*error[^"]*"[^>]*>([^<]+)<\/span>/i,
-        /<div[^>]*class="[^"]*error[^"]*"[^>]*>([^<]+)<\/div>/i,
+        // Look for error spans/divs with actual error text, but exclude generic containers
+        /<span[^>]*class="[^"]*status-error[^"]*"[^>]*>([^<]+)<\/span>/i,
+        /<p[^>]*class="[^"]*error-message[^"]*"[^>]*>([^<]+)<\/p>/i,
         /"errorMessage"\s*:\s*"([^"]+)"/,
+        /"error"\s*:\s*"([^"]+)"/,
     ];
 
     for (const pattern of errorPatterns) {
         const errorMatch = html.match(pattern);
         if (errorMatch) {
-            return { error: errorMatch[1].trim(), csrf };
+            const errorText = errorMatch[1].trim();
+            // Skip empty, generic messages, or messages that are just technical codes
+            if (errorText && errorText.length > 5 && !errorText.startsWith('error') && !errorText.match(/^[A-Z_]+$/)) {
+                return { error: errorText, csrf };
+            }
         }
     }
 
-    // Check for invalid credentials message
-    if (html.includes('credentials') && (html.includes('invalid') || html.includes('incorrect'))) {
+    // Check for invalid credentials message in page content
+    const lowerHtml = html.toLowerCase();
+    if ((lowerHtml.includes('credentials') || lowerHtml.includes('kennwort') || lowerHtml.includes('passwort')) &&
+        (lowerHtml.includes('invalid') || lowerHtml.includes('incorrect') || lowerHtml.includes('falsch') || lowerHtml.includes('ungültig'))) {
         return { error: 'INVALID_CREDENTIALS', csrf };
     }
 
     // Check for locked account
-    if (html.includes('locked') || html.includes('gesperrt')) {
+    if (lowerHtml.includes('locked') || lowerHtml.includes('gesperrt')) {
         return { error: 'ACCOUNT_LOCKED', csrf };
     }
 
-    // Check for MFA required
-    if (html.includes('verifyMFA') || html.includes('MFA') || html.includes('verification') || html.includes('two-factor')) {
+    // Check for ACTUAL MFA page - the page title is "MFA required"
+    // This is the most reliable indicator
+    if (html.includes('<title>MFA required</title>') ||
+        html.includes('<title>MFA Required</title>') ||
+        lowerHtml.includes('<title>mfa required</title>')) {
         return { error: 'MFA_REQUIRED', csrf };
     }
 
@@ -339,14 +359,45 @@ export class GarminAuthService {
 
         await logAuth(`Login response status: ${loginResponse.status}`);
 
+        // Log more details for debugging
+        const responseLength = loginResponse.data?.length || 0;
+        await logAuth(`Response length: ${responseLength} chars`);
+
+        // Check if response is a redirect (contains ticket in URL or response)
+        if (loginResponse.data && typeof loginResponse.data === 'string') {
+            // Log first part of response for debugging - more context
+            const snippet = loginResponse.data.substring(0, 1500);
+            await logAuth(`Response preview (first 300 chars): ${snippet.replace(/[\n\r\t]+/g, ' ').substring(0, 300)}`);
+
+            // Check if ticket is in headers (redirect)
+            if (loginResponse.headers) {
+                const location = loginResponse.headers['location'] || loginResponse.headers['Location'];
+                if (location) {
+                    await logAuth(`Redirect location: ${location}`);
+                    // If there's a redirect with ticket, extract it
+                    const ticketInRedirect = location.match(/ticket=([A-Za-z0-9\-_]+)/);
+                    if (ticketInRedirect) {
+                        await logAuth(`Found ticket in redirect: ${ticketInRedirect[1].substring(0, 10)}...`);
+                        return { ticket: ticketInRedirect[1] };
+                    }
+                }
+            }
+        }
+
         const parsed = parseSSORespsonse(loginResponse.data);
+        await logAuth(`Parsed result: ticket=${!!parsed.ticket}, error=${parsed.error || 'none'}, csrf=${!!parsed.csrf}`);
 
         if (parsed.error === 'MFA_REQUIRED') {
+            // Extract CSRF token from MFA page (might be different from login page)
+            const mfaCsrf = parsed.csrf || extractCSRFToken(loginResponse.data) || csrf;
+            await logAuth(`MFA page CSRF: ${mfaCsrf ? mfaCsrf.substring(0, 10) + '...' : 'not found'}`);
+
             this.mfaState = {
-                clientState: csrf,
+                clientState: mfaCsrf,
                 requiresMFA: true,
+                email: email,  // Store email for later profile fetch
             };
-            return { mfaRequired: true, clientState: csrf };
+            return { mfaRequired: true, clientState: mfaCsrf };
         }
 
         if (parsed.error) {
@@ -475,7 +526,8 @@ export class GarminAuthService {
             throw new Error('No MFA session active');
         }
 
-        await logAuth('Completing MFA verification');
+        await logAuth(`Completing MFA verification with code length: ${mfaCode.length}`);
+        await logAuth(`Using CSRF: ${this.mfaState.clientState?.substring(0, 10)}...`);
 
         const mfaBody = new URLSearchParams({
             mfa_code: mfaCode,
@@ -483,27 +535,50 @@ export class GarminAuthService {
             fromPage: 'setupEnterMfaCode',
         });
 
+        await logAuth(`MFA URL: ${SSO_MFA_URL}`);
+        
         const response = await httpRequest<string>(
             SSO_MFA_URL,
             'POST',
             mfaBody.toString(),
             {
                 'Content-Type': 'application/x-www-form-urlencoded',
+                'Origin': 'https://sso.garmin.com',
+                'Referer': `${SSO_URL}/verifyMFA/loginEnterMfaCode`,
             }
         );
 
+        await logAuth(`MFA response status: ${response.status}`);
+        await logAuth(`MFA response length: ${response.data?.length || 0}`);
+        
+        if (response.data && typeof response.data === 'string') {
+            await logAuth(`MFA response preview: ${response.data.substring(0, 200).replace(/[\n\r\t]+/g, ' ')}`);
+        }
+
         const parsed = parseSSORespsonse(response.data);
+        await logAuth(`MFA parsed: ticket=${!!parsed.ticket}, error=${parsed.error || 'none'}`);
 
         if (!parsed.ticket) {
-            throw new Error('MFA verification failed');
+            // Check if there's a specific error
+            if (parsed.error) {
+                throw new Error(`MFA fehlgeschlagen: ${parsed.error}`);
+            }
+            throw new Error('MFA-Verifizierung fehlgeschlagen. Bitte Code überprüfen.');
         }
 
         // Continue with token exchange
         this.tokens = await this.exchangeTicket(parsed.ticket);
         this.profile = await this.fetchProfile();
+        
+        // Set email from saved MFA state
+        if (this.mfaState.email) {
+            this.profile.email = this.mfaState.email;
+        }
 
         await this.saveSession();
         this.mfaState = null;
+
+        await logAuth('MFA login successful');
 
         return {
             tokens: this.tokens,

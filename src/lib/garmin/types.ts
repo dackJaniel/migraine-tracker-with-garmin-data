@@ -21,6 +21,7 @@ export interface GarminLoginResponse {
 export interface GarminMFAState {
   clientState: string;
   requiresMFA: boolean;
+  email?: string;  // Store email for profile fetch after MFA
 }
 
 // Sleep Data Types
