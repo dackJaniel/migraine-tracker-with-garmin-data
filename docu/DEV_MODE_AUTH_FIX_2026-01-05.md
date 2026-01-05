@@ -55,7 +55,6 @@ proxy: {
     changeOrigin: true,
     rewrite: (path) => path.replace(/^\/api\/garmin-sso/, ''),
     secure: true,
-    followRedirects: true,
     configure: (proxy, _options) => {
       // Request Hook: Forward Cookies & Auth Headers
       proxy.on('proxyReq', (proxyReq, req, _res) => {
@@ -65,14 +64,10 @@ proxy: {
         if (req.headers.authorization) {
           proxyReq.setHeader('Authorization', req.headers.authorization);
         }
-        // Wichtige Garmin Headers
-        proxyReq.setHeader('Origin', 'https://sso.garmin.com');
-        proxyReq.setHeader('Referer', 'https://sso.garmin.com/');
-        proxyReq.setHeader('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36');
       });
-
+      
       // Response Hook: Forward Set-Cookie to Client
-      proxy.on('proxyRes', (proxyRes, req, res) => {
+      proxy.on('proxyRes', (proxyRes, _req, res) => {
         const setCookie = proxyRes.headers['set-cookie'];
         if (setCookie) {
           res.setHeader('Set-Cookie', setCookie);
@@ -89,20 +84,10 @@ proxy: {
 **Wichtige Änderungen:**
 
 - ✅ `configure()` Hook für Request/Response Manipulation
-- ✅ `proxyReq` Event: Forward Cookies, Auth Headers, User-Agent
+- ✅ `proxyReq` Event: Forward Cookies & Auth Headers
 - ✅ `proxyRes` Event: Propagate Set-Cookie Headers
-- ✅ `followRedirects: true` für OAuth Redirects
-
-### 2. OAuth Consumer Proxy
-
-**Problem:** OAuth Consumer Credentials werden von `thegarth.s3.amazonaws.com` geladen (CORS-blockiert)
-
-**Lösung:** Proxy für OAuth Consumer
-
-```typescript
-proxy: {
-  '/api/oauth-consumer': {
-    target: 'https://thegarth.s3.amazonaws.com',
+- ❌ Removed `followRedirects` (caused header conflicts)
+- ❌ Removed manual Origin/Referer/User-Agent (Vite handles via `changeOrigin`)
     changeOrigin: true,
     rewrite: (path) => path.replace(/^\/api\/oauth-consumer/, '/oauth_consumer.json'),
     secure: true,

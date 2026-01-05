@@ -1,6 +1,30 @@
-# React + TypeScript + Vite
+# Migraine Tracker PWA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Progressive Web App für Migräne-Tracking mit Garmin-Integration und autonomem Debug-System.
+
+## 🤖 Autonomous Debug Agent
+
+**NEU:** Vollautomatisches Debugging direkt aus VS Code!
+
+**Schnellstart:**
+```
+Ctrl+Shift+D → Problem beschreiben → Agent löst automatisch
+```
+
+**Features:**
+- ✅ Vollautomatischer Debug-Loop (Code-Analyse → Error-Scan → Fixes → Tests)
+- ✅ Code-Analyse (TypeScript, ESLint, Imports, Async Patterns)
+- ✅ Runtime Error Scanner (DB Logs, Console, Tests)
+- ✅ Live Browser Debugging mit Playwright
+- ✅ Automatische Dokumentation
+
+**Dokumentation:** [.vscode/QUICKSTART.md](.vscode/QUICKSTART.md)
+
+---
+
+## 📋 Projekt-Übersicht
+
+React + TypeScript + Vite PWA mit maximalen Garmin Health Daten und intelligenten Korrelationen.
 
 Currently, two official plugins are available:
 

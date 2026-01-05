@@ -19,7 +19,6 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/garmin-sso/, ''),
         secure: true,
-        followRedirects: true,
         // Wichtig: Cookies zwischen Client und Server weiterleiten
         configure: (proxy, _options) => {
           proxy.on('proxyReq', (proxyReq, req, _res) => {
@@ -31,13 +30,9 @@ export default defineConfig({
             if (req.headers.authorization) {
               proxyReq.setHeader('Authorization', req.headers.authorization);
             }
-            // Wichtige Garmin Headers
-            proxyReq.setHeader('Origin', 'https://sso.garmin.com');
-            proxyReq.setHeader('Referer', 'https://sso.garmin.com/');
-            proxyReq.setHeader('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36');
           });
-
-          proxy.on('proxyRes', (proxyRes, req, res) => {
+          
+          proxy.on('proxyRes', (proxyRes, _req, res) => {
             // Forward Set-Cookie headers from Garmin to client
             const setCookie = proxyRes.headers['set-cookie'];
             if (setCookie) {
@@ -52,7 +47,6 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/garmin/, ''),
         secure: true,
-        followRedirects: true,
         configure: (proxy, _options) => {
           proxy.on('proxyReq', (proxyReq, req, _res) => {
             // Forward cookies from client
@@ -63,13 +57,9 @@ export default defineConfig({
             if (req.headers.authorization) {
               proxyReq.setHeader('Authorization', req.headers.authorization);
             }
-            // Wichtige Garmin Headers
-            proxyReq.setHeader('Origin', 'https://connect.garmin.com');
-            proxyReq.setHeader('Referer', 'https://connect.garmin.com/');
-            proxyReq.setHeader('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36');
           });
-
-          proxy.on('proxyRes', (proxyRes, req, res) => {
+          
+          proxy.on('proxyRes', (proxyRes, _req, res) => {
             // Forward Set-Cookie headers from Garmin to client
             const setCookie = proxyRes.headers['set-cookie'];
             if (setCookie) {
