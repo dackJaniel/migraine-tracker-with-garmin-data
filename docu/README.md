@@ -1,5 +1,9 @@
 # 📚 Migräne Tracker PWA - Dokumentationsübersicht
 
+English overview:
+
+- [docu/PROJECT_DOCUMENTATION_EN_2026-01-06.md](docu/PROJECT_DOCUMENTATION_EN_2026-01-06.md)
+
 **Letzte Aktualisierung:** 2026-01-05  
 **Status:** ✅ MVP funktionsfähig auf Android installiert
 

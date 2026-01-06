@@ -1,203 +1,31 @@
-# Migräne Tracker PWA - KI Kontext
+## Copilot Instructions (dieses Repo)
 
-## 📋 Projekt-Übersicht
+Diese App ist eine deutschsprachige PWA (React + Vite) mit lokaler Dexie/IndexedDB, Garmin-Connect-Sync (OAuth1/OAuth2) und Wetterdaten. Wenn du Änderungen machst: halte den Scope klein (MVP), Light-Mode-only und nutze bestehende Patterns.
 
-**Typ:** Progressive Web App (PWA) für Migräne-Tracking mit Garmin-Integration  
-**Status:** In Entwicklung (MVP Phase)  
-**Sprache:** Deutsch (hardcoded)  
-**Zielplattform:** Android (Capacitor) + Web
+### Architektur & Datenflüsse
+- Routing/Flows: [src/App.tsx](../src/App.tsx) nutzt react-router; „geschützte“ Routen laufen über PIN-Check in [src/components/ProtectedRoute.tsx](../src/components/ProtectedRoute.tsx) (redirect zu `/pin-setup` bzw. `/pin-unlock`).
+- Persistenz: Schema/Migrationen + Helper in [src/lib/db.ts](../src/lib/db.ts). In DB werden Zeiten als ISO-Strings gespeichert (`startTime`, `createdAt`, `syncedAt`), Garmin/Weather als `yyyy-MM-dd` Keys.
+- Logging: Persistente Debug-Logs laufen über `db.logs` (`addLog()` in [src/lib/db.ts](../src/lib/db.ts)); Garmin HTTP/Auth/Sync schreibt dort aktiv rein (wichtig fürs Debugging).
 
-> **Wichtig:** Vollständige Spezifikationen in [PROJECT_PLAN.md](../PROJECT_PLAN.md)
+### Garmin-Integration (kritisch)
+- Einstiegspunkt/Facade: [src/lib/garmin/client.ts](../src/lib/garmin/client.ts) → `auth.ts` + `http-client.ts` + `sync-service.ts`.
+- Auf Android: Requests laufen über `CapacitorHttp` (CORS-Bypass) in [src/lib/garmin/http-client.ts](../src/lib/garmin/http-client.ts).
+- In Web-Dev: Garmin-Aufrufe laufen über Vite-Proxies (`/api/garmin-sso`, `/api/garmin`, `/api/oauth-consumer`) in [vite.config.ts](../vite.config.ts) → keine direkten Cross-Origin Calls.
+- Konvention: Garmin-Endpunkte nicht „raw“ ansprechen (kein direktes `fetch` auf Garmin Domains); verwende `garminClient`/`garminHttp` (OAuth-Signatur, Rate-Limit, Retry, Logging nach `db.logs`).
 
----
+### Wetter-Integration
+- Sync/Status werden über Settings/DB-Helper gespeichert: [src/lib/weather/sync-service.ts](../src/lib/weather/sync-service.ts) nutzt `getSetting/setSetting` und schreibt nach `db.weatherData`.
 
-## 🛠 Tech Stack
+### UI-Konventionen
+- UI: ShadCN-Komponenten in `src/components/ui/*`, Tailwind via Theme Tokens (keine neuen Hardcode-Farben/Themes). Toasts laufen über `sonner` (Toaster in [src/main.tsx](../src/main.tsx)).
+- Strings: Deutsch hardcoded (kein i18n Layer).
 
-### Core
-
-- **Framework:** React 18 + TypeScript (Vite)
-- **UI:** TailwindCSS + ShadCN UI (Light Mode only)
-- **Database:** Dexie.js (IndexedDB) + `dexie-encrypted` (AES-256)
-- **State:** Zustand (global) + `dexie-react-hooks` (DB reactive)
-- **Forms:** React Hook Form + Zod
-- **Icons:** Lucide React
-- **Charts:** Recharts
-- **Dates:** date-fns
-
-### Native Features
-
-- **Mobile:** Capacitor (Android)
-- **Storage:** `@capacitor/preferences` (Tokens, Settings)
-- **HTTP:** `@capacitor-community/http` (CORS bypass für Garmin API)
-- **Filesystem:** `@capacitor/filesystem` (Backups)
-
-### Testing
-
-- **Unit/Integration:** Vitest + Testing Library
-- **E2E:** Playwright
-- **MCP Server:** Custom Tools für DB-Inspektion, Garmin Mocks
-
----
-
-## 🔐 Security Architecture
-
-1. **Master-PIN:** 6-stellig, SHA-256 Hash in Preferences
-2. **DB Encryption:** `dexie-encrypted` mit PBKDF2 Key Derivation (100k iterations)
-3. **Backup Encryption:** WebCrypto API (AES-GCM, separates Passwort)
-4. **Garmin Tokens:** OAuth1/OAuth2 in `@capacitor/preferences`
-
----
-
-## 📊 Datenmodell
-
-### Haupttabellen
-
-```typescript
-episodes: '++id, startTime, endTime, intensity, *triggers, *medicines';
-garminData: 'date, sleepScore, stressLevel, restingHR, hrv, bodyBattery, steps';
-weatherData: 'date, pressure, syncedAt'; // PAKET 12
-dailyLogs: 'date, cycleDay, caffeineIntake, screenTime'; // PAKET 13 (optional)
-riskAssessments: 'date, riskLevel, riskScore'; // PAKET 13
-logs: '++id, timestamp, level, message';
-settings: 'key';
-archivedEpisodes: '++id, startTime, endTime'; // 2-Jahre Retention
-```
-
-### Garmin Metriken (Maximal)
-
-- Sleep (Score, Stages: deep/light/rem/awake)
-- Stress (Average, Max)
-- Heart Rate (Resting, Max, Zones)
-- HRV (Last Night, Weekly Average)
-- Body Battery (Charged, Drained, Current)
-- Steps, Hydration, Respiration, SpO2
-
-### Wetter Metriken (PAKET 12)
-
-- Temperature (Min, Max, Avg)
-- Pressure (hPa, Change zum Vortag)
-- Humidity, Precipitation, Cloud Cover
-- Wind Speed, UV Index, Weather Code
-
-### Prediction & Risk (PAKET 13)
-
-- Risk Assessment (Score 0-100, Level, Contributing Factors)
-- Daily Log (Zyklus, Koffein, Bildschirmzeit - alle optional)
-- Recommendations (Präventions-Empfehlungen)
-
----
-
-## 🏗 Projektstruktur
-
-```
-src/
-├── components/ui/          # ShadCN Komponenten
-├── features/               # Feature-Module
-│   ├── episodes/          # Episode CRUD + Forms
-│   ├── garmin/            # API Client + Sync Service
-│   ├── analytics/         # Charts + Korrelationen
-│   ├── auth/              # PIN Management
-│   ├── backup/            # Export/Import
-│   ├── weather/           # Wetter-Integration
-│   ├── tracking/          # Daily Logs (optional)
-│   └── prediction/        # Risk Engine + Empfehlungen
-├── lib/                   # Core Libraries
-│   ├── db.ts             # Dexie Schema
-│   ├── encryption.ts     # Crypto Utils
-│   ├── garmin/           # Garmin API Client
-│   └── weather/          # Weather API Client
-├── hooks/                 # Custom React Hooks
-├── pages/                 # Route Components
-├── store/                 # Zustand Stores
-└── utils/                 # Helpers
-
-tests/
-├── unit/                  # Vitest Tests
-├── e2e/                   # Playwright Tests
-└── fixtures/              # Test Data
-
-mcp-server/                # MCP Testing Tools
-```
-
----
-
-## 🎯 Code-Standards
-
-### TypeScript
-
-- **Strict Mode:** Aktiviert
-- **Path Aliases:** `@/*` → `./src/*`
-- **No Any:** Immer explizite Typen
-- **Interfaces:** Für Datenstrukturen, Types für Unions
-
-### React Patterns
-
-- **Hooks:** Functional Components only
-- **Props:** Destructuring mit TypeScript Interface
-- **State:** Zustand für global, useState für lokal
-- **Effects:** useEffect mit Dependency Array
-- **Queries:** `useLiveQuery` für Dexie DB
-
-### File Naming
-
-- **Components:** PascalCase (z.B. `EpisodeForm.tsx`)
-- **Utils:** kebab-case (z.B. `encryption-utils.ts`)
-- **Tests:** `*.test.ts` oder `*.spec.ts`
-- **Hooks:** `use-` Prefix (z.B. `use-episodes.ts`)
-
-### Commit Messages
-
-- **Format:** Conventional Commits
-- **Types:** `feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `style:`, `chore:`
-- **Beispiel:** `feat(garmin): implement OAuth2 token refresh logic`
-
----
-
-## 🔄 Garmin API Integration
-
-**Basis:** `python-garminconnect` Patterns (SSO via garth)
-
-### Authentication
-
-- **OAuth:** OAuth1 + OAuth2 Token Flow
-- **Session:** 24h Lifetime, Auto-Relogin bei 401/403
-- **MFA:** Two-Phase Login Support
-- **Storage:** Tokens in `@capacitor/preferences`
-
-### API Endpoints
-
-- **Base URL:** `https://connect.garmin.com/modern/proxy/`
-- **CORS:** WICHTIG: `@capacitor-community/http` verwenden (nicht `fetch`)
-- **Rate Limit:** ~120 requests/minute
-- **Date Format:** YYYY-MM-DD (ISO 8601)
-
-### Sync Strategy
-
-- **Auto-Sync:** Bei App-Start wenn letzter Sync >24h
-- **Range:** Von letzter DB-Entry bis heute
-- **Error Handling:** 400 = Feature nicht verfügbar (graceful degradation)
-- **Retry:** Max 1x bei Authentication Failures
-
----
-
-## 🧪 Testing Guidelines
-
-### Unit Tests (Vitest)
-
-- **Coverage:** 80%+ für Services/Utils
-- **Mocking:** `vi.mock()` für External Dependencies
-- **DB:** In-Memory Dexie mit temporärer DB
-
-### E2E Tests (Playwright)
-
-- **Focus:** Critical User Journeys
-- **Page Object Model:** Wiederverwendbare Locators
-- **Data:** Seed-Script für Dummy-Daten
-
-### MCP Server Tools
-
-- `db-inspect`: IndexedDB auslesen
-- `db-seed`: Test-Daten generieren
+### Dev-Workflows
+- Dev/Build: `npm run dev`, `npm run build`, `npm run preview` (Scripts in [package.json](../package.json)).
+- Tests: `npm test` (Vitest, `fake-indexeddb` Setup in [tests/setup.ts](../tests/setup.ts)), E2E: `npm run test:e2e` (Playwright, startet Dev-Server automatisch: [playwright.config.ts](../playwright.config.ts)).
+- Debugging: Logs/Seed/Clear in Settings UI (siehe [src/pages/Settings.tsx](../src/pages/Settings.tsx)); Garmin-Sync UI in [src/pages/GarminSettings.tsx](../src/pages/GarminSettings.tsx).
+- Autonomous Debug (VS Code): Projekt unterstützt einen vollautomatischen Debug-Loop (siehe [README.md](../README.md)).
+- MCP-Tools (optional): eigenes Tooling in [mcp-server/README.md](../mcp-server/README.md) (DB-Inspect/Seed/Clear, Garmin-Mock, Test-Runner).
 - `garmin-mock`: Garmin API simulieren
 
 ---

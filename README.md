@@ -1,99 +1,78 @@
 # Migraine Tracker PWA
 
-Progressive Web App für Migräne-Tracking mit Garmin-Integration und autonomem Debug-System.
+Local-first Progressive Web App (PWA) for migraine tracking, analytics, and correlations with health and weather data.
 
-## 🤖 Autonomous Debug Agent
+## Project status (important)
 
-**NEU:** Vollautomatisches Debugging direkt aus VS Code!
+- Core tracking features are implemented (episodes, symptoms, intensity history, analytics, encrypted backup).
+- Weather integration (Open-Meteo) is implemented.
+- **Garmin Connect integration is not reliable yet**:
+  - There are still issues in Garmin authentication and data fetching.
+  - **Currently, only demo/fake Garmin data is practical** (seeded Garmin data).
 
-**Schnellstart:**
+See the Garmin-related notes in the documentation folder:
 
-```
-Ctrl+Shift+D → Problem beschreiben → Agent löst automatisch
-```
+- [docu/GARMIN_AUTH_FIX_2026-01-05.md](docu/GARMIN_AUTH_FIX_2026-01-05.md)
+- [docu/GARMIN_SYNC_FIX_2026-01-05.md](docu/GARMIN_SYNC_FIX_2026-01-05.md)
 
-**Features:**
+## Quick start
 
-- ✅ Vollautomatischer Debug-Loop (Code-Analyse → Error-Scan → Fixes → Tests)
-- ✅ Code-Analyse (TypeScript, ESLint, Imports, Async Patterns)
-- ✅ Runtime Error Scanner (DB Logs, Console, Tests)
-- ✅ Live Browser Debugging mit Playwright
-- ✅ Automatische Dokumentation
+### Development
 
-**Dokumentation:** [.vscode/QUICKSTART.md](.vscode/QUICKSTART.md)
+- `npm install`
+- `npm run dev`
 
----
+### Build
 
-## 📋 Projekt-Übersicht
+- `npm run build`
 
-React + TypeScript + Vite PWA mit maximalen Garmin Health Daten und intelligenten Korrelationen.
+### Tests
 
-Currently, two official plugins are available:
+- `npm test`
+- `npm run test:e2e`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Android (Capacitor)
 
-## React Compiler
+See: [docu/ANDROID_BUILD_DEPLOYMENT.md](docu/ANDROID_BUILD_DEPLOYMENT.md)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Documentation
 
-## Expanding the ESLint configuration
+- English overview: [docu/PROJECT_DOCUMENTATION_EN_2026-01-06.md](docu/PROJECT_DOCUMENTATION_EN_2026-01-06.md)
+- Full documentation index (German): [docu/README.md](docu/README.md)
+- Master plan/spec: [PROJECT_PLAN.md](PROJECT_PLAN.md)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## AI-generated code notice
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+This repository (including documentation) was generated with extensive assistance from AI tools. Please review the code and validate behavior before relying on it.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Disclaimer
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+- Anyone may use, modify, and share this project under the MIT License.
+- The software is provided **“as is”**, without any warranty.
+- No guarantee is given that it works, fits a purpose, is secure, or is safe.
+- Use at your own risk. You are responsible for verifying correctness and suitability.
+- This project is **not** medical advice and **not** a certified medical device.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## License
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
+MIT License — see [LICENSE](LICENSE).
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+## References
+
+Internal references:
+
+- [src/lib/db.ts](src/lib/db.ts)
+- [src/lib/garmin/client.ts](src/lib/garmin/client.ts)
+- [src/lib/garmin/http-client.ts](src/lib/garmin/http-client.ts)
+- [src/lib/weather/sync-service.ts](src/lib/weather/sync-service.ts)
+
+External references:
+
+- Vite: https://vite.dev/
+- React: https://react.dev/
+- Dexie: https://dexie.org/
+- Capacitor: https://capacitorjs.com/
+- Open-Meteo: https://open-meteo.com/
+- garth (community Garmin OAuth reference): https://github.com/matin/garth
+- python-garminconnect: https://github.com/cyberjunky/python-garminconnect
+- OAuth 1.0 (RFC 5849): https://www.rfc-editor.org/rfc/rfc5849
