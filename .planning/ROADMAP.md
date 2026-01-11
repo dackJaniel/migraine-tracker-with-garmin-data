@@ -14,7 +14,7 @@ None
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: API Endpoint Fix** - Update endpoints to use connectapi.garmin.com
+- [x] **Phase 1: API Endpoint Fix** - Update endpoints to use connectapi.garmin.com
 - [ ] **Phase 2: Validation & Testing** - Verify data flows correctly on Android
 - [ ] **Phase 3: Python Fallback** - Integrate garth library if TypeScript fix insufficient
 
@@ -27,7 +27,7 @@ None
 **Plans**: 1 plan
 
 Plans:
-- [ ] 01-01: Fix constants.ts endpoints + add vite proxy
+- [x] 01-01: Fix constants.ts endpoints + add vite proxy
 
 ### Phase 2: Validation & Testing
 **Goal**: Test the fixed endpoints on Android device, verify all health metrics sync to IndexedDB correctly
@@ -56,6 +56,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. API Endpoint Fix | 0/1 | Not started | - |
+| 1. API Endpoint Fix | 1/1 | Complete | 2026-01-11 |
 | 2. Validation & Testing | 0/1 | Not started | - |
 | 3. Python Fallback | 0/2 | Not started | - |
