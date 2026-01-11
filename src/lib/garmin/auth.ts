@@ -5,7 +5,7 @@ import { Preferences } from '@capacitor/preferences';
 import { CapacitorHttp } from '@capacitor/core';
 import type { HttpOptions } from '@capacitor/core';
 import { Capacitor } from '@capacitor/core';
-import { SESSION_CONFIG, DEFAULT_HEADERS, ERROR_MESSAGES, GARMIN_BASE_URL, GARMIN_SSO_URL, GARMIN_API_URL } from './constants';
+import { SESSION_CONFIG, DEFAULT_HEADERS, ERROR_MESSAGES, GARMIN_SSO_URL, GARMIN_API_URL } from './constants';
 import type { GarminAuthTokens, GarminProfile, GarminLoginResponse, GarminMFAState } from './types';
 import { db } from '../db';
 
