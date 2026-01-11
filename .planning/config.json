@@ -1,0 +1,11 @@
+{
+  "project": "Migraine Tracker - Garmin Data Fix",
+  "created": "2026-01-11",
+  "workflow": {
+    "mode": "full",
+    "requireDiscussion": true,
+    "requireResearch": true
+  },
+  "currentMilestone": 1,
+  "milestones": []
+}

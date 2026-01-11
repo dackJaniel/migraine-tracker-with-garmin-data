@@ -6,7 +6,13 @@ const isDev = typeof window !== 'undefined' && import.meta.env.DEV;
 // Use proxy in development to avoid CORS, direct URLs in production (native)
 export const GARMIN_BASE_URL = isDev ? '/api/garmin' : 'https://connect.garmin.com';
 export const GARMIN_SSO_URL = isDev ? '/api/garmin-sso' : 'https://sso.garmin.com';
-export const GARMIN_MODERN_PROXY = `${GARMIN_BASE_URL}/modern/proxy`;
+
+// IMPORTANT: For API requests, garth uses connectapi.garmin.com (NOT connect.garmin.com/modern/proxy)
+// The /modern/proxy path is for web browser access, connectapi subdomain is the proper API endpoint
+export const GARMIN_API_URL = isDev ? '/api/garmin' : 'https://connectapi.garmin.com';
+
+// Legacy proxy URL - kept for reference but should use GARMIN_API_URL instead
+export const GARMIN_MODERN_PROXY = `${GARMIN_API_URL}`;
 
 export const WELLNESS_ENDPOINTS = {
   // Sleep endpoint requires displayName in path and date as query param
@@ -60,9 +66,12 @@ export const OAUTH_CONSUMER = {
 };
 
 export const DEFAULT_HEADERS = {
-  'User-Agent': 'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36',
+  'User-Agent': 'com.garmin.android.apps.connectmobile',
   'Accept': 'application/json',
   'Content-Type': 'application/json',
+  // CRITICAL: This header is required for Garmin to route requests to the correct backend
+  // Without it, Garmin returns HTML instead of JSON
+  'di-backend': 'connectapi.garmin.com',
 };
 
 export const ERROR_MESSAGES = {
