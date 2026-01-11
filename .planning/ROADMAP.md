@@ -30,13 +30,14 @@ Plans:
 - [x] 01-01: Fix constants.ts endpoints + add vite proxy
 
 ### Phase 2: Validation & Testing
-**Goal**: Test the fixed endpoints on Android device, verify all health metrics sync to IndexedDB correctly
+**Goal**: Fix Sleep Score, HRV, SpO2, and Hydration parsing/endpoints based on garth reference. Verify all metrics sync correctly on Android.
 **Depends on**: Phase 1
-**Research**: Unlikely (testing existing functionality)
-**Plans**: TBD
+**Research**: Complete (analyzed garth response structures)
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: Build, deploy to Android, test sync
+- [ ] 02-01: Fix Sleep Score, SpO2, HRV parsing (response structure mismatch)
+- [ ] 02-02: Fix Hydration endpoint + Android verification
 
 ### Phase 3: Python Fallback
 **Goal**: If TypeScript fix doesn't work, integrate garth Python library as a backend service for reliable Garmin data fetching
@@ -57,5 +58,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. API Endpoint Fix | 1/1 | Complete | 2026-01-11 |
-| 2. Validation & Testing | 0/1 | Not started | - |
+| 2. Validation & Testing | 0/2 | In progress | - |
 | 3. Python Fallback | 0/2 | Not started | - |
