@@ -89,6 +89,25 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api\/oauth-consumer/, '/oauth_consumer.json'),
         secure: true,
       },
+      // Proxy für Garmin Connect API (connectapi.garmin.com)
+      // This is the proper API endpoint that accepts OAuth2 Bearer tokens
+      '/api/connectapi': {
+        target: 'https://connectapi.garmin.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/connectapi/, ''),
+        secure: true,
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            // Forward OAuth2 Bearer token
+            if (req.headers.authorization) {
+              proxyReq.setHeader('Authorization', req.headers.authorization);
+            }
+            // Set required headers for Garmin API
+            proxyReq.setHeader('User-Agent', 'com.garmin.android.apps.connectmobile');
+            proxyReq.setHeader('Accept', 'application/json');
+          });
+        },
+      },
     },
   },
 })
