@@ -130,7 +130,8 @@ export async function getStepsData(date: string): Promise<StepsData | null> {
  */
 export async function getHydrationData(date: string): Promise<HydrationData | null> {
   try {
-    const response = await garminHttp.get<HydrationDataResponse>(
+    // The /stats/hydration/daily/{start}/{end} endpoint returns an array
+    const response = await garminHttp.get<HydrationDataResponse[] | HydrationDataResponse>(
       USER_SUMMARY_ENDPOINTS.HYDRATION(date)
     );
 
@@ -141,9 +142,17 @@ export async function getHydrationData(date: string): Promise<HydrationData | nu
       return null;
     }
 
+    // Handle array response (new endpoint returns array of daily entries)
+    const entries = Array.isArray(data) ? data : [data];
+    const todayEntry = entries[0];
+
+    if (!todayEntry) {
+      return null;
+    }
+
     return {
-      valueInML: data.valueInML || 0,
-      goalInML: data.goalInML,
+      valueInML: todayEntry.valueInML || 0,
+      goalInML: todayEntry.goalInML,
     };
   } catch (error) {
     console.error(`Failed to get hydration data for ${date}:`, error);

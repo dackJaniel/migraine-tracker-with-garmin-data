@@ -33,7 +33,9 @@ export const HRV_ENDPOINTS = {
 };
 
 export const USER_SUMMARY_ENDPOINTS = {
-  HYDRATION: (date: string) => `${GARMIN_API_URL}/usersummary-service/hydration/allData/${date}`,
+  // Correct endpoint from garth: /usersummary-service/stats/hydration/daily/{start}/{end}
+  // Use same date for start/end to get single day data
+  HYDRATION: (date: string) => `${GARMIN_API_URL}/usersummary-service/stats/hydration/daily/${date}/${date}`,
   USER_SUMMARY: (displayName: string, date: string) => `${GARMIN_API_URL}/usersummary-service/usersummary/daily/${displayName}?calendarDate=${date}`,
   // SpO2 is under wellness-service, not usersummary-service
   SPO2: (date: string) => `${GARMIN_API_URL}/wellness-service/wellness/daily/spo2/${date}`,
