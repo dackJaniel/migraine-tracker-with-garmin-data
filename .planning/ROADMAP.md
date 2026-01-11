@@ -15,7 +15,7 @@ None
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: API Endpoint Fix** - Update endpoints to use connectapi.garmin.com
-- [ ] **Phase 2: Validation & Testing** - Verify data flows correctly on Android
+- [x] **Phase 2: Validation & Testing** - Verify data flows correctly on Android
 - [ ] **Phase 3: Python Fallback** - Integrate garth library if TypeScript fix insufficient
 
 ## Phase Details
@@ -36,8 +36,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: Fix Sleep Score, SpO2, HRV parsing (response structure mismatch)
-- [ ] 02-02: Fix Hydration endpoint + Android verification
+- [x] 02-01: Fix Sleep Score, SpO2, HRV parsing (response structure mismatch)
+- [x] 02-02: Fix Hydration endpoint + Android verification
 
 ### Phase 3: Python Fallback
 **Goal**: If TypeScript fix doesn't work, integrate garth Python library as a backend service for reliable Garmin data fetching
@@ -58,5 +58,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. API Endpoint Fix | 1/1 | Complete | 2026-01-11 |
-| 2. Validation & Testing | 0/2 | In progress | - |
+| 2. Validation & Testing | 2/2 | Complete | 2026-01-11 |
 | 3. Python Fallback | 0/2 | Not started | - |
