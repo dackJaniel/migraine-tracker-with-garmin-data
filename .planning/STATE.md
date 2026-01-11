@@ -5,33 +5,34 @@
 See: .planning/PROJECT.md (updated 2026-01-11)
 
 **Core value:** Garmin health data reliably synced to IndexedDB
-**Current focus:** Phase 1 — API Endpoint Fix
+**Current focus:** Phase 4 — Settings Consolidation
 
 ## Current Position
 
-Phase: 1 of 3 (API Endpoint Fix)
-Plan: 1 of 1 in current phase
-Status: Phase complete
-Last activity: 2026-01-11 — Completed 01-01-PLAN.md
+Phase: 4 of 9 (Settings Consolidation)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-11 — v1.1 milestone initialized
 
-Progress: █░░░░░░░░░ 10%
+Progress: ███░░░░░░░ 33% (v1.0 complete, v1.1 starting)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 3 min
-- Total execution time: 3 min
+- Total plans completed: 3
+- Average duration: ~10 min
+- Total execution time: ~30 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-api-endpoint-fix | 1 | 3 min | 3 min |
+| 1. API Endpoint Fix | 1 | 15m | 15m |
+| 2. Validation & Testing | 2 | 15m | 7.5m |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (3 min)
-- Trend: First plan completed
+- Last 3 plans: 15m, 10m, 5m
+- Trend: Improving
 
 ## Accumulated Context
 
@@ -40,9 +41,9 @@ Progress: █░░░░░░░░░ 10%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- Approach: Try TypeScript fix first, Python fallback if needed
-- Scope: Android only, manual sync, single account
-- Phase 01-01: Use /api/connectapi proxy path for API requests in dev mode
+- [Phase 1-2]: Use connectapi.garmin.com instead of /modern/proxy/
+- [Phase 2]: Extract SpO2 from sleep response, not separate endpoint
+- [Phase 2]: Use garth Python library as reference for API structures
 
 ### Deferred Issues
 
@@ -54,6 +55,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-11T17:10:11Z
-Stopped at: Completed 01-01-PLAN.md, Phase 1 complete
+Last session: 2026-01-11
+Stopped at: v1.1 milestone initialized, ready for Phase 4 planning
 Resume file: None
