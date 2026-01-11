@@ -36,13 +36,13 @@ import {
   AlertCircle,
   Copy,
   Trash2,
-  Watch,
   Save,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { WeatherSettings } from '@/features/weather';
 import { BackupManager } from '@/features/backup/BackupManager';
+import { GarminSettings } from '@/features/garmin/components';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -356,27 +356,9 @@ export default function Settings() {
           </Card>
         </TabsContent>
 
-        {/* Garmin Tab - Link zur vollständigen Garmin-Seite */}
+        {/* Garmin Tab */}
         <TabsContent value="garmin" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Watch className="h-5 w-5" />
-                Garmin Connect
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-slate-600">
-                Verbinde dich mit Garmin Connect, um deine Gesundheitsdaten zu
-                synchronisieren und Korrelationen mit deinen Migräne-Episoden zu
-                analysieren.
-              </p>
-              <Button onClick={() => navigate('/garmin')} className="w-full">
-                <Watch className="h-4 w-4 mr-2" />
-                Garmin Einstellungen öffnen
-              </Button>
-            </CardContent>
-          </Card>
+          <GarminSettings />
         </TabsContent>
 
         {/* Wetter Tab (PAKET 12) */}

@@ -9,3 +9,4 @@ export { DateNavigation } from './DateNavigation';
 export type { DateNavigationProps } from './DateNavigation';
 export { SyncControls } from './SyncControls';
 export type { SyncControlsProps } from './SyncControls';
+export { GarminSettings } from './GarminSettings';
