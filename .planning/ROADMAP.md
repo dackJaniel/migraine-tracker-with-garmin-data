@@ -23,12 +23,11 @@ None
 ### Phase 1: API Endpoint Fix
 **Goal**: Change API base URL from `connect.garmin.com/modern/proxy/` to `connectapi.garmin.com/` and update all endpoint paths to match garth reference implementation
 **Depends on**: Nothing (first phase)
-**Research**: Likely (need to verify exact API paths from garth)
-**Research topics**: Exact endpoint paths from garth library, OAuth2 header requirements for connectapi subdomain
-**Plans**: TBD
+**Research**: Complete (verified paths from garth library)
+**Plans**: 1 plan
 
 Plans:
-- [ ] 01-01: Update constants.ts and endpoint files
+- [ ] 01-01: Fix constants.ts endpoints + add vite proxy
 
 ### Phase 2: Validation & Testing
 **Goal**: Test the fixed endpoints on Android device, verify all health metrics sync to IndexedDB correctly
