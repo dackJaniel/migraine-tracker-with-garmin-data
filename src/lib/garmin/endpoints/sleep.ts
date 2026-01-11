@@ -12,6 +12,10 @@ export interface SleepData {
   remSleepMinutes: number;
   awakeSleepMinutes: number;
   sleepScore?: number;
+  // SpO2 from sleep response
+  averageSpO2?: number;
+  lowestSpO2?: number;
+  highestSpO2?: number;
 }
 
 /**
@@ -29,7 +33,12 @@ function parseSleepResponse(sleepData: SleepDataResponse): SleepData | null {
     lightSleepMinutes: Math.round((sleep.lightSleepSeconds || 0) / 60),
     remSleepMinutes: Math.round((sleep.remSleepSeconds || 0) / 60),
     awakeSleepMinutes: Math.round((sleep.awakeSleepSeconds || 0) / 60),
-    sleepScore: sleep.sleepScore,
+    // Correct path from garth: sleepScores.overall.value
+    sleepScore: sleep.sleepScores?.overall?.value,
+    // SpO2 from sleep response
+    averageSpO2: sleep.averageSpO2Value,
+    lowestSpO2: sleep.lowestSpO2Value,
+    highestSpO2: sleep.highestSpO2Value,
   };
 }
 

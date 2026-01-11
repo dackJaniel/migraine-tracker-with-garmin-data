@@ -40,7 +40,17 @@ export interface SleepDataResponse {
     lightSleepSeconds: number;
     remSleepSeconds: number;
     awakeSleepSeconds: number;
-    sleepScore?: number;
+    // Correct structure from garth reference:
+    sleepScores?: {
+      overall?: {
+        value?: number;
+        qualifierKey?: string;
+      };
+    };
+    // SpO2 data is included in sleep response
+    averageSpO2Value?: number;
+    lowestSpO2Value?: number;
+    highestSpO2Value?: number;
   };
 }
 
@@ -58,12 +68,20 @@ export interface HeartRateDataResponse {
   heartRateValues?: Array<[number, number]>;
 }
 
-// HRV Types
+// HRV Types - Correct structure from garth reference
 export interface HRVDataResponse {
-  hrvValue?: number;
-  lastNightAverage?: number;
-  weeklyAverage?: number;
-  status?: string;
+  hrvSummary?: {
+    lastNightAvg?: number;
+    weeklyAvg?: number;
+    status?: string;
+    feedbackPhrase?: string;
+    calendarDate?: string;
+  };
+  hrvReadings?: Array<{
+    hrvValue: number;
+    readingTimeGmt: string;
+    readingTimeLocal: string;
+  }>;
 }
 
 // Body Battery Types

@@ -224,11 +224,12 @@ export async function getHRVData(date: string): Promise<HRVData | null> {
       return null;
     }
 
+    // Correct path from garth: hrvSummary.lastNightAvg
     return {
-      hrvValue: hrvData.hrvValue,
-      lastNightAverage: hrvData.lastNightAverage,
-      weeklyAverage: hrvData.weeklyAverage,
-      status: hrvData.status,
+      hrvValue: hrvData.hrvSummary?.lastNightAvg,
+      lastNightAverage: hrvData.hrvSummary?.lastNightAvg,
+      weeklyAverage: hrvData.hrvSummary?.weeklyAvg,
+      status: hrvData.hrvSummary?.status,
     };
   } catch (error) {
     console.error(`Failed to get HRV data for ${date}:`, error);

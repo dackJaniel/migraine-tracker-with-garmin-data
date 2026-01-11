@@ -138,7 +138,8 @@ export async function syncSingleDate(date: string): Promise<GarminData | null> {
       steps: stepsData?.totalSteps,
       hydration: hydrationData?.valueInML,
       respirationRate: respirationData?.avgSleepRespirationValue,
-      spo2: spo2Data?.averageSpO2,
+      // Prioritize SpO2 from sleep data, fallback to separate endpoint
+      spo2: sleepData?.averageSpO2 ?? spo2Data?.averageSpO2,
       syncedAt: new Date().toISOString(),
     };
 
