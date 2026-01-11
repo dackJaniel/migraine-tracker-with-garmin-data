@@ -9,41 +9,38 @@ export const GARMIN_SSO_URL = isDev ? '/api/garmin-sso' : 'https://sso.garmin.co
 
 // IMPORTANT: For API requests, garth uses connectapi.garmin.com (NOT connect.garmin.com/modern/proxy)
 // The /modern/proxy path is for web browser access, connectapi subdomain is the proper API endpoint
-export const GARMIN_API_URL = isDev ? '/api/garmin' : 'https://connectapi.garmin.com';
-
-// Legacy proxy URL - kept for reference but should use GARMIN_API_URL instead
-export const GARMIN_MODERN_PROXY = `${GARMIN_API_URL}`;
+export const GARMIN_API_URL = isDev ? '/api/connectapi' : 'https://connectapi.garmin.com';
 
 export const WELLNESS_ENDPOINTS = {
   // Sleep endpoint requires displayName in path and date as query param
   // Alternative: Some Garmin implementations use different path format
-  SLEEP_DATA: (displayName: string, date: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/dailySleepData/${displayName}?date=${date}&nonSleepBufferMinutes=60`,
+  SLEEP_DATA: (displayName: string, date: string) => `${GARMIN_API_URL}/wellness-service/wellness/dailySleepData/${displayName}?date=${date}&nonSleepBufferMinutes=60`,
   // Backup endpoint (if primary fails)
-  SLEEP_DATA_ALT: (date: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/dailySleepData?calendarDate=${date}`,
-  STRESS_DATA: (date: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/dailyStress/${date}`,
-  ALL_DAY_STRESS: (date: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/daily/stress/${date}`,
+  SLEEP_DATA_ALT: (date: string) => `${GARMIN_API_URL}/wellness-service/wellness/dailySleepData?calendarDate=${date}`,
+  STRESS_DATA: (date: string) => `${GARMIN_API_URL}/wellness-service/wellness/dailyStress/${date}`,
+  ALL_DAY_STRESS: (date: string) => `${GARMIN_API_URL}/wellness-service/wellness/daily/stress/${date}`,
   // Heart Rate endpoint requires displayName in path and date as query param
-  HEART_RATE: (displayName: string, date: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/dailyHeartRate/${displayName}?date=${date}`,
-  RESTING_HR: (date: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/daily/restingHeartRate/${date}`,
-  BODY_BATTERY: (startDate: string, endDate: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/bodyBattery/reports/daily?startDate=${startDate}&endDate=${endDate}`,
+  HEART_RATE: (displayName: string, date: string) => `${GARMIN_API_URL}/wellness-service/wellness/dailyHeartRate/${displayName}?date=${date}`,
+  RESTING_HR: (date: string) => `${GARMIN_API_URL}/wellness-service/wellness/daily/restingHeartRate/${date}`,
+  BODY_BATTERY: (startDate: string, endDate: string) => `${GARMIN_API_URL}/wellness-service/wellness/bodyBattery/reports/daily?startDate=${startDate}&endDate=${endDate}`,
   // Daily Summary requires displayName
-  DAILY_SUMMARY: (displayName: string, date: string) => `${GARMIN_MODERN_PROXY}/usersummary-service/usersummary/daily/${displayName}?calendarDate=${date}`,
-  RESPIRATION: (date: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/daily/respiration/${date}`,
+  DAILY_SUMMARY: (displayName: string, date: string) => `${GARMIN_API_URL}/usersummary-service/usersummary/daily/${displayName}?calendarDate=${date}`,
+  RESPIRATION: (date: string) => `${GARMIN_API_URL}/wellness-service/wellness/daily/respiration/${date}`,
 };
 
 export const HRV_ENDPOINTS = {
-  HRV_DATA: (date: string) => `${GARMIN_MODERN_PROXY}/hrv-service/hrv/${date}`,
+  HRV_DATA: (date: string) => `${GARMIN_API_URL}/hrv-service/hrv/${date}`,
 };
 
 export const USER_SUMMARY_ENDPOINTS = {
-  HYDRATION: (date: string) => `${GARMIN_MODERN_PROXY}/usersummary-service/hydration/allData/${date}`,
-  USER_SUMMARY: (displayName: string, date: string) => `${GARMIN_MODERN_PROXY}/usersummary-service/usersummary/daily/${displayName}?calendarDate=${date}`,
+  HYDRATION: (date: string) => `${GARMIN_API_URL}/usersummary-service/hydration/allData/${date}`,
+  USER_SUMMARY: (displayName: string, date: string) => `${GARMIN_API_URL}/usersummary-service/usersummary/daily/${displayName}?calendarDate=${date}`,
   // SpO2 is under wellness-service, not usersummary-service
-  SPO2: (date: string) => `${GARMIN_MODERN_PROXY}/wellness-service/wellness/daily/spo2/${date}`,
+  SPO2: (date: string) => `${GARMIN_API_URL}/wellness-service/wellness/daily/spo2/${date}`,
 };
 
 export const TRAINING_ENDPOINTS = {
-  TRAINING_READINESS: (date: string) => `${GARMIN_MODERN_PROXY}/metrics-service/metrics/trainingreadiness/${date}`,
+  TRAINING_READINESS: (date: string) => `${GARMIN_API_URL}/metrics-service/metrics/trainingreadiness/${date}`,
 };
 
 export const RATE_LIMIT = {
