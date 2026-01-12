@@ -43,6 +43,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { WeatherSettings } from '@/features/weather';
 import { BackupManager } from '@/features/backup/BackupManager';
 import { GarminSettings } from '@/features/garmin/components';
+import { AutoSyncSettings } from '@/features/sync';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -248,6 +249,7 @@ export default function Settings() {
           <TabsTrigger value="security">Sicherheit</TabsTrigger>
           <TabsTrigger value="garmin">Garmin</TabsTrigger>
           <TabsTrigger value="weather">Wetter</TabsTrigger>
+          <TabsTrigger value="sync">Sync</TabsTrigger>
           <TabsTrigger value="data">Daten</TabsTrigger>
           <TabsTrigger value="debug">Debug</TabsTrigger>
         </TabsList>
@@ -364,6 +366,11 @@ export default function Settings() {
         {/* Wetter Tab (PAKET 12) */}
         <TabsContent value="weather" className="space-y-4">
           <WeatherSettings />
+        </TabsContent>
+
+        {/* Auto-Sync Tab */}
+        <TabsContent value="sync" className="space-y-4">
+          <AutoSyncSettings />
         </TabsContent>
 
         {/* Daten Tab */}
