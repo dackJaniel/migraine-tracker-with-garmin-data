@@ -21,6 +21,7 @@ import {
   Line,
   Legend,
 } from 'recharts';
+import { TopInsights } from './TopInsights';
 
 export function EpisodeCharts() {
   // Episoden pro Monat (letzte 6 Monate)
@@ -95,6 +96,11 @@ export function EpisodeCharts() {
 
   return (
     <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+      {/* Top Insights - prominently at the top */}
+      <div className="lg:col-span-2">
+        <TopInsights />
+      </div>
+
       {/* Episoden pro Monat */}
       <Card className="lg:col-span-2">
         <CardHeader>
