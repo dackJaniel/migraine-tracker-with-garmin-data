@@ -50,16 +50,16 @@ export default function Dashboard() {
   return (
     <div className="container mx-auto p-4 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Dashboard</h1>
           <p className="text-slate-600 mt-1">
             Übersicht deiner Migräne-Episoden
           </p>
         </div>
         <Button
           size="lg"
-          className="gap-2"
+          className="gap-2 w-full sm:w-auto"
           onClick={() => navigate('/episodes/new')}
         >
           <Plus className="h-5 w-5" />
@@ -163,12 +163,12 @@ export default function Dashboard() {
               {episodes.slice(0, 10).map(episode => (
                 <div
                   key={episode.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
                   onClick={() => navigate(`/episodes/${episode.id}`)}
                 >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <div className="text-lg font-semibold">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                      <div className="text-base sm:text-lg font-semibold">
                         Intensität {episode.intensity}/10
                       </div>
                       <div className="text-sm text-slate-600">
@@ -184,7 +184,7 @@ export default function Dashboard() {
                         )}
                     </div>
                     {episode.triggers.length > 0 && (
-                      <div className="flex gap-2 mt-2">
+                      <div className="flex flex-wrap gap-2 mt-2">
                         {episode.triggers.map(trigger => (
                           <span
                             key={trigger}
@@ -202,7 +202,7 @@ export default function Dashboard() {
                     )}
                   </div>
                   <div
-                    className="flex gap-2"
+                    className="flex gap-2 self-end sm:self-auto"
                     onClick={e => e.stopPropagation()}
                   >
                     <Button
