@@ -44,7 +44,7 @@ Plans:
 **Milestone Goal:** Improve UX, add auto-sync, analytics, and Dropbox export
 
 - [x] **Phase 4: Settings Consolidation** - Alle Einstellungen unter Settings vereinen
-- [ ] **Phase 5: UI Mobile Polish** - Mobile-Optimierung, Overflow-Fixes
+- [x] **Phase 5: UI Mobile Polish** - Mobile-Optimierung, Overflow-Fixes
 - [ ] **Phase 6: GPS Fix** - Android Standort-Problem beheben
 - [ ] **Phase 7: Auto Sync** - Automatischer Garmin & Wetter Sync 2x täglich
 - [ ] **Phase 8: Analytics Enhancement** - Korrelationen verbessern (UI + Logik)
@@ -68,11 +68,11 @@ Plans:
 - [x] 04-01: Create GarminSettings component, integrate into Settings
 - [x] 04-02: Simplify GarminPage to pure data viewer
 
-### Phase 5: UI Mobile Polish
+### Phase 5: UI Mobile Polish ✅
 **Goal**: Mobile-First Optimierung, Overflow-Probleme beheben
 **Depends on**: Phase 4
-**Research**: Unlikely (CSS/Layout fixes)
-**Plans**: TBD
+**Status**: Complete
+**Plans**: 1 plan
 
 Scope:
 - Icons/Schriften die über Box-Ränder ragen fixen
@@ -80,7 +80,7 @@ Scope:
 - Konsistente Spacing/Padding
 
 Plans:
-- [ ] 05-01: TBD
+- [x] 05-01: Fix mobile layouts for CorrelationInsights, Dashboard, EpisodeForm
 
 ### Phase 6: GPS Fix
 **Goal**: Android Standort-Fehler beheben ("Standort konnte nicht erstellt werden")
@@ -155,7 +155,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8 → 9
 | 2. Validation & Testing | v1.0 | 2/2 | Complete | 2026-01-11 |
 | 3. Python Fallback | v1.0 | - | Skipped | 2026-01-11 |
 | 4. Settings Consolidation | v1.1 | 2/2 | Complete | 2026-01-11 |
-| 5. UI Mobile Polish | v1.1 | 0/? | Not started | - |
+| 5. UI Mobile Polish | v1.1 | 1/1 | Complete | 2026-01-12 |
 | 6. GPS Fix | v1.1 | 0/? | Not started | - |
 | 7. Auto Sync | v1.1 | 0/? | Not started | - |
 | 8. Analytics Enhancement | v1.1 | 0/? | Not started | - |
