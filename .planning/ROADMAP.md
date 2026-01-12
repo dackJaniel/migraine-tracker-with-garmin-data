@@ -45,7 +45,7 @@ Plans:
 
 - [x] **Phase 4: Settings Consolidation** - Alle Einstellungen unter Settings vereinen
 - [x] **Phase 5: UI Mobile Polish** - Mobile-Optimierung, Overflow-Fixes
-- [ ] **Phase 6: GPS Fix** - Android Standort-Problem beheben
+- [x] **Phase 6: GPS Fix** - Android Standort-Problem beheben
 - [ ] **Phase 7: Auto Sync** - Automatischer Garmin & Wetter Sync 2x täglich
 - [ ] **Phase 8: Analytics Enhancement** - Korrelationen verbessern (UI + Logik)
 - [ ] **Phase 9: Dropbox Export** - Verschlüsselter Auto-Export zu Dropbox
@@ -82,12 +82,11 @@ Scope:
 Plans:
 - [x] 05-01: Fix mobile layouts for CorrelationInsights, Dashboard, EpisodeForm
 
-### Phase 6: GPS Fix
+### Phase 6: GPS Fix ✅
 **Goal**: Android Standort-Fehler beheben ("Standort konnte nicht erstellt werden")
 **Depends on**: Phase 5 (UI ready)
-**Research**: Likely (Capacitor Geolocation)
-**Research topics**: Capacitor Geolocation Plugin, Android Permissions, Location API
-**Plans**: TBD
+**Status**: Complete
+**Plans**: 1 plan
 
 Scope:
 - GPS-Fehler auf Android diagnostizieren
@@ -95,7 +94,7 @@ Scope:
 - Android Permissions richtig handhaben
 
 Plans:
-- [ ] 06-01: TBD
+- [x] 06-01: Install Capacitor Geolocation + update location-service.ts
 
 ### Phase 7: Auto Sync
 **Goal**: Automatischer Sync von Garmin & Wetter Daten 2x täglich
@@ -156,7 +155,7 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8 → 9
 | 3. Python Fallback | v1.0 | - | Skipped | 2026-01-11 |
 | 4. Settings Consolidation | v1.1 | 2/2 | Complete | 2026-01-11 |
 | 5. UI Mobile Polish | v1.1 | 1/1 | Complete | 2026-01-12 |
-| 6. GPS Fix | v1.1 | 0/? | Not started | - |
+| 6. GPS Fix | v1.1 | 1/1 | Complete | 2026-01-12 |
 | 7. Auto Sync | v1.1 | 0/? | Not started | - |
 | 8. Analytics Enhancement | v1.1 | 0/? | Not started | - |
 | 9. Dropbox Export | v1.1 | 0/? | Not started | - |
