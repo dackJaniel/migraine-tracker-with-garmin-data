@@ -114,27 +114,32 @@ export function CorrelationInsights() {
             {significantCorrelations.map((correlation, index) => (
               <div
                 key={index}
-                className="flex items-start gap-3 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                className="flex flex-col sm:flex-row sm:items-start gap-3 p-4 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
               >
-                <div className="mt-1 text-primary">
-                  {getIcon(correlation.type)}
+                <div className="flex items-center gap-3 sm:block">
+                  <div className="text-primary">
+                    {getIcon(correlation.type)}
+                  </div>
+                  <div className="text-2xl font-bold text-primary sm:hidden">
+                    {correlation.percentage}%
+                  </div>
                 </div>
                 <div className="flex-1 space-y-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <h4 className="font-semibold">{correlation.title}</h4>
                     <Badge variant="default">Signifikant</Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     {correlation.description}
                   </p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground mt-2">
                     <span>Datenbasis: {correlation.sampleSize} Einträge</span>
                     {correlation.pValue && (
                       <span>p-Wert: {correlation.pValue.toFixed(3)}</span>
                     )}
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="hidden sm:block text-right">
                   <div className="text-2xl font-bold text-primary">
                     {correlation.percentage}%
                   </div>
@@ -160,10 +165,15 @@ export function CorrelationInsights() {
             .map((correlation, index) => (
               <div
                 key={index}
-                className="flex items-start gap-3 p-4 rounded-lg border hover:bg-muted/50 transition-colors"
+                className="flex flex-col sm:flex-row sm:items-start gap-3 p-4 rounded-lg border hover:bg-muted/50 transition-colors"
               >
-                <div className="mt-1 text-muted-foreground">
-                  {getIcon(correlation.type)}
+                <div className="flex items-center gap-3 sm:block">
+                  <div className="text-muted-foreground">
+                    {getIcon(correlation.type)}
+                  </div>
+                  <div className="text-xl font-semibold text-muted-foreground sm:hidden">
+                    {correlation.percentage}%
+                  </div>
                 </div>
                 <div className="flex-1 space-y-1">
                   <h4 className="font-semibold">{correlation.title}</h4>
@@ -174,7 +184,7 @@ export function CorrelationInsights() {
                     Datenbasis: {correlation.sampleSize} Einträge
                   </p>
                 </div>
-                <div className="text-right">
+                <div className="hidden sm:block text-right">
                   <div className="text-xl font-semibold text-muted-foreground">
                     {correlation.percentage}%
                   </div>
