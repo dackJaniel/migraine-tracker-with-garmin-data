@@ -1,4 +1,7 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { performAutoSyncIfNeeded } from '@/lib/auto-sync';
+import { toast } from 'sonner';
 import Layout from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
@@ -12,6 +15,27 @@ import EpisodeDetail from './features/episodes/EpisodeDetail';
 import DebugDB from './pages/DebugDB';
 
 function App() {
+  // Auto-sync on app start
+  useEffect(() => {
+    const runAutoSync = async () => {
+      try {
+        const result = await performAutoSyncIfNeeded();
+        if (result.synced) {
+          const parts = [];
+          if (result.garmin) parts.push('Garmin');
+          if (result.weather) parts.push('Wetter');
+          toast.success(`Auto-Sync: ${parts.join(' & ')} aktualisiert`);
+        }
+      } catch (error) {
+        console.error('Auto-sync failed:', error);
+      }
+    };
+
+    // Small delay to let app render first
+    const timer = setTimeout(runAutoSync, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
