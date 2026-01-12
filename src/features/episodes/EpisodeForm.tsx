@@ -297,7 +297,7 @@ export default function EpisodeForm() {
   return (
     <div className="container mx-auto p-4 max-w-2xl space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
         <Button
           variant="ghost"
           size="icon"
@@ -306,10 +306,10 @@ export default function EpisodeForm() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
             {isEditMode ? 'Episode bearbeiten' : 'Neue Episode'}
           </h1>
-          <p className="text-slate-600 mt-1">
+          <p className="text-sm sm:text-base text-slate-600 mt-1">
             Erfasse Details zu deiner Migräne-Episode
           </p>
         </div>
@@ -329,13 +329,13 @@ export default function EpisodeForm() {
                 name="startTime"
                 control={control}
                 render={({ field }) => (
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
                           className={cn(
-                            'flex-1 justify-start text-left font-normal',
+                            'w-full sm:flex-1 justify-start text-left font-normal',
                             !field.value && 'text-muted-foreground'
                           )}
                         >
@@ -375,7 +375,7 @@ export default function EpisodeForm() {
                         newDate.setHours(parseInt(hours), parseInt(minutes));
                         field.onChange(newDate);
                       }}
-                      className="w-32"
+                      className="w-full sm:w-32"
                     />
                   </div>
                 )}
@@ -411,13 +411,13 @@ export default function EpisodeForm() {
                   name="endTime"
                   control={control}
                   render={({ field }) => (
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
                             className={cn(
-                              'flex-1 justify-start text-left font-normal',
+                              'w-full sm:flex-1 justify-start text-left font-normal',
                               !field.value && 'text-muted-foreground'
                             )}
                           >
@@ -458,7 +458,7 @@ export default function EpisodeForm() {
                           newDate.setHours(parseInt(hours), parseInt(minutes));
                           field.onChange(newDate);
                         }}
-                        className="w-32"
+                        className="w-full sm:w-32"
                       />
                     </div>
                   )}
@@ -537,7 +537,7 @@ export default function EpisodeForm() {
                   control={control}
                   render={({ field }) => (
                     <div className="space-y-2">
-                      <div className="flex justify-between gap-2">
+                      <div className="grid grid-cols-5 gap-1 sm:gap-2">
                         {[1, 2, 3, 4, 5].map(rating => (
                           <Button
                             key={rating}
@@ -546,7 +546,7 @@ export default function EpisodeForm() {
                               field.value === rating ? 'default' : 'outline'
                             }
                             size="sm"
-                            className="flex-1 flex-col h-auto py-2"
+                            className="flex-col h-auto py-2 px-1 sm:px-2"
                             onClick={() =>
                               field.onChange(
                                 field.value === rating ? null : rating
@@ -558,7 +558,7 @@ export default function EpisodeForm() {
                                 <Star
                                   key={i}
                                   className={cn(
-                                    'h-3 w-3',
+                                    'h-2.5 w-2.5 sm:h-3 sm:w-3',
                                     field.value === rating
                                       ? 'fill-white text-white'
                                       : 'fill-yellow-400 text-yellow-400'
