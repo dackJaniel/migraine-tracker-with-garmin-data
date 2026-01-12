@@ -3,6 +3,8 @@
  * Verwaltet Standort-Einstellungen für Wetter-Abfragen
  */
 
+import { Geolocation } from '@capacitor/geolocation';
+import { Capacitor } from '@capacitor/core';
 import { addLog, getSetting, setSetting } from '@/lib/db';
 import type { Location, WeatherSettings } from './types';
 import { reverseGeocode } from './client';
@@ -53,25 +55,48 @@ export async function saveLocation(location: Location): Promise<void> {
 }
 
 /**
- * Ermittelt den aktuellen Standort via Browser Geolocation API
+ * Ermittelt den aktuellen Standort via Capacitor Geolocation (native) oder Browser API (web)
  */
 export async function getCurrentLocation(): Promise<Location | null> {
   try {
-    // Verwende Browser Geolocation API (funktioniert auf Web und in Capacitor)
-    if (!navigator.geolocation) {
-      await addLog('warn', 'Geolocation not supported');
-      return null;
-    }
+    let latitude: number;
+    let longitude: number;
 
-    const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
+    if (Capacitor.isNativePlatform()) {
+      // Native platform: Use Capacitor Geolocation with proper permission handling
+      const permStatus = await Geolocation.requestPermissions();
+
+      if (permStatus.location === 'denied') {
+        await addLog('warn', 'Location permission denied');
+        return null;
+      }
+
+      const position = await Geolocation.getCurrentPosition({
         enableHighAccuracy: false,
         timeout: 10000,
         maximumAge: 300000, // 5 Minuten Cache
       });
-    });
 
-    const { latitude, longitude } = position.coords;
+      latitude = position.coords.latitude;
+      longitude = position.coords.longitude;
+    } else {
+      // Web: Fall back to browser Geolocation API
+      if (!navigator.geolocation) {
+        await addLog('warn', 'Geolocation not supported');
+        return null;
+      }
+
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 300000, // 5 Minuten Cache
+        });
+      });
+
+      latitude = position.coords.latitude;
+      longitude = position.coords.longitude;
+    }
 
     // Reverse Geocoding für Stadtname
     const cityName = await reverseGeocode(latitude, longitude);
@@ -85,9 +110,14 @@ export async function getCurrentLocation(): Promise<Location | null> {
     await addLog('info', 'Current location detected', { name: location.name, lat: location.lat, lon: location.lon });
     return location;
   } catch (error) {
-    await addLog('error', 'Failed to get current location', {
-      error: String(error),
-    });
+    const errorMessage = String(error);
+    if (errorMessage.includes('location disabled') || errorMessage.includes('Location services')) {
+      await addLog('warn', 'Location services disabled');
+    } else {
+      await addLog('error', 'Failed to get current location', {
+        error: errorMessage,
+      });
+    }
     return null;
   }
 }
