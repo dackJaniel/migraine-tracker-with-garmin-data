@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-11)
 
 **Core value:** Garmin health data reliably synced to IndexedDB
-**Current focus:** Phase 6 — GPS Fix (complete)
+**Current focus:** Phase 7 — Auto Sync (complete)
 
 ## Current Position
 
-Phase: 6 of 9 (GPS Fix)
+Phase: 7 of 9 (Auto Sync)
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-12 — Completed 06-01-PLAN.md
+Last activity: 2026-01-12 — Completed 07-01-PLAN.md
 
-Progress: ██████░░░░ 66% (v1.0 complete, v1.1 Phases 4-6 done)
+Progress: ███████░░░ 77% (v1.0 complete, v1.1 Phases 4-7 done)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: ~7 min
-- Total execution time: ~51 min
+- Total execution time: ~54 min
 
 **By Phase:**
 
@@ -32,9 +32,10 @@ Progress: ██████░░░░ 66% (v1.0 complete, v1.1 Phases 4-6 don
 | 4. Settings Consolidation | 2 | 10m | 5m |
 | 5. UI Mobile Polish | 1 | 8m | 8m |
 | 6. GPS Fix | 1 | 3m | 3m |
+| 7. Auto Sync | 1 | 3m | 3m |
 
 **Recent Trend:**
-- Last 3 plans: 5m, 8m, 3m
+- Last 3 plans: 8m, 3m, 3m
 - Trend: Fast execution
 
 ## Accumulated Context
@@ -55,6 +56,8 @@ Recent decisions affecting current work:
 - [Phase 5]: Stack date/time pickers vertically on mobile
 - [Phase 6]: Use Capacitor.isNativePlatform() to detect native vs web
 - [Phase 6]: Fall back to browser geolocation API on web for dev mode
+- [Phase 7]: Auto-sync defaults to enabled (opt-out model)
+- [Phase 7]: 1 second delay before auto-sync to let UI render first
 
 ### Deferred Issues
 
@@ -67,5 +70,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-12
-Stopped at: Phase 6 complete, ready for Phase 7 planning
+Stopped at: Phase 7 complete, ready for Phase 8 planning
 Resume file: None
