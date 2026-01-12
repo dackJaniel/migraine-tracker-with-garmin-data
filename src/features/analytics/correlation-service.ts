@@ -8,7 +8,7 @@ export interface CorrelationResult {
     sampleSize: number;
     isSignificant: boolean;
     pValue?: number;
-    type: 'sleep' | 'stress' | 'hrv' | 'trigger' | 'bodyBattery' | 'nightOnset' | 'weather' | 'pressure' | 'temperature' | 'humidity';
+    type: 'sleep' | 'stress' | 'hrv' | 'trigger' | 'bodyBattery' | 'nightOnset' | 'weather' | 'pressure' | 'temperature' | 'humidity' | 'steps' | 'restingHR' | 'hydration';
 }
 
 /**
@@ -35,6 +35,10 @@ export async function analyzeSleepCorrelation(): Promise<CorrelationResult | nul
                 garminData.sleepStages.deep +
                 garminData.sleepStages.light +
                 garminData.sleepStages.rem;
+
+            // Skip 0-value data (no valid sleep recorded)
+            if (totalSleepMinutes === 0) continue;
+
             const sleepHours = totalSleepMinutes / 60;
 
             if (sleepHours < 6) {
@@ -58,6 +62,10 @@ export async function analyzeSleepCorrelation(): Promise<CorrelationResult | nul
             garminDay.sleepStages.deep +
             garminDay.sleepStages.light +
             garminDay.sleepStages.rem;
+
+        // Skip 0-value data (no valid sleep recorded)
+        if (totalSleepMinutes === 0) continue;
+
         const sleepHours = totalSleepMinutes / 60;
 
         if (sleepHours >= 6) {
@@ -118,7 +126,8 @@ export async function analyzeStressCorrelation(): Promise<CorrelationResult | nu
         const episodeDate = format(new Date(episode.startTime), 'yyyy-MM-dd');
         const garminData = await db.garminData.get(episodeDate);
 
-        if (garminData?.stressLevel?.average) {
+        // Skip if stressLevel.average is 0 or undefined
+        if (garminData?.stressLevel?.average && garminData.stressLevel.average > 0) {
             if (garminData.stressLevel.average > 70) {
                 daysWithHighStress++;
                 episodesWithHighStress++;
@@ -147,9 +156,9 @@ export async function analyzeHRVCorrelation(): Promise<CorrelationResult | null>
     const episodes = await db.episodes.toArray();
     if (episodes.length < 5) return null;
 
-    // HRV Durchschnitt berechnen
+    // HRV Durchschnitt berechnen (skip 0-values)
     const allGarminData = await db.garminData.toArray();
-    const hrvValues = allGarminData.filter((d) => d.hrv).map((d) => d.hrv!);
+    const hrvValues = allGarminData.filter((d) => d.hrv && d.hrv > 0).map((d) => d.hrv!);
 
     if (hrvValues.length < 10) return null;
 
@@ -167,7 +176,8 @@ export async function analyzeHRVCorrelation(): Promise<CorrelationResult | null>
 
         const garminData = await db.garminData.get(previousDay);
 
-        if (garminData?.hrv && garminData.hrv < lowHRVThreshold) {
+        // Skip if hrv is 0 or undefined
+        if (garminData?.hrv && garminData.hrv > 0 && garminData.hrv < lowHRVThreshold) {
             daysWithLowHRV++;
             episodesAfterLowHRV++;
         }
@@ -201,7 +211,8 @@ export async function analyzeBodyBatteryCorrelation(): Promise<CorrelationResult
         const episodeDate = format(new Date(episode.startTime), 'yyyy-MM-dd');
         const garminData = await db.garminData.get(episodeDate);
 
-        if (garminData?.bodyBattery?.current) {
+        // Skip if bodyBattery.current is 0 or undefined
+        if (garminData?.bodyBattery?.current && garminData.bodyBattery.current > 0) {
             if (garminData.bodyBattery.current < 30) {
                 daysWithLowBattery++;
                 episodesWithLowBattery++;
@@ -368,6 +379,140 @@ export async function analyzeTimeOfDayDistribution(): Promise<{
 }
 
 /**
+ * Analysiert die Korrelation zwischen niedrigen Schritten und Migräne-Episoden
+ */
+export async function analyzeStepsCorrelation(): Promise<CorrelationResult | null> {
+    const episodes = await db.episodes.toArray();
+    if (episodes.length < 5) return null;
+
+    let daysWithLowSteps = 0;
+    let episodesAfterLowSteps = 0;
+
+    for (const episode of episodes) {
+        // Get data from previous day
+        const previousDay = format(
+            new Date(new Date(episode.startTime).getTime() - 24 * 60 * 60 * 1000),
+            'yyyy-MM-dd'
+        );
+
+        const garminData = await db.garminData.get(previousDay);
+
+        // Skip if steps is 0 or undefined
+        if (garminData?.steps && garminData.steps > 0) {
+            if (garminData.steps < 3000) {
+                daysWithLowSteps++;
+                episodesAfterLowSteps++;
+            }
+        }
+    }
+
+    if (daysWithLowSteps === 0) return null;
+
+    const percentage = Math.round((episodesAfterLowSteps / daysWithLowSteps) * 100);
+
+    return {
+        title: 'Wenige Schritte & Migräne',
+        description: `An Tagen mit weniger als 3.000 Schritten hattest du in ${percentage}% der Fälle am Folgetag eine Migräne (${episodesAfterLowSteps} von ${daysWithLowSteps} Tagen)`,
+        percentage,
+        sampleSize: daysWithLowSteps,
+        isSignificant: percentage > 40,
+        type: 'steps',
+    };
+}
+
+/**
+ * Analysiert die Korrelation zwischen erhöhtem Ruhepuls und Migräne-Episoden
+ */
+export async function analyzeRestingHRCorrelation(): Promise<CorrelationResult | null> {
+    const episodes = await db.episodes.toArray();
+    if (episodes.length < 5) return null;
+
+    // Calculate personal average resting HR (skip 0-values)
+    const allGarminData = await db.garminData.toArray();
+    const restingHRValues = allGarminData.filter((d) => d.restingHR && d.restingHR > 0).map((d) => d.restingHR!);
+
+    if (restingHRValues.length < 10) return null;
+
+    const avgRestingHR = restingHRValues.reduce((sum, val) => sum + val, 0) / restingHRValues.length;
+    const elevatedThreshold = avgRestingHR * 1.1; // 10% above average
+
+    let daysWithElevatedHR = 0;
+    let episodesAfterElevatedHR = 0;
+
+    for (const episode of episodes) {
+        // Get data from previous day
+        const previousDay = format(
+            new Date(new Date(episode.startTime).getTime() - 24 * 60 * 60 * 1000),
+            'yyyy-MM-dd'
+        );
+
+        const garminData = await db.garminData.get(previousDay);
+
+        // Skip if restingHR is 0 or undefined
+        if (garminData?.restingHR && garminData.restingHR > 0 && garminData.restingHR > elevatedThreshold) {
+            daysWithElevatedHR++;
+            episodesAfterElevatedHR++;
+        }
+    }
+
+    if (daysWithElevatedHR === 0) return null;
+
+    const percentage = Math.round((episodesAfterElevatedHR / daysWithElevatedHR) * 100);
+
+    return {
+        title: 'Erhöhter Ruhepuls & Migräne',
+        description: `An Tagen mit erhöhtem Ruhepuls (>${Math.round(elevatedThreshold)} bpm) hattest du in ${percentage}% der Fälle am Folgetag eine Migräne (${episodesAfterElevatedHR} von ${daysWithElevatedHR} Tagen)`,
+        percentage,
+        sampleSize: daysWithElevatedHR,
+        isSignificant: percentage > 40,
+        type: 'restingHR',
+    };
+}
+
+/**
+ * Analysiert die Korrelation zwischen niedriger Hydration und Migräne-Episoden
+ */
+export async function analyzeHydrationCorrelation(): Promise<CorrelationResult | null> {
+    const episodes = await db.episodes.toArray();
+    if (episodes.length < 5) return null;
+
+    let daysWithLowHydration = 0;
+    let episodesAfterLowHydration = 0;
+
+    for (const episode of episodes) {
+        // Get data from previous day
+        const previousDay = format(
+            new Date(new Date(episode.startTime).getTime() - 24 * 60 * 60 * 1000),
+            'yyyy-MM-dd'
+        );
+
+        const garminData = await db.garminData.get(previousDay);
+
+        // Skip if hydration is 0 or undefined
+        if (garminData?.hydration && garminData.hydration > 0) {
+            // Low hydration: less than 1500ml
+            if (garminData.hydration < 1500) {
+                daysWithLowHydration++;
+                episodesAfterLowHydration++;
+            }
+        }
+    }
+
+    if (daysWithLowHydration === 0) return null;
+
+    const percentage = Math.round((episodesAfterLowHydration / daysWithLowHydration) * 100);
+
+    return {
+        title: 'Geringe Flüssigkeitszufuhr & Migräne',
+        description: `An Tagen mit weniger als 1,5L Flüssigkeit hattest du in ${percentage}% der Fälle am Folgetag eine Migräne (${episodesAfterLowHydration} von ${daysWithLowHydration} Tagen)`,
+        percentage,
+        sampleSize: daysWithLowHydration,
+        isSignificant: percentage > 40,
+        type: 'hydration',
+    };
+}
+
+/**
  * Führt alle Korrelationsanalysen durch
  */
 export async function analyzeAllCorrelations(): Promise<CorrelationResult[]> {
@@ -378,6 +523,10 @@ export async function analyzeAllCorrelations(): Promise<CorrelationResult[]> {
         analyzeBodyBatteryCorrelation(),
         analyzeNightOnsetCorrelation(),
         analyzeTriggerPatterns(),
+        // New correlations (PAKET 08-01)
+        analyzeStepsCorrelation(),
+        analyzeRestingHRCorrelation(),
+        analyzeHydrationCorrelation(),
         // Weather correlations (PAKET 12)
         analyzePressureCorrelation(),
         analyzeTemperatureCorrelation(),
@@ -403,7 +552,8 @@ export async function analyzePressureCorrelation(): Promise<CorrelationResult | 
         const episodeDate = format(new Date(episode.startTime), 'yyyy-MM-dd');
         const weatherData = await db.weatherData.get(episodeDate);
 
-        if (weatherData?.pressureChange !== undefined) {
+        // Skip if pressure value is 0 or missing
+        if (weatherData?.pressureChange !== undefined && weatherData.pressureChange !== 0) {
             episodesWithPressureData++;
 
             // Druckabfall > 5 hPa gilt als signifikant
@@ -447,7 +597,8 @@ export async function analyzeTemperatureCorrelation(): Promise<CorrelationResult
         const episodeDate = format(new Date(episode.startTime), 'yyyy-MM-dd');
         const weatherData = await db.weatherData.get(episodeDate);
 
-        if (weatherData?.temperature) {
+        // Skip if temperature values are 0 or missing
+        if (weatherData?.temperature && (weatherData.temperature.max !== 0 || weatherData.temperature.min !== 0)) {
             episodesWithTempData++;
 
             // Hitze: > 30°C
@@ -507,7 +658,8 @@ export async function analyzeHumidityCorrelation(): Promise<CorrelationResult | 
         const episodeDate = format(new Date(episode.startTime), 'yyyy-MM-dd');
         const weatherData = await db.weatherData.get(episodeDate);
 
-        if (weatherData?.humidity) {
+        // Skip if humidity is 0 or missing
+        if (weatherData?.humidity && weatherData.humidity > 0) {
             episodesWithHumidityData++;
 
             // Hohe Luftfeuchtigkeit: > 80%
