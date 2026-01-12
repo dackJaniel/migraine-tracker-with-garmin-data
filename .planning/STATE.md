@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-11)
 
 **Core value:** Garmin health data reliably synced to IndexedDB
-**Current focus:** Phase 7 — Auto Sync (complete)
+**Current focus:** Phase 8 — Analytics Enhancement (complete)
 
 ## Current Position
 
-Phase: 7 of 9 (Auto Sync)
+Phase: 8 of 9 (Analytics Enhancement)
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-12 — Completed 07-01-PLAN.md
+Last activity: 2026-01-12 — Completed 08-01-PLAN.md
 
-Progress: ███████░░░ 77% (v1.0 complete, v1.1 Phases 4-7 done)
+Progress: ████████░░ 88% (v1.0 complete, v1.1 Phases 4-8 done)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: ~7 min
-- Total execution time: ~54 min
+- Total execution time: ~61 min
 
 **By Phase:**
 
@@ -33,9 +33,10 @@ Progress: ███████░░░ 77% (v1.0 complete, v1.1 Phases 4-7 don
 | 5. UI Mobile Polish | 1 | 8m | 8m |
 | 6. GPS Fix | 1 | 3m | 3m |
 | 7. Auto Sync | 1 | 3m | 3m |
+| 8. Analytics Enhancement | 1 | 7m | 7m |
 
 **Recent Trend:**
-- Last 3 plans: 8m, 3m, 3m
+- Last 3 plans: 3m, 3m, 7m
 - Trend: Fast execution
 
 ## Accumulated Context
@@ -58,6 +59,8 @@ Recent decisions affecting current work:
 - [Phase 6]: Fall back to browser geolocation API on web for dev mode
 - [Phase 7]: Auto-sync defaults to enabled (opt-out model)
 - [Phase 7]: 1 second delay before auto-sync to let UI render first
+- [Phase 8]: Confidence thresholds: <10 Wenige Daten, 10-30 Moderat, >30 Belastbar
+- [Phase 8]: 0-value filtering on all correlation functions to prevent false patterns
 
 ### Deferred Issues
 
@@ -70,5 +73,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-12
-Stopped at: Phase 7 complete, ready for Phase 8 planning
+Stopped at: Phase 8 complete, ready for Phase 9 planning
 Resume file: None

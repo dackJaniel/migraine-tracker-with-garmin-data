@@ -47,7 +47,7 @@ Plans:
 - [x] **Phase 5: UI Mobile Polish** - Mobile-Optimierung, Overflow-Fixes
 - [x] **Phase 6: GPS Fix** - Android Standort-Problem beheben
 - [x] **Phase 7: Auto Sync** - Automatischer Garmin & Wetter Sync beim App-Start
-- [ ] **Phase 8: Analytics Enhancement** - Korrelationen verbessern (UI + Logik)
+- [x] **Phase 8: Analytics Enhancement** - Korrelationen verbessern (UI + Logik)
 - [ ] **Phase 9: Dropbox Export** - Verschlüsselter Auto-Export zu Dropbox
 
 ## Phase Details
@@ -110,11 +110,11 @@ Scope:
 Plans:
 - [x] 07-01: Auto-sync service + Settings UI + App integration
 
-### Phase 8: Analytics Enhancement
+### Phase 8: Analytics Enhancement ✅
 **Goal**: Korrelationen verbessern - UI prominenter, Logik robuster
 **Depends on**: Phase 7
-**Research**: Unlikely (interne Logik + UI)
-**Plans**: TBD
+**Status**: Complete
+**Plans**: 1 plan
 
 Scope:
 - Korrelationen in Übersicht nach vorne
@@ -123,7 +123,7 @@ Scope:
 - Genauere Darstellung der Korrelationen
 
 Plans:
-- [ ] 08-01: TBD
+- [x] 08-01: 0-value filtering, new correlations, TopInsights component, confidence badges
 
 ### Phase 9: Dropbox Export
 **Goal**: Verschlüsselter Auto-Export der Daten zu Dropbox
@@ -155,5 +155,5 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8 → 9
 | 5. UI Mobile Polish | v1.1 | 1/1 | Complete | 2026-01-12 |
 | 6. GPS Fix | v1.1 | 1/1 | Complete | 2026-01-12 |
 | 7. Auto Sync | v1.1 | 1/1 | Complete | 2026-01-12 |
-| 8. Analytics Enhancement | v1.1 | 0/? | Not started | - |
+| 8. Analytics Enhancement | v1.1 | 1/1 | Complete | 2026-01-12 |
 | 9. Dropbox Export | v1.1 | 0/? | Not started | - |
