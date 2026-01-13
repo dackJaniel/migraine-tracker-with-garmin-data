@@ -6,7 +6,12 @@
 import { GenericOAuth2 } from '@capacitor-community/generic-oauth2';
 import { Preferences } from '@capacitor/preferences';
 import { Capacitor } from '@capacitor/core';
-import { DROPBOX_APP_KEY, DROPBOX_AUTH_URL, DROPBOX_TOKEN_URL, DROPBOX_SCOPES } from './constants';
+import {
+  DROPBOX_APP_KEY,
+  DROPBOX_AUTH_URL,
+  DROPBOX_TOKEN_URL,
+  DROPBOX_SCOPES,
+} from './constants';
 import type { DropboxTokens } from './types';
 
 const TOKENS_KEY = 'dropbox_tokens';
