@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-11)
 
 **Core value:** Garmin health data reliably synced to IndexedDB
-**Current focus:** Phase 8 — Analytics Enhancement (complete)
+**Current focus:** Phase 9 — Dropbox Export (in progress)
 
 ## Current Position
 
-Phase: 8 of 9 (Analytics Enhancement)
-Plan: 1 of 1 in current phase
-Status: Phase complete
-Last activity: 2026-01-12 — Completed 08-01-PLAN.md
+Phase: 9 of 9 (Dropbox Export)
+Plan: 1 of ? in current phase
+Status: In progress
+Last activity: 2026-01-13 — Completed 09-01-PLAN.md
 
-Progress: ████████░░ 88% (v1.0 complete, v1.1 Phases 4-8 done)
+Progress: █████████░ 90% (v1.0 complete, v1.1 Phases 4-8 done, Phase 9 started)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
+- Total plans completed: 10
 - Average duration: ~7 min
-- Total execution time: ~61 min
+- Total execution time: ~67 min
 
 **By Phase:**
 
@@ -34,9 +34,10 @@ Progress: ████████░░ 88% (v1.0 complete, v1.1 Phases 4-8 don
 | 6. GPS Fix | 1 | 3m | 3m |
 | 7. Auto Sync | 1 | 3m | 3m |
 | 8. Analytics Enhancement | 1 | 7m | 7m |
+| 9. Dropbox Export | 1 | 6m | 6m |
 
 **Recent Trend:**
-- Last 3 plans: 3m, 3m, 7m
+- Last 3 plans: 3m, 7m, 6m
 - Trend: Fast execution
 
 ## Accumulated Context
@@ -61,6 +62,9 @@ Recent decisions affecting current work:
 - [Phase 7]: 1 second delay before auto-sync to let UI render first
 - [Phase 8]: Confidence thresholds: <10 Wenige Daten, 10-30 Moderat, >30 Belastbar
 - [Phase 8]: 0-value filtering on all correlation functions to prevent false patterns
+- [Phase 9]: Used @capacitor-community/generic-oauth2 for cross-platform OAuth
+- [Phase 9]: PKCE flow for mobile security (no client secret needed)
+- [Phase 9]: Timestamp-based backup filenames to prevent overwrites
 
 ### Deferred Issues
 
@@ -72,6 +76,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-12
-Stopped at: Phase 8 complete, ready for Phase 9 planning
+Last session: 2026-01-13
+Stopped at: Completed 09-01-PLAN.md
 Resume file: None

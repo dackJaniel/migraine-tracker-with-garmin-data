@@ -128,9 +128,8 @@ Plans:
 ### Phase 9: Dropbox Export
 **Goal**: Verschlüsselter Auto-Export der Daten zu Dropbox
 **Depends on**: Phase 8
-**Research**: Likely (Dropbox API + Encryption)
-**Research topics**: Dropbox API v2, OAuth2 für Dropbox, Client-side Encryption (Web Crypto API)
-**Plans**: TBD
+**Status**: In progress
+**Plans**: 2+ plans
 
 Scope:
 - Dropbox OAuth2 Integration
@@ -139,7 +138,8 @@ Scope:
 - Export-Einstellungen in Settings
 
 Plans:
-- [ ] 09-01: TBD
+- [x] 09-01: Dropbox service layer (OAuth2, encrypted upload)
+- [ ] 09-02: Settings UI for Dropbox connection (TBD)
 
 ## Progress
 
@@ -156,4 +156,4 @@ Phases execute in numeric order: 4 → 5 → 6 → 7 → 8 → 9
 | 6. GPS Fix | v1.1 | 1/1 | Complete | 2026-01-12 |
 | 7. Auto Sync | v1.1 | 1/1 | Complete | 2026-01-12 |
 | 8. Analytics Enhancement | v1.1 | 1/1 | Complete | 2026-01-12 |
-| 9. Dropbox Export | v1.1 | 0/? | Not started | - |
+| 9. Dropbox Export | v1.1 | 1/2+ | In progress | - |
